@@ -188,39 +188,39 @@ Para cada mês presente nas duas bases e cada recorte (Brasil, UF, município):
 
 ### Resultado com dados reais (setembro/2026)
 
-Primeira conciliação com os dois arquivos do mesmo mês, depois da calibração
-das regras (arquivo de marca/modelo: 22 milhões de linhas, 40,5 mil modelos
-distintos, processado em 1,5 min):
+Conciliação com os dois arquivos do mesmo mês, depois da calibração das regras
+(arquivo de marca/modelo: 22 milhões de linhas, 40,5 mil modelos distintos,
+processado em 1,5 min):
 
-| Indicador | Combustível | Modelo | Modelo / combustível |
+| Indicador (UFs válidas) | Combustível | Modelo | Modelo / combustível |
 |---|---:|---:|---:|
-| Frota total | 136.424.856 | 136.424.856 | 1,000 |
-| Elétrico (UFs válidas) | 395.132 | 377.785 | 0,956 |
-| Elétrico (Brasil, inclui "Sem Informação") | 484.407 | 436.855 | 0,902 |
-| Híbrido plug-in (UFs válidas) | 79.245 | 352.706 | 4,45 |
-| Híbrido convencional (UFs válidas) | 709.697 | 255.345 | 0,36 |
-| Híbridos, soma (UFs válidas) | 788.942 | 608.051 | 0,77 |
-| Híbridos + híbridos leves do modelo (UFs válidas) | 788.942 | 725.658 | 0,92 |
+| Frota total (Brasil) | 136.424.856 | 136.424.856 | 1,000 |
+| Elétrico | 395.132 | 379.826 | 0,961 |
+| Híbrido plug-in | 79.245 | 352.706 | 4,45 |
+| Híbrido convencional | 709.697 | 260.628 | 0,37 |
+| Híbridos, soma | 788.942 | 613.334 | 0,78 |
+| Híbridos + híbridos leves do modelo | 788.942 | 730.941 | 0,93 |
 
 Leitura:
 
 - A frota total coincide em todas as UFs: os dois arquivos cobrem o mesmo
   universo.
-- Elétricos: a base por modelo recupera 95,6% nas UFs válidas (de 93% a 99%
-  por UF). O resíduo maior está no grupo de UF/município "Sem Informação"
-  (3,1 milhões de veículos, quase todos sem ano de fabricação), onde só 66% dos
-  elétricos foram identificados pelo nome.
+- Elétricos: a base por modelo recupera 96,1% nas UFs válidas (de 93% a
+  99,6% por UF) e 91,9% no Brasil. O resíduo maior está no grupo de
+  UF/município "Sem Informação" (3,1 milhões de veículos, quase todos sem ano
+  de fabricação).
 - **O campo combustível não separa plug-in de híbrido convencional.** A base
   por modelo tem 4,5 vezes mais plug-ins que o rótulo HIBRIDO PLUG-IN: a maior
   parte dos PHEV está registrada como GASOLINA/ELETRICO ou similar. Para a
   separação PHEV × HEV, usar a base por modelo.
 - **O campo combustível conta híbridos leves como híbridos.** Somando os
-  híbridos leves da base por modelo, os híbridos fecham em 92%. Como a decisão
+  híbridos leves da base por modelo, os híbridos fecham em 93%. Como a decisão
   do projeto é excluir híbridos leves, a base por combustível superestima a
   frota híbrida.
 
-Pendências da calibração (modelos sem regra, a confirmar):
-Shineray PT2/PT3/PT4 (~8 mil veículos) e GAC GS4 (~6 mil).
+Classificações confirmadas por conhecimento de mercado (não pelo texto):
+Shineray PT2/PT3/PT4/PT7 e SE1/SE2/SE3 são elétricos; GAC GS4 é híbrido
+convencional a gasolina.
 
 ## Limitações conhecidas
 
@@ -260,7 +260,7 @@ e, para o classificador por modelo, textos reais do campo "Marca Modelo".
 
 ## Próximos passos
 
-- Resolver as pendências da calibração e estender a série a outros meses.
+- Estender a série a outros meses e acompanhar a lista `revisar` a cada mês novo.
 - Código IBGE do município (junção por nome normalizado + UF com a tabela do IBGE).
 - Cruzamento com "Frota por Município e Tipo" para isolar veículos leves.
 - Validação contra séries publicadas (ABVE, ANFAVEA).
