@@ -25,8 +25,7 @@ from urllib.parse import unquote, urljoin, urlparse
 import requests
 from bs4 import BeautifulSoup
 
-from .leitura import EXTENSOES_DADOS, inferir_periodo
-from .texto import normalizar
+from .leitura import EXTENSOES_DADOS, identificar_tabela, inferir_periodo
 
 log = logging.getLogger(__name__)
 
@@ -60,7 +59,7 @@ def _criar_link(url: str, texto: str, fonte: str) -> Link | None:
     return Link(
         url=url,
         texto=texto,
-        tabela=classificar_tabela(f"{nome} {texto}"),
+        tabela=identificar_tabela(f"{nome} {texto}"),
         periodo=inferir_periodo(nome) or inferir_periodo(texto),
         fonte=fonte,
     )
@@ -72,17 +71,6 @@ def url_download(href: str) -> str:
         if href.endswith(sufixo):
             return href[: -len(sufixo)]
     return href
-
-
-def classificar_tabela(texto: str) -> str:
-    t = normalizar(texto).replace("_", " ")
-    if "COMBUSTIVEL" in t:
-        return "combustivel"
-    if "MARCA" in t or "MODELO" in t:
-        return "marca_modelo"
-    if "TIPO" in t:
-        return "municipio_tipo" if "MUNICIPIO" in t else "uf_tipo"
-    return "outro"
 
 
 # --- fonte "portal" (HTML do gov.br) -------------------------------------------------

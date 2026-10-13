@@ -3,7 +3,7 @@ import zipfile
 import pandas as pd
 import pytest
 
-from eletromobilidade.leitura import inferir_periodo, ler_frota_combustivel, para_inteiro
+from eletromobilidade.leitura import inferir_periodo, ler_frota_combustivel, ler_frota_marca_modelo, para_inteiro
 
 from conftest import LINHAS_JAN, escrever_xlsx
 
@@ -69,3 +69,16 @@ def test_para_inteiro():
 def test_para_inteiro_rejeita_contagens_invalidas(valor):
     with pytest.raises(ValueError):
         para_inteiro(pd.Series([valor], dtype=object))
+
+
+def test_le_marca_modelo_em_blocos(zip_marca_modelo_jan):
+    from conftest import LINHAS_MARCA_MODELO_JAN
+
+    blocos = list(ler_frota_marca_modelo(zip_marca_modelo_jan, tamanho_bloco=5))
+    assert len(blocos) == 3
+    df = pd.concat(blocos, ignore_index=True)
+    assert list(df.columns) == ["uf", "municipio", "marca_modelo", "ano_fabricacao", "qtd_veiculos"]
+    assert df["qtd_veiculos"].sum() == sum(l[4] for l in LINHAS_MARCA_MODELO_JAN)
+    assert df["ano_fabricacao"].dtype == "Int64"
+    assert df["ano_fabricacao"].isna().sum() == 1  # "Sem Informação"
+    assert df.loc[0, "marca_modelo"] == "I/BYD DOLPHIN GS 180EV"
