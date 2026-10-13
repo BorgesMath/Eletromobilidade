@@ -17,6 +17,7 @@ título de cada recurso.
 from __future__ import annotations
 
 import logging
+import time
 import zipfile
 from dataclasses import dataclass
 from pathlib import Path
@@ -24,6 +25,8 @@ from urllib.parse import unquote, urljoin, urlparse
 
 import requests
 from bs4 import BeautifulSoup
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 from .leitura import EXTENSOES_DADOS, identificar_tabela, inferir_periodo
 
@@ -35,7 +38,25 @@ DATASET_RENAVAM = "12686da0-3d71-4499-b432-d270f785c907"
 CABECALHOS = {"User-Agent": "Mozilla/5.0 (compatible; eletromobilidade/0.1)"}
 
 FONTES = ("ckan", "portal")
-TABELAS = ("marca_modelo", "combustivel", "municipio_tipo", "uf_tipo")
+TABELAS = ("marca_modelo", "combustivel", "municipio_tipo", "uf_tipo", "ano_fabricacao", "tipo_especie_eixos",
+           "restricao", "potencia", "cep", "cor")
+
+
+def criar_sessao(tentativas: int = 5, espera: float = 2.0) -> requests.Session:
+    """Sessão HTTP com novas tentativas e espera exponencial (2, 4, 8, 16 s...).
+
+    Os servidores do gov.br respondem de forma intermitente com 502/503/504 e
+    estouros de tempo; essas falhas são repetidas, as demais não.
+    """
+    sessao = requests.Session()
+    retry = Retry(total=tentativas, connect=tentativas, read=tentativas, status=tentativas,
+                  backoff_factor=espera, status_forcelist=(429, 500, 502, 503, 504),
+                  allowed_methods=("GET", "HEAD"), raise_on_status=False)
+    adaptador = HTTPAdapter(max_retries=retry)
+    sessao.mount("https://", adaptador)
+    sessao.mount("http://", adaptador)
+    sessao.headers.update(CABECALHOS)
+    return sessao
 
 
 @dataclass(frozen=True)
@@ -92,7 +113,7 @@ def extrair_links(html: str, url_base: str) -> list[Link]:
 
 
 def listar_links(ano: int, sessao: requests.Session | None = None) -> list[Link]:
-    sessao = sessao or requests.Session()
+    sessao = sessao or criar_sessao()
     url = URL_PAGINA.format(ano=ano)
     resposta = sessao.get(url, headers=CABECALHOS, timeout=60)
     resposta.raise_for_status()
@@ -115,7 +136,7 @@ def extrair_recursos_ckan(resposta: dict) -> list[Link]:
 
 
 def listar_recursos_ckan(dataset: str = DATASET_RENAVAM, sessao: requests.Session | None = None) -> list[Link]:
-    sessao = sessao or requests.Session()
+    sessao = sessao or criar_sessao()
     resposta = sessao.get(URL_CKAN, params={"id": dataset}, headers=CABECALHOS, timeout=60)
     resposta.raise_for_status()
     return extrair_recursos_ckan(resposta.json())
@@ -129,7 +150,7 @@ def listar(anos: list[int], fontes: tuple[str, ...] = FONTES,
 
     Uma fonte indisponível gera aviso e é ignorada, para não impedir a coleta das demais.
     """
-    sessao = sessao or requests.Session()
+    sessao = sessao or criar_sessao()
     links: list[Link] = []
     for fonte in fontes:
         try:
@@ -166,14 +187,28 @@ def _verificar(arquivo: Path, nome_final: str, esperado: int | None) -> None:
         raise IOError(f"{nome_final} não é um zip válido.")
 
 
+def _tamanho_total(resposta, ja_baixado: int) -> int | None:
+    """Tamanho final esperado do arquivo, a partir de Content-Range (206) ou Content-Length (200)."""
+    faixa = resposta.headers.get("Content-Range", "")
+    if resposta.status_code == 206 and "/" in faixa and not faixa.endswith("/*"):
+        return int(faixa.rsplit("/", 1)[1])
+    # Com compressão de transporte o Content-Length não corresponde aos bytes gravados.
+    if resposta.headers.get("Content-Encoding", "identity") != "identity":
+        return None
+    tamanho = resposta.headers.get("Content-Length")
+    return int(tamanho) + ja_baixado if tamanho else None
+
+
 def baixar(link: Link, destino: str | Path, sessao: requests.Session | None = None,
-           sobrescrever: bool = False) -> Path:
+           sobrescrever: bool = False, tentativas: int = 5, espera: float = 2.0) -> Path:
     """Baixa para ``destino/{tabela}/{ano}/``; reaproveita o arquivo se já existir.
 
-    O arquivo é gravado como ``.parcial`` e só é renomeado depois de conferido o
-    tamanho (``Content-Length``) e, para ``.zip``, a estrutura do arquivo.
+    O arquivo é gravado como ``.parcial``. Se a conexão cair no meio, o download é
+    retomado do ponto em que parou (cabeçalho ``Range``), com espera exponencial,
+    até ``tentativas`` vezes. Só depois de conferido o tamanho e, para ``.zip``, a
+    estrutura do arquivo, o ``.parcial`` é renomeado.
     """
-    sessao = sessao or requests.Session()
+    sessao = sessao or criar_sessao()
     pasta = Path(destino) / link.tabela / (str(link.periodo[0]) if link.periodo else "sem_periodo")
     pasta.mkdir(parents=True, exist_ok=True)
     caminho = pasta / link.nome_arquivo
@@ -181,16 +216,32 @@ def baixar(link: Link, destino: str | Path, sessao: requests.Session | None = No
         log.info("Já existe: %s", caminho)
         return caminho
     temporario = caminho.with_name(caminho.name + ".parcial")
+    temporario.unlink(missing_ok=True)
+    esperado = None
     try:
-        with sessao.get(link.url, headers=CABECALHOS, stream=True, timeout=300) as resposta:
-            resposta.raise_for_status()
-            # Com compressão de transporte o Content-Length não corresponde aos bytes gravados.
-            comprimido = resposta.headers.get("Content-Encoding", "identity") != "identity"
-            esperado = None if comprimido else resposta.headers.get("Content-Length")
-            with open(temporario, "wb") as f:
-                for bloco in resposta.iter_content(chunk_size=1 << 20):
-                    f.write(bloco)
-        _verificar(temporario, caminho.name, int(esperado) if esperado else None)
+        for tentativa in range(tentativas + 1):
+            ja_baixado = temporario.stat().st_size if temporario.exists() else 0
+            cabecalhos = {"Range": f"bytes={ja_baixado}-"} if ja_baixado else {}
+            try:
+                with sessao.get(link.url, headers=cabecalhos, stream=True, timeout=300) as resposta:
+                    resposta.raise_for_status()
+                    if ja_baixado and resposta.status_code != 206:
+                        ja_baixado = 0  # servidor ignorou o Range: recomeça do zero
+                    esperado = _tamanho_total(resposta, ja_baixado) or esperado
+                    with open(temporario, "ab" if ja_baixado else "wb") as f:
+                        for bloco in resposta.iter_content(chunk_size=1 << 20):
+                            f.write(bloco)
+                break
+            except (requests.ConnectionError, requests.Timeout,
+                    requests.exceptions.ChunkedEncodingError) as erro:
+                if tentativa == tentativas:
+                    raise
+                pausa = espera * 2 ** tentativa
+                log.warning("%s: conexão interrompida com %d bytes (%s); retomando em %.0f s.",
+                            link.nome_arquivo, temporario.stat().st_size if temporario.exists() else 0,
+                            type(erro).__name__, pausa)
+                time.sleep(pausa)
+        _verificar(temporario, caminho.name, esperado)
     except BaseException:
         temporario.unlink(missing_ok=True)
         raise
@@ -202,7 +253,7 @@ def baixar(link: Link, destino: str | Path, sessao: requests.Session | None = No
 def baixar_tabela(tabela: str, anos: list[int], destino: str | Path, meses: list[int] | None = None,
                   fontes: tuple[str, ...] = FONTES, sobrescrever: bool = False) -> list[Path]:
     """Baixa os arquivos de uma tabela (ex.: ``"marca_modelo"``) para os anos/meses pedidos."""
-    sessao = requests.Session()
+    sessao = criar_sessao()
     links = selecionar(listar(anos, fontes, sessao), tabela, meses, fontes)
     if not links:
         log.warning("Nenhum arquivo de %s encontrado para %s nas fontes %s.", tabela, anos, fontes)

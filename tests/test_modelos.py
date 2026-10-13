@@ -38,6 +38,33 @@ CASOS = [
     ("I/KIA SPORTAGE TMHEV EXP", "hibrido_leve"),
     ("I/CHEV BOLT EUV PREMIER", "eletrico"),
     ("SR/RANDON SR BA 03E", "nao_motorizado"),
+    # encontrados na calibração com o arquivo de setembro/2026
+    ("I/GEELY EX2 MAX", "eletrico"),
+    ("I/GEELY EX5 EM-I ULTRA", "hibrido_plug_in"),
+    ("I/AUDI Q8 E TRON 55", "eletrico"),
+    ("I/M.BENZ EQC400 4M", "eletrico"),
+    ("I/JAC E JS1", "eletrico"),
+    ("I/JAC E-J7", "eletrico"),
+    ("I/VOLVO XC40 6 PLUS", "eletrico"),
+    ("I/PORSCHE MACAN E4", "eletrico"),
+    ("I/PORSCHE CAYENNE CP PHE", "hibrido_plug_in"),
+    ("I/DENZA B5 GS DM", "hibrido_plug_in"),
+    ("I/JETOUR T2 I-DM PREMIUM", "hibrido_plug_in"),
+    ("I/LPM C10 REEV E27", "hibrido_plug_in"),
+    ("I/LPM B10 LIFE", "eletrico"),
+    ("I/HYD IONIQ5 SIG", "eletrico"),
+    ("I/HYD KONA H 16GDI SIG", "hibrido"),
+    ("TOYOTA/COROLLA APREMIUMH", "hibrido"),
+    ("I/TOYOTA RAV4H SXAWD CNT", "hibrido"),
+    ("I/CAOACHERY TIGGO8 PHEV", "hibrido_plug_in"),
+    ("CAOACHERY/TIGGO7 PRO HA", "hibrido_leve"),
+    ("CAOACHERY/TIGGO5X H", "hibrido_leve"),
+    ("I/GCX X11 3KW", "eletrico"),
+    ("MOTOCHEFE/X11 3.000W", "eletrico"),
+    ("VAMMO/VMOTO COMFORT 4KW", "eletrico"),
+    ("I/MG MG4 64 KWH COM", "eletrico"),
+    ("SHINERAY/SE1", "eletrico"),
+    ("MOTTU/MOTTU-E", "eletrico"),
     # armadilhas: "E", "EV" e "HEV" que não indicam eletrificação
     ("VW/8.150E DELIVERY", "combustao"),
     ("VW/POLO 1.6 E-FLEX", "combustao"),
@@ -47,6 +74,13 @@ CASOS = [
     ("I/PEUGEOT EXPERT CARGO", "combustao"),
     ("I/LR EVOQUE SE", "combustao"),
     ("YAMAHA/YBR 125E", "combustao"),
+    ("I/CHANGAN CHANA SC1026W", "combustao"),
+    ("I/M.BENZ C 300W", "combustao"),
+    ("TOYOTA/YARIS HA XS15", "combustao"),
+    ("CAOACHERY/TIGGO7 PRO16TA", "combustao"),
+    ("MOTTU/SPORT 110I", "combustao"),
+    ("I/GEELY EC-7 1.8 GS", "combustao"),
+    ("I/PORSCHE MACAN T", "combustao"),
 ]
 
 
@@ -89,4 +123,11 @@ def test_regras_invalidas(tmp_path):
         carregar_regras(arq)
     arq.write_text("classe;padrao;nota\neletrico;(BYD;\n", encoding="utf-8")
     with pytest.raises(ValueError, match="regex inválida"):
+        carregar_regras(arq)
+
+
+def test_regras_com_ponto_e_virgula_na_nota(tmp_path):
+    arq = tmp_path / "r.csv"
+    arq.write_text("classe;padrao;nota\neletrico;BYD;nota; com ponto e vírgula\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="linha 2"):
         carregar_regras(arq)

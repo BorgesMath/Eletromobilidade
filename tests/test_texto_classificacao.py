@@ -42,6 +42,7 @@ def test_tabela_embutida_e_valida():
     ("HIBRIDO PLUG-IN FLEX", "hibrido_plug_in"),
     ("HIDROGENIO/ELETRICO", "celula_combustivel"),
     ("BIODIESEL", "combustao"),
+    ("HIBRIDO/ETANOL", "hibrido"),
     ("", "sem_informacao"),
 ])
 def test_regras_para_rotulos_novos(rotulo, classe):

@@ -39,6 +39,10 @@ MARCAS_A_REVISAR = ("BYD", "TESLA", "VOLTZ", "ZEEKR", "POLESTAR", "NETA", "AION"
 def carregar_regras(caminho: str | Path | None = None) -> pd.DataFrame:
     """Lê e valida as regras; devolve ``regra`` (número da linha, a partir de 1), ``classe``, ``padrao``, ``nota``."""
     caminho = Path(caminho) if caminho is not None else REGRAS_PADRAO
+    for numero, linha in enumerate(caminho.read_text(encoding="utf-8").splitlines(), start=1):
+        if linha.strip() and linha.count(";") != 2:
+            raise ValueError(f"{caminho.name}, linha {numero}: esperados 3 campos separados por ';' "
+                             f"(não use ';' dentro da regex nem da nota): {linha[:80]}")
     regras = pd.read_csv(caminho, sep=";", dtype=str, keep_default_na=False, encoding="utf-8")
     invalidas = set(regras["classe"]) - set(CLASSES_MODELO)
     if invalidas:

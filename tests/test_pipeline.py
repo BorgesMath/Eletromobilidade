@@ -96,6 +96,8 @@ def test_conciliacao(xlsx_jan, zip_marca_modelo_jan):
     assert br["total_combustivel"] == br["total_modelo"] == 1507
     assert (br["eletrico_combustivel"], br["eletrico_modelo"], br["eletrico_diferenca"]) == (110, 108, -2)
     assert br["eletrico_razao"] == pytest.approx(108 / 110)
+    assert (br["hibrido_plug_in_combustivel"], br["hibrido_plug_in_modelo"]) == (25, 25)
+    assert (br["hibrido_combustivel"], br["hibrido_modelo"]) == (50, 50)
     assert (br["hibridos_combustivel"], br["hibridos_modelo"]) == (75, 75)
     assert (br["eletrificada_combustivel"], br["eletrificada_modelo"]) == (185, 183)
     assert br["hibrido_leve_modelo"] == 12

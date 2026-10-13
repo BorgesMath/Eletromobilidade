@@ -10,8 +10,12 @@ Indicadores comparados (``<indicador>_combustivel``, ``<indicador>_modelo``,
 
 * ``total``: frota total. Deve coincidir se os dois arquivos forem do mesmo recorte.
 * ``eletrico``: tração 100% elétrica.
-* ``hibridos``: híbridos plug-in + convencionais (o rótulo de combustível não
-  separa bem os dois, ver README).
+* ``hibrido_plug_in``: híbridos recarregáveis na tomada (PHEV).
+* ``hibrido``: híbridos convencionais (HEV), cuja bateria só é recarregada pelo
+  motor a combustão e pela frenagem regenerativa.
+* ``hibridos``: soma dos dois anteriores. No campo combustível parte dos PHEV
+  aparece como "GASOLINA/ELETRICO" (ver README), então a soma é mais comparável
+  entre as bases do que cada parcela.
 * ``eletrificada``: soma das classes eletrificadas.
 
 ``hibrido_leve_modelo`` é informado à parte: no campo combustível esses
@@ -27,6 +31,8 @@ from .pipeline import CHAVE_MUNICIPIO, CHAVE_TEMPO, CHAVE_UF
 INDICADORES = {
     "total": ["frota_total"],
     "eletrico": ["frota_eletrico"],
+    "hibrido_plug_in": ["frota_hibrido_plug_in"],
+    "hibrido": ["frota_hibrido"],
     "hibridos": ["frota_hibrido_plug_in", "frota_hibrido"],
     "eletrificada": ["frota_eletrificada"],
 }

@@ -2,6 +2,7 @@ import io
 import zipfile
 
 import pytest
+import requests
 
 from eletromobilidade.coleta import (Link, baixar, extrair_links, extrair_recursos_ckan, selecionar,
                                      url_download)
@@ -89,8 +90,8 @@ def test_selecionar_prefere_fonte_e_filtra_mes():
 
 
 class _Resposta:
-    def __init__(self, conteudo: bytes, cabecalhos: dict):
-        self.conteudo, self.headers = conteudo, cabecalhos
+    def __init__(self, conteudo: bytes, cabecalhos: dict, status: int = 200, cair_apos: int | None = None):
+        self.conteudo, self.headers, self.status_code, self.cair_apos = conteudo, cabecalhos, status, cair_apos
 
     def __enter__(self):
         return self
@@ -102,18 +103,35 @@ class _Resposta:
         pass
 
     def iter_content(self, chunk_size):
-        for i in range(0, len(self.conteudo), chunk_size):
-            yield self.conteudo[i:i + chunk_size]
+        passo = 10_000  # blocos pequenos para simular quedas no meio do arquivo
+        for i in range(0, len(self.conteudo), passo):
+            if self.cair_apos is not None and i >= self.cair_apos:
+                raise requests.exceptions.ChunkedEncodingError("conexão caiu")
+            yield self.conteudo[i:i + passo]
 
 
 class _Sessao:
-    def __init__(self, conteudo: bytes, cabecalhos: dict | None = None):
-        self.resposta = _Resposta(conteudo, cabecalhos or {"Content-Length": str(len(conteudo))})
-        self.chamadas = 0
+    """Servidor falso: entrega ``conteudo``, opcionalmente caindo após ``cair_apos`` bytes
+    nas ``quedas`` primeiras requisições, e atende ``Range`` se ``aceita_range``."""
 
-    def get(self, *args, **kwargs):
-        self.chamadas += 1
-        return self.resposta
+    def __init__(self, conteudo: bytes, cabecalhos: dict | None = None, quedas: int = 0,
+                 cair_apos: int | None = None, aceita_range: bool = True):
+        self.conteudo, self.cabecalhos = conteudo, cabecalhos
+        self.quedas, self.cair_apos, self.aceita_range = quedas, cair_apos, aceita_range
+        self.pedidos: list[dict] = []
+
+    def get(self, url, headers=None, **kwargs):
+        headers = headers or {}
+        self.pedidos.append(headers)
+        cair = self.cair_apos if len(self.pedidos) <= self.quedas else None
+        inicio = int(headers["Range"].split("=")[1].rstrip("-")) if "Range" in headers else 0
+        if inicio and self.aceita_range:
+            parte = self.conteudo[inicio:]
+            return _Resposta(parte, {"Content-Length": str(len(parte)),
+                                     "Content-Range": f"bytes {inicio}-{len(self.conteudo) - 1}/{len(self.conteudo)}"},
+                             206, cair)
+        cab = self.cabecalhos or {"Content-Length": str(len(self.conteudo))}
+        return _Resposta(self.conteudo, cab, 200, cair)
 
 
 def _zip_bytes() -> bytes:
@@ -133,7 +151,7 @@ def test_baixar_grava_por_tabela_e_ano_e_reaproveita(tmp_path):
     assert caminho == tmp_path / "marca_modelo" / "2026" / LINK_ZIP.nome_arquivo
     assert zipfile.is_zipfile(caminho)
     assert baixar(LINK_ZIP, tmp_path, sessao) == caminho
-    assert sessao.chamadas == 1
+    assert len(sessao.pedidos) == 1
 
 
 def test_baixar_rejeita_download_incompleto(tmp_path):
@@ -147,3 +165,32 @@ def test_baixar_rejeita_download_incompleto(tmp_path):
 def test_baixar_rejeita_zip_invalido(tmp_path):
     with pytest.raises(IOError, match="zip válido"):
         baixar(LINK_ZIP, tmp_path, _Sessao(b"<html>erro</html>"))
+
+
+def _zip_grande() -> bytes:
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w", zipfile.ZIP_STORED) as z:
+        z.writestr("frota.csv", "UF;Município\n" + "SAO PAULO;SAO PAULO\n" * 5000)
+    return buf.getvalue()
+
+
+def test_baixar_retoma_de_onde_parou(tmp_path):
+    conteudo = _zip_grande()
+    sessao = _Sessao(conteudo, quedas=2, cair_apos=20_000)
+    caminho = baixar(LINK_ZIP, tmp_path, sessao, espera=0, tentativas=3)
+    assert caminho.read_bytes() == conteudo
+    assert [p.get("Range") for p in sessao.pedidos] == [None, "bytes=20000-", "bytes=40000-"]
+
+
+def test_baixar_recomeca_se_servidor_ignora_range(tmp_path):
+    conteudo = _zip_grande()
+    sessao = _Sessao(conteudo, quedas=1, cair_apos=20_000, aceita_range=False)
+    assert baixar(LINK_ZIP, tmp_path, sessao, espera=0).read_bytes() == conteudo
+
+
+def test_baixar_desiste_apos_tentativas(tmp_path):
+    sessao = _Sessao(_zip_grande(), quedas=10, cair_apos=0)
+    with pytest.raises(requests.exceptions.ChunkedEncodingError):
+        baixar(LINK_ZIP, tmp_path, sessao, espera=0, tentativas=2)
+    assert len(sessao.pedidos) == 3
+    assert not any((tmp_path / "marca_modelo" / "2026").iterdir())
