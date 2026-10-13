@@ -2,8 +2,9 @@
 
 Exemplos::
 
-    eletromobilidade links --ano 2025
-    eletromobilidade baixar --anos 2025 2026 --meses 1 2 3
+    eletromobilidade links --ano 2026
+    eletromobilidade baixar --tabela marca_modelo --anos 2026 --meses 9
+    eletromobilidade baixar --tabela combustivel --anos 2025 2026
     eletromobilidade processar --entrada data/raw --saida data/processed
 """
 
@@ -21,14 +22,18 @@ PROCESSED = Path("data/processed")
 
 
 def _links(args) -> None:
-    for link in coleta.listar_links(args.ano):
+    for link in coleta.listar([args.ano], tuple(args.fontes)):
         periodo = f"{link.periodo[0]}-{link.periodo[1]:02d}" if link.periodo else "???????"
-        print(f"{periodo}  {link.tabela:<15} {link.url}")
+        print(f"{periodo}  {link.fonte:<6} {link.tabela:<15} {link.url}")
 
 
 def _baixar(args) -> None:
-    for caminho in coleta.baixar_frota_combustivel(args.anos, args.destino, args.meses):
+    caminhos = coleta.baixar_tabela(args.tabela, args.anos, args.destino, args.meses,
+                                    tuple(args.fontes), args.sobrescrever)
+    for caminho in caminhos:
         print(caminho)
+    if not caminhos:
+        raise SystemExit(1)
 
 
 def _processar(args) -> None:
@@ -51,14 +56,21 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("-v", "--verbose", action="store_true")
     sub = parser.add_subparsers(dest="comando", required=True)
 
-    p = sub.add_parser("links", help="lista os arquivos publicados na página de um ano")
+    fontes = dict(nargs="+", choices=coleta.FONTES, default=list(coleta.FONTES),
+                  help="fontes consultadas, em ordem de preferência (padrão: ckan portal)")
+
+    p = sub.add_parser("links", help="lista os arquivos publicados para um ano")
     p.add_argument("--ano", type=int, required=True)
+    p.add_argument("--fontes", **fontes)
     p.set_defaults(func=_links)
 
-    p = sub.add_parser("baixar", help="baixa os arquivos de frota por município e combustível")
+    p = sub.add_parser("baixar", help="baixa os arquivos de uma tabela da SENATRAN")
+    p.add_argument("--tabela", choices=coleta.TABELAS, required=True)
     p.add_argument("--anos", type=int, nargs="+", required=True)
     p.add_argument("--meses", type=int, nargs="+", choices=range(1, 13), metavar="MES")
+    p.add_argument("--fontes", **fontes)
     p.add_argument("--destino", type=Path, default=RAW)
+    p.add_argument("--sobrescrever", action="store_true", help="baixa de novo arquivos já existentes")
     p.set_defaults(func=_baixar)
 
     p = sub.add_parser("processar", help="gera a base de eletromobilidade a partir dos arquivos baixados")
