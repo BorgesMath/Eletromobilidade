@@ -1,18 +1,22 @@
-# Artefatos de compilação OpenFOAM
-*.o
-*.dep
-*.so
-*.a
-lnInclude/
-.dep/
-platforms/
-Make/*/
-!/Make/files
-!/Make/options
+# Dados brutos e processados (grandes; regeneráveis a partir da SENATRAN)
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
 
-# Editores / sistema
-*~
-.#*
-.DS_Store
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Editores / SO
 .vscode/
 .idea/
+.DS_Store
