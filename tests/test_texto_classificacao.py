@@ -2,7 +2,7 @@ import pandas as pd
 import pytest
 
 from eletromobilidade.classificacao import carregar_tabela, classificar, classificar_por_regra
-from eletromobilidade.texto import normalizar_coluna, normalizar_combustivel
+from eletromobilidade.texto import corrigir_mojibake, normalizar_coluna, normalizar_combustivel
 from eletromobilidade.ufs import resolver_uf
 
 
@@ -63,3 +63,10 @@ def test_tabela_com_classe_invalida_falha(tmp_path):
     arq.write_text("combustivel,classe,nota\nGASOLINA,fossil,\n", encoding="utf-8")
     with pytest.raises(ValueError, match="fossil"):
         carregar_tabela(arq)
+
+
+def test_corrigir_mojibake():
+    assert corrigir_mojibake("MunicÃ­pio") == "Município"
+    assert corrigir_mojibake("Sem InformaÃ§Ã£o") == "Sem Informação"
+    assert corrigir_mojibake("SÃO PAULO") == "SÃO PAULO"
+    assert normalizar_coluna("MunicÃ­pio") == "municipio"

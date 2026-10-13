@@ -13,6 +13,7 @@ from conftest import LINHAS_JAN, escrever_xlsx
     ("copy_of_D_Frota_por_UF_Municipio_COMBUSTIVEL_Maro_2025.xlsx", (2025, 3)),
     ("Frota por UF, Município e Combustível - Março 2025", (2025, 3)),
     ("frota_combustivel_2024-11.csv", (2024, 11)),
+    ("d_frota_por_uf_municipio_combustivel_janeito_2019.xlsx", (2019, 1)),
     ("frota_combustivel.xlsx", None),
     ("Janeiro_2025_e_Fevereiro_2025.xlsx", None),
 ])
@@ -104,3 +105,16 @@ def test_identificar_tabela_e_periodo_nomes_reais(nome, tabela, periodo):
 
     assert identificar_tabela(nome) == tabela
     assert inferir_periodo(nome) == periodo
+
+
+def test_le_xlsx_com_acentos_corrompidos_e_linha_column(tmp_path):
+    """Leiaute de d_frota_por_uf_municipio_combustivel_agosto_2019.xlsx."""
+    linhas = [["Column1", "Column2", "Column3", "Column4"],
+              ["UF", "MunicÃ­pio", "CombustÃ­vel VeÃ­culo", "Qtd. VeÃ­culos"],
+              ["ACRE", "ACRELANDIA", "ALCOOL", 57],
+              ["ACRE", "ACRELANDIA", "Sem InformaÃ§Ã£o", 95]]
+    arq = tmp_path / "d_frota_por_uf_municipio_combustivel_agosto_2019.xlsx"
+    pd.DataFrame(linhas).to_excel(arq, header=False, index=False)
+    df = ler_frota_combustivel(arq)
+    assert df["combustivel"].tolist() == ["ALCOOL", "Sem Informação"]
+    assert df["qtd_veiculos"].sum() == 152

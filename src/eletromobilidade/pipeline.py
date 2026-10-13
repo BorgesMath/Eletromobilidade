@@ -23,6 +23,7 @@ import pandas as pd
 
 from .classificacao import CLASSES, CLASSES_ELETRIFICADAS, carregar_tabela, classificar
 from .leitura import EXTENSOES_DADOS, identificar_tabela, inferir_periodo, ler_frota_combustivel
+from .qualidade import assinatura, corrigir_escala, meses_repetidos
 from .texto import normalizar
 from .ufs import resolver_uf
 
@@ -104,16 +105,29 @@ def paineis(longo: pd.DataFrame, prefixo: str, classes: tuple[str, ...],
     }
 
 
-def salvar(tabelas: dict[str, pd.DataFrame], destino: str | Path, csv: bool = True) -> list[Path]:
-    """Grava cada tabela em Parquet e, opcionalmente, em CSV no padrão Excel pt-BR (``;`` e ``,``)."""
+LIMITE_LINHAS_EXCEL = 1_048_575  # 1.048.576 linhas da planilha, menos o cabeçalho
+
+
+def salvar(tabelas: dict[str, pd.DataFrame], destino: str | Path, csv: bool = True,
+           limite_csv: int = LIMITE_LINHAS_EXCEL) -> list[Path]:
+    """Grava cada tabela em Parquet e, opcionalmente, em CSV no padrão Excel pt-BR (``;`` e ``,``).
+
+    Tabelas com mais de ``limite_csv`` linhas (por padrão, o limite do Excel) ficam só em
+    Parquet; um CSV antigo de mesmo nome é removido para não ficar desatualizado.
+    """
     destino = Path(destino)
     destino.mkdir(parents=True, exist_ok=True)
     gravados = []
     for nome, df in tabelas.items():
+        df = df.copy(deep=False)
+        df.attrs = {}  # metadados não serializáveis não vão para o arquivo
         caminho = destino / f"{nome}.parquet"
         df.to_parquet(caminho, index=False)
         gravados.append(caminho)
-        if csv:
+        if csv and len(df) > limite_csv:
+            (destino / f"{nome}.csv").unlink(missing_ok=True)
+            log.warning("%s: %d linhas, acima do limite do Excel; gravado só em Parquet.", nome, len(df))
+        elif csv:
             caminho = destino / f"{nome}.csv"
             df.to_csv(caminho, index=False, sep=";", decimal=",", encoding="utf-8-sig", date_format="%Y-%m-%d")
             gravados.append(caminho)
@@ -129,23 +143,53 @@ def processar_arquivo(caminho: str | Path, periodo: tuple[int, int] | None = Non
     periodo = periodo or inferir_periodo(caminho)
     if periodo is None:
         raise ValueError(f"Período não identificado no nome de {caminho.name}; informe-o explicitamente.")
-    df = ler_frota_combustivel(caminho)
+    df, ajuste = corrigir_escala(ler_frota_combustivel(caminho))
+    if ajuste:
+        log.warning("%s: %s.", caminho.name, ajuste)
     df = enriquecer(df, periodo, caminho.name)
-    return df.join(classificar(df["combustivel"], tabela))
+    df = df.join(classificar(df["combustivel"], tabela))
+    df.attrs["ajuste"] = ajuste
+    return df
+
+
+def registro_qualidade(periodo: tuple[int, int], arquivo: str, linhas: int, total: int,
+                       ajustes: list[str], incluido: bool) -> dict:
+    return {"ano": periodo[0], "mes": periodo[1],
+            "data_referencia": pd.Timestamp(year=periodo[0], month=periodo[1], day=1),
+            "arquivo": arquivo, "linhas": linhas, "frota_total": total,
+            "ajuste": "; ".join(a for a in ajustes if a), "incluido": incluido}
 
 
 def processar_arquivos(caminhos: list[Path], tabela: dict[str, str] | None = None) -> pd.DataFrame:
-    """Processa vários arquivos mensais por combustível; falha se dois cobrirem o mesmo mês."""
+    """Processa vários arquivos mensais por combustível; falha se dois cobrirem o mesmo mês.
+
+    Aplica as verificações de ``qualidade.py`` (escala x10, mês repetido). O registro
+    por arquivo fica em ``resultado.attrs["qualidade"]``.
+    """
     if not caminhos:
         raise FileNotFoundError("Nenhum arquivo de frota por combustível para processar.")
     tabela = tabela or carregar_tabela()
-    partes = []
+    meses: dict[tuple[int, int], pd.DataFrame] = {}
     for caminho, periodo in periodos_por_arquivo(caminhos).items():
         log.info("Processando %s", caminho.name)
-        partes.append(processar_arquivo(caminho, periodo, tabela))
-    return pd.concat(partes, ignore_index=True).sort_values(
+        meses[periodo] = processar_arquivo(caminho, periodo, tabela)
+
+    repetidos = meses_repetidos({p: assinatura(df, ["uf", "municipio", "combustivel"]) for p, df in meses.items()})
+    qualidade = []
+    for periodo, df in sorted(meses.items()):
+        ajustes = [df.attrs.get("ajuste")]
+        if periodo in repetidos:
+            original = repetidos[periodo]
+            ajustes.append(f"idêntico a {original[0]}-{original[1]:02d}; excluído da série")
+            log.warning("%s: %s.", df["arquivo_origem"].iloc[0], ajustes[-1])
+        qualidade.append(registro_qualidade(periodo, df["arquivo_origem"].iloc[0], len(df),
+                                            int(df["qtd_veiculos"].sum()), ajustes, periodo not in repetidos))
+
+    resultado = pd.concat([df for p, df in meses.items() if p not in repetidos], ignore_index=True).sort_values(
         ["ano", "mes", "uf_sigla", "municipio_norm", "combustivel_norm"], na_position="last"
     ).reset_index(drop=True)
+    resultado.attrs = {"qualidade": pd.DataFrame(qualidade)}
+    return resultado
 
 
 def auditoria_combustiveis(longo: pd.DataFrame) -> pd.DataFrame:
@@ -158,9 +202,15 @@ def auditoria_combustiveis(longo: pd.DataFrame) -> pd.DataFrame:
 
 
 def construir_base_combustivel(longo: pd.DataFrame) -> dict[str, pd.DataFrame]:
-    return {
+    qualidade = longo.attrs.get("qualidade")
+    longo = longo.copy(deep=False)
+    longo.attrs = {}
+    tabelas = {
         "frota_combustivel": longo,
         "combustivel_eletrificados": longo[longo["eletrificado"]].reset_index(drop=True),
         **paineis(longo, "combustivel", CLASSES, CLASSES_ELETRIFICADAS),
         "combustiveis_classificados": auditoria_combustiveis(longo),
     }
+    if qualidade is not None:
+        tabelas["qualidade_combustivel"] = qualidade
+    return tabelas

@@ -16,6 +16,7 @@ título de cada recurso.
 
 from __future__ import annotations
 
+import json
 import logging
 import time
 import zipfile
@@ -35,6 +36,7 @@ log = logging.getLogger(__name__)
 URL_PAGINA = "https://www.gov.br/transportes/pt-br/assuntos/transito/conteudo-Senatran/frota-de-veiculos-{ano}"
 URL_CKAN = "https://dados.transportes.gov.br/api/3/action/package_show"
 DATASET_RENAVAM = "12686da0-3d71-4499-b432-d270f785c907"
+ARQUIVO_CACHE_CKAN = "ckan_renavam.json"
 CABECALHOS = {"User-Agent": "Mozilla/5.0 (compatible; eletromobilidade/0.1)"}
 
 FONTES = ("ckan", "portal")
@@ -135,17 +137,35 @@ def extrair_recursos_ckan(resposta: dict) -> list[Link]:
     return links
 
 
-def listar_recursos_ckan(dataset: str = DATASET_RENAVAM, sessao: requests.Session | None = None) -> list[Link]:
+def listar_recursos_ckan(dataset: str = DATASET_RENAVAM, sessao: requests.Session | None = None,
+                         cache: Path | None = None) -> list[Link]:
+    """Recursos do conjunto no CKAN.
+
+    Com ``cache``, a resposta da API é guardada em disco e reaproveitada quando a API
+    estiver fora do ar (o ``package_show`` do portal responde 503 com frequência,
+    enquanto os links de download continuam funcionando).
+    """
     sessao = sessao or criar_sessao()
-    resposta = sessao.get(URL_CKAN, params={"id": dataset}, headers=CABECALHOS, timeout=60)
-    resposta.raise_for_status()
-    return extrair_recursos_ckan(resposta.json())
+    try:
+        resposta = sessao.get(URL_CKAN, params={"id": dataset}, headers=CABECALHOS, timeout=60)
+        resposta.raise_for_status()
+        conteudo = resposta.json()
+    except requests.RequestException as erro:
+        if cache is None or not Path(cache).exists():
+            raise
+        log.warning("API CKAN indisponível (%s); usando a listagem guardada em %s.", erro, cache)
+        return extrair_recursos_ckan(json.loads(Path(cache).read_text(encoding="utf-8")))
+    links = extrair_recursos_ckan(conteudo)
+    if cache is not None:
+        Path(cache).parent.mkdir(parents=True, exist_ok=True)
+        Path(cache).write_text(json.dumps(conteudo, ensure_ascii=False), encoding="utf-8")
+    return links
 
 
 # --- seleção e download ----------------------------------------------------------------
 
 def listar(anos: list[int], fontes: tuple[str, ...] = FONTES,
-           sessao: requests.Session | None = None) -> list[Link]:
+           sessao: requests.Session | None = None, cache_ckan: Path | None = None) -> list[Link]:
     """Links das fontes pedidas para os anos pedidos.
 
     Uma fonte indisponível gera aviso e é ignorada, para não impedir a coleta das demais.
@@ -155,7 +175,8 @@ def listar(anos: list[int], fontes: tuple[str, ...] = FONTES,
     for fonte in fontes:
         try:
             if fonte == "ckan":
-                links += [l for l in listar_recursos_ckan(sessao=sessao) if l.periodo and l.periodo[0] in anos]
+                links += [l for l in listar_recursos_ckan(sessao=sessao, cache=cache_ckan)
+                          if l.periodo and l.periodo[0] in anos]
             elif fonte == "portal":
                 for ano in anos:
                     links += listar_links(ano, sessao)
@@ -166,17 +187,25 @@ def listar(anos: list[int], fontes: tuple[str, ...] = FONTES,
     return links
 
 
+def candidatos_por_periodo(links: list[Link], tabela: str, meses: list[int] | None = None,
+                           fontes: tuple[str, ...] = FONTES) -> dict[object, list[Link]]:
+    """Links da tabela agrupados por período, cada grupo em ordem de preferência de fonte.
+
+    Links sem período identificado formam grupos próprios (chave = URL).
+    """
+    candidatos = [l for l in links if l.tabela == tabela and (not meses or (l.periodo and l.periodo[1] in meses))]
+    candidatos.sort(key=lambda l: fontes.index(l.fonte) if l.fonte in fontes else len(fontes))
+    grupos: dict[object, list[Link]] = {}
+    for link in candidatos:
+        grupos.setdefault(link.periodo or link.url, []).append(link)
+    return dict(sorted(grupos.items(), key=lambda kv: (kv[1][0].periodo or (0, 0), kv[1][0].url)))
+
+
 def selecionar(links: list[Link], tabela: str, meses: list[int] | None = None,
                fontes: tuple[str, ...] = FONTES) -> list[Link]:
     """Um link por período da tabela pedida; havendo o mesmo período em duas fontes,
     vale a que aparece primeiro em ``fontes``. Links sem período identificado são mantidos."""
-    candidatos = [l for l in links if l.tabela == tabela and (not meses or (l.periodo and l.periodo[1] in meses))]
-    candidatos.sort(key=lambda l: fontes.index(l.fonte) if l.fonte in fontes else len(fontes))
-    escolhidos: dict[object, Link] = {}
-    for link in candidatos:
-        chave = link.periodo or link.url
-        escolhidos.setdefault(chave, link)
-    return sorted(escolhidos.values(), key=lambda l: (l.periodo or (0, 0), l.url))
+    return [grupo[0] for grupo in candidatos_por_periodo(links, tabela, meses, fontes).values()]
 
 
 def _verificar(arquivo: Path, nome_final: str, esperado: int | None) -> None:
@@ -250,16 +279,51 @@ def baixar(link: Link, destino: str | Path, sessao: requests.Session | None = No
     return caminho
 
 
+FALHAS_PARA_DESISTIR = 3
+
+
+@dataclass
+class ResultadoDownload:
+    baixados: list[Path]
+    falhas: list[tuple[Link, str]]
+
+
 def baixar_tabela(tabela: str, anos: list[int], destino: str | Path, meses: list[int] | None = None,
-                  fontes: tuple[str, ...] = FONTES, sobrescrever: bool = False) -> list[Path]:
-    """Baixa os arquivos de uma tabela (ex.: ``"marca_modelo"``) para os anos/meses pedidos."""
+                  fontes: tuple[str, ...] = FONTES, sobrescrever: bool = False) -> ResultadoDownload:
+    """Baixa os arquivos de uma tabela (ex.: ``"marca_modelo"``) para os anos/meses pedidos.
+
+    Para cada período tenta as fontes em ordem de preferência. Um período que falha
+    em todas não interrompe os demais: a falha é registrada e informada no fim.
+    """
     sessao = criar_sessao()
-    links = selecionar(listar(anos, fontes, sessao), tabela, meses, fontes)
-    if not links:
+    grupos = candidatos_por_periodo(listar(anos, fontes, sessao, Path(destino) / ARQUIVO_CACHE_CKAN),
+                                    tabela, meses, fontes)
+    if not grupos:
         log.warning("Nenhum arquivo de %s encontrado para %s nas fontes %s.", tabela, anos, fontes)
-    baixados = []
-    for link in links:
-        if link.periodo is None:
-            log.warning("Período não identificado para %s; baixando mesmo assim.", link.url)
-        baixados.append(baixar(link, destino, sessao, sobrescrever))
-    return baixados
+    resultado = ResultadoDownload([], [])
+    falhas_seguidas: dict[str, int] = {}
+    for grupo in grupos.values():
+        if grupo[0].periodo is None:
+            log.warning("Período não identificado para %s; baixando mesmo assim.", grupo[0].url)
+        erro_final = "nenhuma fonte disponível"
+        for link in grupo:
+            if falhas_seguidas.get(link.fonte, 0) >= FALHAS_PARA_DESISTIR:
+                erro_final = f"fonte {link.fonte} fora do ar nesta execução"
+                continue
+            try:
+                resultado.baixados.append(baixar(link, destino, sessao, sobrescrever))
+                falhas_seguidas[link.fonte] = 0
+                break
+            except (requests.RequestException, OSError) as erro:
+                log.warning("Falha em %s (%s): %s", link.nome_arquivo, link.fonte, erro)
+                falhas_seguidas[link.fonte] = falhas_seguidas.get(link.fonte, 0) + 1
+                erro_final = str(erro)
+                if falhas_seguidas[link.fonte] == FALHAS_PARA_DESISTIR:
+                    log.error("Fonte %s: %d falhas seguidas; demais arquivos dela ficam para outra execução.",
+                              link.fonte, FALHAS_PARA_DESISTIR)
+        else:
+            resultado.falhas.append((grupo[-1], erro_final))
+    if resultado.falhas:
+        log.error("%d arquivo(s) não baixado(s): %s", len(resultado.falhas),
+                  ", ".join(l.nome_arquivo for l, _ in resultado.falhas))
+    return resultado

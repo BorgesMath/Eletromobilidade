@@ -124,3 +124,84 @@ def test_cli_processar_grava_saidas(pasta_dois_meses, zip_marca_modelo_jan, tmp_
     assert len(pd.read_parquet(saida / "conciliacao_brasil.parquet")) == 1  # só janeiro nas duas bases
     csv = (saida / "combustivel_uf.csv").read_text(encoding="utf-8-sig").splitlines()
     assert csv[0].startswith("ano;mes;data_referencia;uf_sigla")
+
+
+def test_cache_da_base_modelo(zip_marca_modelo_jan, tmp_path, monkeypatch):
+    from eletromobilidade import base_modelo
+    from eletromobilidade.modelos import carregar_regras
+
+    cache = tmp_path / "cache"
+    primeira = processar_arquivos_modelo([zip_marca_modelo_jan], cache=cache)
+    assert len(list(cache.glob("*.parquet"))) == 3
+
+    def proibido(*args, **kwargs):
+        raise AssertionError("arquivo relido apesar do cache")
+
+    monkeypatch.setattr(base_modelo, "agregar_arquivo", proibido)
+    segunda = processar_arquivos_modelo([zip_marca_modelo_jan], cache=cache)
+    for nome in primeira:
+        pd.testing.assert_frame_equal(primeira[nome], segunda[nome], check_dtype=False)
+
+    # regras diferentes invalidam o cache
+    regras = carregar_regras()
+    regras.loc[0, "padrao"] = "^(R|SR)/"
+    with pytest.raises(AssertionError, match="relido"):
+        processar_arquivos_modelo([zip_marca_modelo_jan], regras=regras, cache=cache)
+
+
+def test_salvar_limita_csv(tmp_path):
+    tabelas = {"pequena": pd.DataFrame({"a": [1, 2]}), "grande": pd.DataFrame({"a": range(10)})}
+    (tmp_path / "grande.csv").write_text("antigo")
+    pipeline.salvar(tabelas, tmp_path, limite_csv=5)
+    assert (tmp_path / "pequena.csv").exists() and (tmp_path / "pequena.parquet").exists()
+    assert (tmp_path / "grande.parquet").exists() and not (tmp_path / "grande.csv").exists()
+
+
+@pytest.fixture
+def poucas_linhas_bastam(monkeypatch):
+    from eletromobilidade import qualidade
+    monkeypatch.setattr(qualidade, "MINIMO_LINHAS_ESCALA", 3)
+
+
+def test_qualidade_combustivel_escala_e_mes_repetido(tmp_path, poucas_linhas_bastam):
+    escrever_xlsx(tmp_path / "combustivel_Outubro_2021.xlsx", LINHAS_JAN)
+    novembro = [(*l[:3], l[3] + 1) for l in LINHAS_JAN]  # mês diferente de outubro
+    escrever_xlsx(tmp_path / "combustivel_Novembro_2021.xlsx", [(*l[:3], l[3] * 10) for l in novembro])
+    escrever_xlsx(tmp_path / "combustivel_Dezembro_2021.xlsx", LINHAS_JAN[:-1])
+    escrever_xlsx(tmp_path / "combustivel_Janeiro_2022.xlsx", LINHAS_JAN[:-1])  # cópia de dezembro
+
+    base = pipeline.construir_base_combustivel(
+        pipeline.processar_arquivos(pipeline.localizar_arquivos(tmp_path, "combustivel")))
+    br = base["combustivel_brasil"].set_index(["ano", "mes"])["frota_total"]
+    total = sum(l[3] for l in LINHAS_JAN)
+    assert br.to_dict() == {(2021, 10): total, (2021, 11): total + len(LINHAS_JAN),  # escala corrigida
+                            (2021, 12): total - 7}  # jan/2022 excluído
+
+    q = base["qualidade_combustivel"].set_index(["ano", "mes"])
+    assert "divididas por 10" in q.loc[(2021, 11), "ajuste"]
+    assert q.loc[(2022, 1), "ajuste"].startswith("idêntico a 2021-12")
+    assert not q.loc[(2022, 1), "incluido"] and q.loc[(2021, 11), "incluido"]
+
+
+def test_qualidade_modelo_escala_e_mes_repetido(tmp_path, poucas_linhas_bastam):
+    from conftest import escrever_marca_modelo_zip
+
+    julho = [(*l[:4], l[4] + 1) for l in LINHAS_MARCA_MODELO_JAN]  # mês diferente de agosto
+    escrever_marca_modelo_zip(tmp_path / "i_frota_marca_e_modelo_ano_julho_2026.zip",
+                              [(*l[:4], l[4] * 10) for l in julho])
+    escrever_marca_modelo_zip(tmp_path / "i_frota_marca_e_modelo_ano_agosto_2026.zip", LINHAS_MARCA_MODELO_JAN)
+    escrever_marca_modelo_zip(tmp_path / "i_frota_marca_e_modelo_ano_setembro_2026.zip", LINHAS_MARCA_MODELO_JAN)
+
+    base = processar_arquivos_modelo(pipeline.localizar_arquivos(tmp_path, "marca_modelo"), cache=tmp_path / "c")
+    total = sum(l[4] for l in LINHAS_MARCA_MODELO_JAN)
+    assert base["modelo_brasil"].set_index("mes")["frota_total"].to_dict() == {
+        7: total + len(LINHAS_MARCA_MODELO_JAN), 8: total}
+    assert base["modelo_eletrificados"]["qtd_veiculos"].sum() == 2 * (90 + 8 + 50 + 25 + 12 + 10) + 6
+    q = base["qualidade_modelo"].set_index("mes")
+    assert "divididas por 10" in q.loc[7, "ajuste"]
+    assert q.loc[9, "ajuste"].startswith("idêntico a 2026-08") and not q.loc[9, "incluido"]
+
+    # o ajuste de escala sobrevive ao cache
+    q2 = processar_arquivos_modelo(pipeline.localizar_arquivos(tmp_path, "marca_modelo"),
+                                   cache=tmp_path / "c")["qualidade_modelo"].set_index("mes")
+    assert q2.loc[7, "ajuste"] == q.loc[7, "ajuste"]
