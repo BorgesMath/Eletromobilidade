@@ -1,16 +1,4 @@
 ﻿ano;mes;data_referencia;arquivo;linhas;frota_total;ajuste;incluido
-2019;1;2019-01-01;d_frota_por_uf_municipio_combustivel_janeito_2019.xlsx;40070;103380504;;True
-2019;2;2019-02-01;d_frota_por_uf_municipio_combustivel_fevereiro_2019.xlsx;40107;103708715;;True
-2019;3;2019-03-01;d_frota_por_uf_municipio_combustivel_marco_2019.xlsx;40144;104055326;;True
-2019;4;2019-04-01;d_frota_por_uf_municipio_combustivel_abril_2019.xlsx;40171;104366728;;True
-2019;5;2019-05-01;d_frota_por_uf_municipio_combustivel_maio_2019.xlsx;40192;104734003;;True
-2019;6;2019-06-01;d_frota_por_uf_municipio_combustivel_junho_2019.xlsx;40220;105080461;;True
-2019;7;2019-07-01;d_frota_por_uf_municipio_combustivel_julho_2019.xlsx;40258;105395841;;True
-2019;8;2019-08-01;d_frota_por_uf_municipio_combustivel_agosto_2019.xlsx;40319;105767252;;True
-2019;9;2019-09-01;d_frota_por_uf_municipio_combustivel_setembro_2019.xlsx;40558;106123478;;True
-2019;10;2019-10-01;d_frota_por_uf_municipio_combustivel_outubro_2019.xlsx;40809;106492140;;True
-2019;11;2019-11-01;d_frota_por_uf_municipio_combustivel_novembro_2019.xlsx;40999;106858366;;True
-2019;12;2019-12-01;d_frota_por_uf_municipio_combustivel_dezembro_2019.xlsx;41250;107216985;;True
 2020;6;2020-06-01;d_frota_por_uf_municipio_combustivel_junho_2020.xlsx;41839;108413338;;True
 2020;7;2020-07-01;d_frota_por_uf_municipio_combustivel_julho_2020.xlsx;41988;108696151;;True
 2020;8;2020-08-01;d_frota_por_uf_municipio_combustivel_agosto_2020.xlsx;42140;109007132;;True
