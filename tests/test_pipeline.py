@@ -205,3 +205,14 @@ def test_qualidade_modelo_escala_e_mes_repetido(tmp_path, poucas_linhas_bastam):
     q2 = processar_arquivos_modelo(pipeline.localizar_arquivos(tmp_path, "marca_modelo"),
                                    cache=tmp_path / "c")["qualidade_modelo"].set_index("mes")
     assert q2.loc[7, "ajuste"] == q.loc[7, "ajuste"]
+
+
+def test_cli_desde_ignora_meses_anteriores(tmp_path):
+    entrada, saida = tmp_path / "raw", tmp_path / "saida"
+    entrada.mkdir()
+    escrever_xlsx(entrada / "combustivel_Dezembro_2019.xlsx", LINHAS_JAN)
+    escrever_xlsx(entrada / "combustivel_Junho_2020.xlsx", LINHAS_JAN[:-1])
+    main(["processar", "--entrada", str(entrada), "--saida", str(saida)])  # padrão: desde 2020-01
+    assert pd.read_parquet(saida / "combustivel_brasil.parquet")[["ano", "mes"]].values.tolist() == [[2020, 6]]
+    main(["processar", "--entrada", str(entrada), "--saida", str(saida), "--desde", ""])
+    assert len(pd.read_parquet(saida / "combustivel_brasil.parquet")) == 2

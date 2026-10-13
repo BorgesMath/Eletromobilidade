@@ -37,11 +37,18 @@ CHAVE_MUNICIPIO = CHAVE_TEMPO + CHAVE_UF + ["municipio_norm"]
 # --- utilidades comuns às duas bases ----------------------------------------------------
 
 def localizar_arquivos(pasta: str | Path, tabela: str) -> list[Path]:
-    """Arquivos da ``tabela`` (``"combustivel"``, ``"marca_modelo"``...) sob ``pasta``, pelo nome."""
-    return sorted(
-        p for p in Path(pasta).rglob("*")
-        if p.is_file() and p.suffix.lower() in EXTENSOES_DADOS and identificar_tabela(p.name) == tabela
-    )
+    """Arquivos mensais da ``tabela`` (``"combustivel"``, ``"marca_modelo"``...) sob ``pasta``, pelo nome.
+
+    Arquivos sem mês identificável no nome (ex.: tabelas de saída) são ignorados com aviso.
+    """
+    encontrados = []
+    for p in sorted(Path(pasta).rglob("*")):
+        if p.is_file() and p.suffix.lower() in EXTENSOES_DADOS and identificar_tabela(p.name) == tabela:
+            if inferir_periodo(p) is None:
+                log.warning("Ignorado (mês não identificado no nome): %s", p)
+            else:
+                encontrados.append(p)
+    return encontrados
 
 
 def periodos_por_arquivo(caminhos: list[Path]) -> dict[Path, tuple[int, int]]:

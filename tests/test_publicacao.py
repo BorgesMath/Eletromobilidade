@@ -36,3 +36,13 @@ def test_publicar(tmp_path, xlsx_jan, zip_marca_modelo_jan):
     assert "**Base por modelo:** 1 mês (jan/2026)" in leiame
     assert "frota por classe, total" in leiame
     assert "`modelo_eletrificados.parquet`" in leiame
+
+
+def test_dicionario_descreve_todas_as_colunas(tmp_path, xlsx_jan, zip_marca_modelo_jan):
+    processados, resultados = tmp_path / "proc", tmp_path / "resultados"
+    main(["processar", "--entrada", str(tmp_path), "--saida", str(processados), "--sem-cache"])
+    main(["publicar", "--entrada", str(processados), "--saida", str(resultados)])
+    texto = (resultados / "DICIONARIO.md").read_text(encoding="utf-8")
+    assert "### `conciliacao_uf.csv`" in texto and "| `eletrico_razao` | decimal |" in texto
+    sem_descricao = [l for l in texto.splitlines() if l.startswith("| `") and l.endswith("|  |")]
+    assert sem_descricao == []

@@ -19,7 +19,7 @@ from . import coleta, pipeline
 from .base_modelo import processar_arquivos_modelo
 from .classificacao import carregar_tabela
 from .conciliacao import conciliar_bases
-from .leitura import identificar_tabela
+from .leitura import identificar_tabela, inferir_periodo
 from .modelos import carregar_regras
 from .publicacao import publicar
 
@@ -27,6 +27,7 @@ RAW = Path("data/raw")
 PROCESSED = Path("data/processed")
 CACHE = Path("data/interim/marca_modelo")
 RESULTADOS = Path("resultados")
+INICIO_SERIE = "2020-01"
 
 
 def _links(args) -> None:
@@ -58,6 +59,13 @@ def _processar(args) -> None:
     else:
         combustivel = pipeline.localizar_arquivos(args.entrada, "combustivel")
         marca_modelo = pipeline.localizar_arquivos(args.entrada, "marca_modelo")
+    if args.desde:
+        inicio = tuple(int(x) for x in args.desde.split("-"))
+        antes = [c for c in combustivel + marca_modelo if (inferir_periodo(c) or (9999, 12)) < inicio]
+        if antes:
+            logging.info("Ignorando %d arquivo(s) anteriores a %s.", len(antes), args.desde)
+        combustivel = [c for c in combustivel if c not in antes]
+        marca_modelo = [c for c in marca_modelo if c not in antes]
     if not combustivel and not marca_modelo:
         raise SystemExit("Nenhum arquivo de frota por combustível ou por marca/modelo encontrado.")
 
@@ -120,6 +128,8 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("arquivos", nargs="*", help="arquivos específicos (padrão: todos em --entrada)")
     p.add_argument("--entrada", type=Path, default=RAW)
     p.add_argument("--saida", type=Path, default=PROCESSED)
+    p.add_argument("--desde", default=INICIO_SERIE,
+                   help=f"primeiro mês da série, AAAA-MM (padrão: {INICIO_SERIE}; '' para usar todos os arquivos)")
     p.add_argument("--tabela-combustiveis", type=Path, help="CSV alternativo combustível -> classe")
     p.add_argument("--regras-modelos", type=Path, help="CSV alternativo de regras modelo -> classe")
     p.add_argument("--sem-csv", action="store_true", help="grava apenas Parquet")
