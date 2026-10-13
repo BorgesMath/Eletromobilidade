@@ -1,0 +1,37 @@
+combustivel,classe,nota
+ELETRICO/FONTE EXTERNA,eletrico,Código RENAVAM 07. Tração 100% elétrica com energia de fonte externa (recarga na rede).
+ELETRICO/FONTE INTERNA,eletrico,Código RENAVAM 06. Significado de 'fonte interna' não é inequívoco na documentação pública; ver README.
+ELETRICO,eletrico,
+HIBRIDO PLUG-IN,hibrido_plug_in,Rótulo presente a partir de 2022 segundo análises de terceiros; não informa o combustível do motor térmico.
+GASOLINA/ELETRICO,hibrido,Código RENAVAM 18. Pode incluir híbridos plug-in registrados antes da criação do rótulo HIBRIDO PLUG-IN.
+ALCOOL/ELETRICO,hibrido,
+ETANOL/ELETRICO,hibrido,
+DIESEL/ELETRICO,hibrido,
+GASOLINA/ALCOOL/ELETRICO,hibrido,
+ALCOOL/GASOLINA/ELETRICO,hibrido,
+HIBRIDO,hibrido,
+CELULA COMBUSTIVEL,celula_combustivel,
+CELULA DE COMBUSTIVEL,celula_combustivel,
+HIDROGENIO,celula_combustivel,
+GASOLINA,combustao,
+ALCOOL,combustao,
+ETANOL,combustao,
+DIESEL,combustao,
+ALCOOL/GASOLINA,combustao,Flex.
+GASOLINA/ALCOOL,combustao,Flex.
+GAS NATURAL VEICULAR,combustao,
+GAS METANO,combustao,
+GASOGENIO,combustao,
+GAS/NATURAL/LIQUEFEITO,combustao,
+GASOLINA/GAS NATURAL VEICULAR,combustao,
+GASOLINA/GAS NATURAL COMBUSTIVEL,combustao,
+GASOL/GAS NATURAL COMBUSTIVEL,combustao,
+ALCOOL/GAS NATURAL VEICULAR,combustao,
+ALCOOL/GAS NATURAL COMBUSTIVEL,combustao,
+DIESEL/GAS NATURAL VEICULAR,combustao,
+DIESEL/GAS NATURAL COMBUSTIVEL,combustao,
+GASOLINA/ALCOOL/GAS NATURAL,combustao,
+SEM INFORMACAO,sem_informacao,
+NAO IDENTIFICADO,sem_informacao,
+NAO SE APLICA,sem_informacao,
+VIDE/CAMPO/OBSERVACAO,sem_informacao,Código RENAVAM 11.
