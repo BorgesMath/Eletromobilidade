@@ -1,6 +1,7 @@
 # Dados brutos e processados (grandes; regeneráveis a partir da SENATRAN)
 data/raw/*
 data/processed/*
+data/interim/
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 

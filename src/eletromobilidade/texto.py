@@ -15,11 +15,25 @@ def remover_acentos(texto: str) -> str:
     return "".join(c for c in decomposto if not unicodedata.combining(c))
 
 
+def corrigir_mojibake(texto: str) -> str:
+    """Desfaz texto UTF-8 lido como Latin-1 (``"MunicÃ­pio"`` -> ``"Município"``).
+
+    Ocorre em arquivos antigos do portal (ex.: agosto/2019). Texto legítimo com
+    "Ã" (``"SÃO PAULO"``) não forma UTF-8 válido e é devolvido sem alteração.
+    """
+    if "Ã" not in texto and "Â" not in texto:
+        return texto
+    try:
+        return texto.encode("latin-1").decode("utf-8")
+    except (UnicodeEncodeError, UnicodeDecodeError):
+        return texto
+
+
 def normalizar(texto: object) -> str:
     """Caixa alta, sem acentos, espaços colapsados. ``None``/NaN viram ``""``."""
     if texto is None or (isinstance(texto, float) and texto != texto):
         return ""
-    texto = remover_acentos(str(texto)).upper().strip()
+    texto = remover_acentos(corrigir_mojibake(str(texto))).upper().strip()
     return _ESPACOS.sub(" ", texto)
 
 

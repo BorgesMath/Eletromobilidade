@@ -1,11 +1,12 @@
 import io
+import json
 import zipfile
 
 import pytest
 import requests
 
-from eletromobilidade.coleta import (Link, baixar, extrair_links, extrair_recursos_ckan, selecionar,
-                                     url_download)
+from eletromobilidade.coleta import (Link, baixar, extrair_links, extrair_recursos_ckan, listar_recursos_ckan,
+                                     selecionar, url_download)
 
 BASE = "https://www.gov.br/transportes/pt-br/assuntos/transito/conteudo-Senatran/frota-de-veiculos-2025"
 
@@ -194,3 +195,61 @@ def test_baixar_desiste_apos_tentativas(tmp_path):
         baixar(LINK_ZIP, tmp_path, sessao, espera=0, tentativas=2)
     assert len(sessao.pedidos) == 3
     assert not any((tmp_path / "marca_modelo" / "2026").iterdir())
+
+
+class _SessaoCkan:
+    def __init__(self, resposta: dict | None):
+        self.resposta = resposta
+
+    def get(self, *args, **kwargs):
+        if self.resposta is None:
+            raise requests.exceptions.HTTPError("503 Service Temporarily Unavailable")
+        r = requests.models.Response()
+        r.status_code, r._content = 200, json.dumps(self.resposta).encode()
+        return r
+
+
+def test_listagem_ckan_usa_cache_quando_api_cai(tmp_path):
+    cache = tmp_path / "ckan.json"
+    assert len(listar_recursos_ckan(sessao=_SessaoCkan(CKAN), cache=cache)) == 2
+    assert cache.exists()
+    assert [l.periodo for l in listar_recursos_ckan(sessao=_SessaoCkan(None), cache=cache)] == [(2026, 9), (2026, 8)]
+    with pytest.raises(requests.exceptions.HTTPError):
+        listar_recursos_ckan(sessao=_SessaoCkan(None), cache=tmp_path / "inexistente.json")
+
+
+def test_baixar_tabela_tenta_outra_fonte_e_segue_apos_falha(tmp_path, monkeypatch):
+    from eletromobilidade import coleta
+
+    ckan_set = Link("https://a/marca_setembro_2026.zip", "", "marca_modelo", (2026, 9), "ckan")
+    portal_set = Link("https://b/Marca_Setembro_2026.zip", "", "marca_modelo", (2026, 9), "portal")
+    ckan_ago = Link("https://a/marca_agosto_2026.zip", "", "marca_modelo", (2026, 8), "ckan")
+    monkeypatch.setattr(coleta, "listar", lambda *a, **k: [ckan_set, portal_set, ckan_ago])
+
+    def baixar_falso(link, destino, sessao, sobrescrever):
+        if link.url.startswith("https://a/"):
+            raise requests.exceptions.HTTPError("503")
+        return tmp_path / link.nome_arquivo
+
+    monkeypatch.setattr(coleta, "baixar", baixar_falso)
+    r = coleta.baixar_tabela("marca_modelo", [2026], tmp_path)
+    assert r.baixados == [tmp_path / "Marca_Setembro_2026.zip"]          # setembro veio do portal
+    assert [l.nome_arquivo for l, _ in r.falhas] == ["marca_agosto_2026.zip"]  # agosto falhou e não parou o lote
+
+
+def test_baixar_tabela_desiste_da_fonte_fora_do_ar(tmp_path, monkeypatch):
+    from eletromobilidade import coleta
+
+    links = [Link(f"https://a/marca_{m}_2026.zip", "", "marca_modelo", (2026, i), "ckan")
+             for i, m in enumerate(["janeiro", "fevereiro", "marco", "abril", "maio"], start=1)]
+    monkeypatch.setattr(coleta, "listar", lambda *a, **k: links)
+    tentativas = []
+
+    def baixar_falso(link, *args):
+        tentativas.append(link)
+        raise requests.exceptions.HTTPError("503")
+
+    monkeypatch.setattr(coleta, "baixar", baixar_falso)
+    r = coleta.baixar_tabela("marca_modelo", [2026], tmp_path)
+    assert len(tentativas) == coleta.FALHAS_PARA_DESISTIR
+    assert len(r.falhas) == 5 and "fora do ar" in r.falhas[-1][1]

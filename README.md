@@ -72,6 +72,12 @@ Se o download automático falhar, baixe os arquivos manualmente para `data/raw/`
 mantendo o nome original, ou passe arquivos específicos:
 `eletromobilidade processar arquivo1.xlsx arquivo2.zip`.
 
+Os agregados mensais da base por modelo ficam em cache (`data/interim/marca_modelo/`,
+opção `--cache`): ao acrescentar meses à série, só os novos são lidos. Mudar as
+regras de `dados/modelos.csv` invalida o cache automaticamente. Tabelas com mais
+linhas que o Excel suporta (ex.: `frota_combustivel` com a série completa) são
+gravadas só em Parquet.
+
 O arquivo de marca/modelo é lido em blocos de 1 milhão de linhas. Em teste com
 7,5 milhões de linhas (amostra real replicada), levou 29 s com pico de 650 MB
 de memória; um mês completo (~22 milhões de linhas) deve levar cerca de 1,5 min.
@@ -104,10 +110,34 @@ Cada tabela é gravada em Parquet e em CSV (`;` como separador, `,` decimal, UTF
 | `modelo_{municipio,uf,brasil}` | mês × recorte | Painel da base por modelo |
 | `modelos_classificados` | mês × modelo | Auditoria: classe, regra aplicada, total, `revisar` |
 | `conciliacao_{municipio,uf,brasil}` | mês × recorte | Comparação entre as duas bases |
+| `qualidade_{combustivel,modelo}` | arquivo mensal | Linhas, frota total, ajustes aplicados e se o mês entrou na série |
 
 Os painéis trazem `frota_<classe>` para cada classe, `frota_total`,
 `frota_eletrificada` e `participacao_eletrificada = frota_eletrificada / frota_total`.
 O painel do Brasil inclui registros sem UF válida; o de UF, não.
+
+## Série histórica e qualidade dos arquivos
+
+Disponibilidade verificada em outubro/2026: o arquivo por combustível existe de
+janeiro/2019 a setembro/2026 (faltam janeiro a maio/2020 no portal); o de
+marca/modelo, de 2019 em diante no CKAN (e alguns meses de 2013, 2014 e 2018).
+
+Defeitos encontrados nos arquivos publicados e tratados automaticamente
+(`qualidade.py`, registrados em `qualidade_*`):
+
+| Arquivo | Defeito | Tratamento |
+|---|---|---|
+| Combustível, nov/2021 | Todas as contagens multiplicadas por 10 (frota de 1,135 bilhão) | Contagens divididas por 10 (113,5 milhões, coerente com out e dez/2021) |
+| Combustível, jan/2022 | Idêntico ao de dez/2021 | Mês excluído da série |
+| Combustível, ago/2019 | Acentos corrompidos ("MunicÃ­pio") e linha extra "Column1…" | Texto reparado na leitura |
+| Combustível, jan/2019 | Nome com "janeito" | Mês reconhecido |
+
+A regra de escala só age quando *todas* as contagens positivas de um arquivo
+(milhares) são múltiplas de 10, o que não ocorre em dado real. Na coleta, a
+API do CKAN e os downloads respondem 503 com frequência: a listagem de recursos
+fica guardada em `data/raw/ckan_renavam.json` e é usada quando a API cai; uma
+fonte com 3 falhas seguidas é deixada para a execução seguinte, sem interromper
+as demais.
 
 ## Classificação dos combustíveis
 

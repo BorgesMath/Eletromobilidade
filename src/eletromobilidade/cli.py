@@ -23,20 +23,23 @@ from .modelos import carregar_regras
 
 RAW = Path("data/raw")
 PROCESSED = Path("data/processed")
+CACHE = Path("data/interim/marca_modelo")
 
 
 def _links(args) -> None:
-    for link in coleta.listar([args.ano], tuple(args.fontes)):
+    for link in coleta.listar([args.ano], tuple(args.fontes), cache_ckan=RAW / coleta.ARQUIVO_CACHE_CKAN):
         periodo = f"{link.periodo[0]}-{link.periodo[1]:02d}" if link.periodo else "???????"
         print(f"{periodo}  {link.fonte:<6} {link.tabela:<15} {link.url}")
 
 
 def _baixar(args) -> None:
-    caminhos = coleta.baixar_tabela(args.tabela, args.anos, args.destino, args.meses,
-                                    tuple(args.fontes), args.sobrescrever)
-    for caminho in caminhos:
+    resultado = coleta.baixar_tabela(args.tabela, args.anos, args.destino, args.meses,
+                                     tuple(args.fontes), args.sobrescrever)
+    for caminho in resultado.baixados:
         print(caminho)
-    if not caminhos:
+    for link, erro in resultado.falhas:
+        print(f"FALHA {link.nome_arquivo}: {erro}")
+    if resultado.falhas or not resultado.baixados:
         raise SystemExit(1)
 
 
@@ -60,7 +63,8 @@ def _processar(args) -> None:
         longo = pipeline.processar_arquivos(combustivel, carregar_tabela(args.tabela_combustiveis))
         tabelas |= pipeline.construir_base_combustivel(longo)
     if marca_modelo:
-        tabelas |= processar_arquivos_modelo(marca_modelo, carregar_regras(args.regras_modelos))
+        tabelas |= processar_arquivos_modelo(marca_modelo, carregar_regras(args.regras_modelos),
+                                             cache=None if args.sem_cache else args.cache)
     if combustivel and marca_modelo:
         tabelas |= conciliar_bases(tabelas)
 
@@ -111,6 +115,9 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--tabela-combustiveis", type=Path, help="CSV alternativo combustível -> classe")
     p.add_argument("--regras-modelos", type=Path, help="CSV alternativo de regras modelo -> classe")
     p.add_argument("--sem-csv", action="store_true", help="grava apenas Parquet")
+    p.add_argument("--cache", type=Path, default=CACHE,
+                   help="agregados mensais da base por modelo (padrão: data/interim/marca_modelo)")
+    p.add_argument("--sem-cache", action="store_true", help="relê todos os arquivos de marca/modelo")
     p.set_defaults(func=_processar)
 
     args = parser.parse_args(argv)

@@ -25,7 +25,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from .texto import normalizar, normalizar_coluna
+from .texto import corrigir_mojibake, normalizar, normalizar_coluna
 
 COLUNAS_COMBUSTIVEL = ("uf", "municipio", "combustivel", "qtd_veiculos")
 COLUNAS_MARCA_MODELO = ("uf", "municipio", "marca_modelo", "ano_fabricacao", "qtd_veiculos")
@@ -36,7 +36,9 @@ MESES = {
     "JANEIRO": 1, "FEVEREIRO": 2, "MARCO": 3, "MARO": 3, "ABRIL": 4, "MAIO": 5, "JUNHO": 6,
     "JULHO": 7, "AGOSTO": 8, "SETEMBRO": 9, "OUTUBRO": 10, "NOVEMBRO": 11, "DEZEMBRO": 12,
 }
-# "MARO" aparece em nomes de arquivo do portal em que o "ç" de "Março" foi perdido.
+# Grafias erradas encontradas nos nomes de arquivo do portal: "MARO" (o "ç" de "Março"
+# perdido) e "JANEITO" (d_frota_por_uf_municipio_combustivel_janeito_2019.xlsx).
+MESES["JANEITO"] = 1
 
 _LINHAS_BUSCA_CABECALHO = 30
 _BYTES_AMOSTRA = 1 << 16
@@ -212,10 +214,13 @@ def _ler_texto_em_blocos(caminho: Path, colunas: tuple[str, ...],
 def _ler_blocos(caminho: Path, colunas: tuple[str, ...], tamanho_bloco: int | None) -> Iterator[pd.DataFrame]:
     if caminho.suffix.lower() not in EXTENSOES_DADOS:
         raise ValueError(f"Formato não suportado: {caminho.name}")
-    if _eh_excel(caminho):
-        yield _ler_excel(caminho, colunas)
-    else:
-        yield from _ler_texto_em_blocos(caminho, colunas, tamanho_bloco)
+    try:
+        if _eh_excel(caminho):
+            yield _ler_excel(caminho, colunas)
+        else:
+            yield from _ler_texto_em_blocos(caminho, colunas, tamanho_bloco)
+    except ValueError as erro:
+        raise ValueError(f"{caminho.name}: {erro}") from None
 
 
 # --- conversões ----------------------------------------------------------------------
@@ -249,6 +254,9 @@ def para_inteiro(valores: pd.Series) -> pd.Series:
 
 def _limpar_texto(serie: pd.Series) -> pd.Series:
     serie = serie.astype("string").str.strip()
+    corrompido = serie.str.contains("Ã|Â", regex=True).fillna(False)
+    if corrompido.any():
+        serie = serie.mask(corrompido, serie[corrompido].map(corrigir_mojibake))
     return serie.mask(serie == "")
 
 
