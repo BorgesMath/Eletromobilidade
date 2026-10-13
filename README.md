@@ -3,20 +3,30 @@
 Tratamento da base de frota de veículos da SENATRAN (RENAVAM) e construção de
 uma base específica de eletromobilidade, por município, UF e Brasil, mês a mês.
 
-## Fonte de dados
+## Fontes de dados
 
-SENATRAN / Ministério dos Transportes, página anual
-[Frota de Veículos](https://www.gov.br/transportes/pt-br/assuntos/transito/conteudo-Senatran/frota-de-veiculos-2025)
-(`frota-de-veiculos-{ano}`). O arquivo usado é **Frota por UF, Município e
-Combustível** (mensal, `.xlsx`), com as colunas:
+| Fonte (`--fontes`) | Onde | Tabelas usadas |
+|---|---|---|
+| `ckan` | API CKAN do [portal de dados abertos](https://dados.transportes.gov.br/dataset/12686da0-3d71-4499-b432-d270f785c907), conjunto RENAVAM | `marca_modelo` (zip mensal) |
+| `portal` | Páginas anuais [`frota-de-veiculos-{ano}`](https://www.gov.br/transportes/pt-br/assuntos/transito/conteudo-Senatran/frota-de-veiculos-2025) do gov.br | `combustivel`, `municipio_tipo`, `uf_tipo` |
 
-| UF | Município | Combustível Veículo | Qtd. Veículos |
-|----|-----------|---------------------|---------------|
-| SAO PAULO | SAO PAULO | ELETRICO/FONTE EXTERNA | … |
+Tabelas reconhecidas (`--tabela`):
 
-A UF vem por extenso; o pacote acrescenta sigla, código IBGE da UF e região.
-Os nomes dos arquivos no portal não são estáveis (`copy_of_…`, `Maro` para
-"Março"), por isso o período é inferido do nome/texto do link.
+| Tabela | Arquivo da SENATRAN | Colunas |
+|---|---|---|
+| `marca_modelo` | Frota por UF, Município, Marca e Modelo, Ano | UF, Município, Marca Modelo, Ano Fabricação Veículo CRV, Qtd. Veículos |
+| `combustivel` | Frota por UF, Município e Combustível | UF, Município, Combustível Veículo, Qtd. Veículos |
+| `municipio_tipo` | Frota por Município e Tipo | — |
+| `uf_tipo` | Frota por UF e Tipo de Veículo | — |
+
+Quando o mesmo mês aparece nas duas fontes, vale a primeira listada em
+`--fontes` (padrão: `ckan portal`). Os nomes dos arquivos não são estáveis
+(`copy_of_…`, `Maro` para "Março"), por isso a tabela e o período são inferidos
+do nome e do título de cada recurso. A UF vem por extenso; o pacote acrescenta
+sigla, código IBGE da UF e região.
+
+**Atenção:** o arquivo `marca_modelo` não informa o combustível. O
+processamento (`processar`) usa hoje apenas a tabela `combustivel`.
 
 ## Instalação
 
@@ -28,12 +38,12 @@ pip install -e ".[dev]"
 ## Uso
 
 ```bash
-# 1. ver o que está publicado num ano
-eletromobilidade links --ano 2025
+# 1. ver o que está publicado num ano (nas duas fontes)
+eletromobilidade links --ano 2026
 
-# 2. baixar os arquivos de combustível (para data/raw/AAAA/)
-eletromobilidade baixar --anos 2025 2026
-eletromobilidade baixar --anos 2026 --meses 1 2 3
+# 2. baixar (para data/raw/{tabela}/{ano}/)
+eletromobilidade baixar --tabela marca_modelo --anos 2026 --meses 9
+eletromobilidade baixar --tabela combustivel --anos 2025 2026
 
 # 3. gerar a base (lê tudo em data/raw, grava em data/processed)
 eletromobilidade -v processar
