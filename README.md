@@ -248,6 +248,12 @@ Leitura:
   do projeto é excluir híbridos leves, a base por combustível superestima a
   frota híbrida.
 
+Teste das regras num mês antigo (dezembro/2019, mesmas regras calibradas em
+2026): frota total idêntica; elétricos 4.462 pelo modelo contra 4.367 pelo
+combustível (102%); híbridos (plug-in + convencional) em 96,6%. Em 2019 o rótulo
+HIBRIDO PLUG-IN ainda não existia: os 2.442 plug-ins identificados pelo nome
+(Volvo T8, BMW 330e etc.) estão, no campo combustível, entre os híbridos.
+
 Classificações confirmadas por conhecimento de mercado (não pelo texto):
 Shineray PT2/PT3/PT4/PT7 e SE1/SE2/SE3 são elétricos; GAC GS4 é híbrido
 convencional a gasolina.

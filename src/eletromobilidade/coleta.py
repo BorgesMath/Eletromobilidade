@@ -228,6 +228,12 @@ def _tamanho_total(resposta, ja_baixado: int) -> int | None:
     return int(tamanho) + ja_baixado if tamanho else None
 
 
+def caminho_local(link: Link, destino: str | Path) -> Path:
+    """Onde o arquivo de um link fica em disco: ``destino/{tabela}/{ano}/{nome}``."""
+    return (Path(destino) / link.tabela / (str(link.periodo[0]) if link.periodo else "sem_periodo")
+            / link.nome_arquivo)
+
+
 def baixar(link: Link, destino: str | Path, sessao: requests.Session | None = None,
            sobrescrever: bool = False, tentativas: int = 5, espera: float = 2.0) -> Path:
     """Baixa para ``destino/{tabela}/{ano}/``; reaproveita o arquivo se já existir.
@@ -238,9 +244,8 @@ def baixar(link: Link, destino: str | Path, sessao: requests.Session | None = No
     estrutura do arquivo, o ``.parcial`` é renomeado.
     """
     sessao = sessao or criar_sessao()
-    pasta = Path(destino) / link.tabela / (str(link.periodo[0]) if link.periodo else "sem_periodo")
-    pasta.mkdir(parents=True, exist_ok=True)
-    caminho = pasta / link.nome_arquivo
+    caminho = caminho_local(link, destino)
+    caminho.parent.mkdir(parents=True, exist_ok=True)
     if caminho.exists() and not sobrescrever:
         log.info("Já existe: %s", caminho)
         return caminho
@@ -306,6 +311,10 @@ def baixar_tabela(tabela: str, anos: list[int], destino: str | Path, meses: list
         if grupo[0].periodo is None:
             log.warning("Período não identificado para %s; baixando mesmo assim.", grupo[0].url)
         erro_final = "nenhuma fonte disponível"
+        existente = next((caminho_local(l, destino) for l in grupo if caminho_local(l, destino).exists()), None)
+        if existente is not None and not sobrescrever:
+            resultado.baixados.append(existente)
+            continue
         for link in grupo:
             if falhas_seguidas.get(link.fonte, 0) >= FALHAS_PARA_DESISTIR:
                 erro_final = f"fonte {link.fonte} fora do ar nesta execução"
