@@ -1,0 +1,46 @@
+classe;padrao;nota
+nao_motorizado;^(R|SR|REB|SREB)/;Prefixos R/ (reboque) e SR/ (semirreboque) do RENAVAM.
+sem_informacao;^(SEM INFORMACAO|NAO IDENTIFICADO|NAO INFORMADO)$;
+celula_combustivel;\bFCEV\b|\bMIRAI\b|HIDROGENIO|FUEL ?CELL;
+eletrico;VOLVO.*(\b(EX30|EX40|EC40|EX90|ES90|C40)\b|\bP[68]\b|\bPURE\b|RECHARGE PE\b|\bBEV\b);Volvo a bateria (C40, EX30, XC40 P6/P8/Pure, 'RECHARGE PE' = Pure Electric).
+hibrido_plug_in;VOLVO.*\b(T5H|T6H|T8|RECHARGE|TWIN ENGINE)\b;Volvo T8 e T5/T6 'H'/'Recharge' são híbridos plug-in. T5 sem sufixo é combustão.
+hibrido_plug_in;BYD.*\bDM(-?[IPO])?\b;BYD DM/DM-i/DM-p/DM-o: híbrido plug-in.
+eletrico;BYD;Demais BYD (Dolphin, Yuan, Seal, Tan, Han, ônibus): elétricos a bateria. A marca não vende combustão no Brasil.
+eletrico;\b(TESLA|VOLTZ|ZEEKR|NETA|AION|XPENG)\b|^(I/|IMP/)?POLESTAR\b;Marcas/linhas só com elétricos a bateria no Brasil. POLESTAR só como marca (Volvo 'Polestar' é tratado antes).
+eletrico;GWM.*(\bORA\b|\bBEV\d*\b);GWM Ora.
+hibrido_plug_in;GWM.*(PHEV|\bH6 GT\b|\bWEY\b);Haval H6 GT e Wey 07 são vendidos como híbridos plug-in no Brasil.
+eletrico;OMODA.*\bE5\b;Omoda E5.
+hibrido_plug_in;JAECOO 7;Jaecoo 7 é vendido no Brasil como híbrido plug-in (SHS). Revisar se surgirem versões a combustão.
+hibrido_plug_in;LEXUS.*(\d{3}H\+|\b(NX|RX) ?450H);Lexus 450h+.
+eletrico;LEXUS.*\b(UX ?300E|RZ)\b;
+hibrido;LEXUS.*\d{3}H\b;Lexus ES300h, NX350h, UX250h, RX500h, CT200h etc.
+eletrico;BMW.*\b(I3|I4|I5|I7|IX\d?|CE ?0?[24])\b;BMW i3/i4/i5/i7/iX e scooter CE 04.
+hibrido_plug_in;BMW.*\d{2}E\b;BMW 330e, 530e, X3 xDrive30e, X5 xDrive45e/50e.
+eletrico;(M\.? ?BENZ|MERCEDES).*(\bEQ[ABCESV]\b|\bEO ?500|\bE-?SPRINTER\b);Mercedes EQ e chassi elétrico eO500U.
+hibrido_plug_in;(M\.? ?BENZ|MERCEDES).*\b(A|C|E|S|CLA|GLA|GLC|GLE) ?\d{3} ?E\b;Mercedes 300e, 350e etc.
+eletrico;PORSCHE.*TAYCAN;
+hibrido_plug_in;PORSCHE.*(E-?HYB|\d ?E ?HYB|PHEV);Porsche E-Hybrid.
+eletrico;JAG.*I-?PACE;
+hibrido_plug_in;(LR|LAND ?ROVER|RANGE ?ROVER).*\bP\d{3}E\b;Land Rover P300e/P400e/P440e.
+eletrico;MINI.*\bCOOPER SE\b;
+eletrico;RENAULT.*(E-?KWID|KWID E-?TECH|\bZOE\b|MEGANE E-?TECH|KANGOO (E-?TECH|Z\.?E)|MASTER (E-?TECH|Z\.?E));Renault a bateria.
+eletrico;(PEUGEOT|CITROEN|FIAT).*\bE[- ]?(208|2008|JUMPY|EXPERT|SCUDO|DOBLO|PARTNER|BERLINGO)\b|FIAT.*\b500 ?E\b;Stellantis a bateria (aparece como E-208 e também 'E EXPERT').
+hibrido_plug_in;JEEP.*\b4XE\b;Jeep 4xe.
+hibrido_leve;\b(FIAT|JEEP|PEUGEOT|CITROEN|RAM)\b.*\b(HYB|HYBRID|HIBRIDO)\b;Stellantis 'Hybrid'/'Bio-Hybrid' no Brasil é híbrido leve (12 V). Revisar versões novas.
+eletrico;VW.*(\bID\.? ?[3457]\b|\bID\.? ?BUZZ\b|\bE-?DELIVERY\b|\bE-?UP\b|\bE-?GOLF\b);VW a bateria. Não confundir com 8.150E DELIVERY (diesel, E = eletrônico).
+eletrico;\b(CHEV|CHEVROLET|GM)\b.*\b(BOLT|EQUINOX EV|BLAZER EV|SPARK EUV|SPARK EV)\b;GM a bateria.
+eletrico;FORD.*(MACH-?E|\bE-?TRANSIT\b|LIGHTNING);Ford a bateria.
+eletrico;NISSAN.*\b(LEAF|ARIYA)\b;
+hibrido;NISSAN.*\bE-?POWER\b;Nissan e-Power (híbrido em série).
+eletrico;(HYUNDAI|KIA).*\b(IONIQ ?[56]|KONA (EV|ELE\w*)|NIRO (EV|ELE\w*))\b;
+eletrico;JAC.*\b(IEV\d*\w*|E-?J[STV]?\d+\w*)\b;JAC iEV e E-JS.
+eletrico;CHERY.*\b(ARRIZO 5 ?E|ICAR|IQ)\b;Chery Arrizo 5e e iCar.
+hibrido_leve;CHERY.*\b(HYB|HYBRID|MHEV)\b;Caoa Chery 'Hybrid' (Tiggo 5x/7, Arrizo 6) é híbrido leve 48 V. PHEV é capturado antes.
+hibrido_leve;SUZUKI.*\bHYB(RID)?\b;Suzuki 'Hybrid' (SHVS) é híbrido leve. Revisar.
+hibrido_leve;YAMAHA.*\bHYB(RID)?\b;Yamaha Fluo Hybrid: motor-gerador de partida, híbrido leve.
+hibrido;\bELETRA\b.*(HIBRI|HYB);Eletra híbrido diesel-elétrico.
+eletrico;\bELETRA\b;Eletra: ônibus elétricos e trólebus.
+hibrido_plug_in;PHEV|PLUG-?IN|P-?HIBRID|\b4XE\b|\bSHS\b;Regra genérica de plug-in. 'E-HYBRID' fica restrito à Porsche: 'XRE-HYBRID' (Toyota Yaris Cross) é híbrido convencional.
+eletrico;\bBEV\d*\b|\bEV\d*\b|\d+EV\b|ELETRIC|ELECTRIC|\bE-?TRON\b;Regra genérica de elétrico. \bEV não captura EVOLUTION nem CHEV.
+hibrido_leve;MHEV|\bMILD\b;Regra genérica de híbrido leve (inclui 'TMHEV', Kia Sportage).
+hibrido;\bHEV\d*\b|HYBRID|HIBRID|\bHYB\b|\bHV\b|\bPRIUS\b;Regra genérica de híbrido. \bHEV não captura PHEV, MHEV nem CHEV.

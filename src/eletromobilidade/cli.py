@@ -15,7 +15,11 @@ import logging
 from pathlib import Path
 
 from . import coleta, pipeline
+from .base_modelo import processar_arquivos_modelo
 from .classificacao import carregar_tabela
+from .conciliacao import conciliar_bases
+from .leitura import identificar_tabela
+from .modelos import carregar_regras
 
 RAW = Path("data/raw")
 PROCESSED = Path("data/processed")
@@ -37,17 +41,44 @@ def _baixar(args) -> None:
 
 
 def _processar(args) -> None:
-    caminhos = [Path(a) for a in args.arquivos] if args.arquivos else pipeline.localizar_arquivos(args.entrada)
-    tabela = carregar_tabela(args.tabela_combustiveis)
-    longo = pipeline.processar_arquivos(caminhos, tabela)
-    tabelas = pipeline.construir_base(longo)
+    if args.arquivos:
+        caminhos = [Path(a) for a in args.arquivos]
+        combustivel = [c for c in caminhos if identificar_tabela(c.name) == "combustivel"]
+        marca_modelo = [c for c in caminhos if identificar_tabela(c.name) == "marca_modelo"]
+        ignorados = set(caminhos) - set(combustivel) - set(marca_modelo)
+        if ignorados:
+            logging.warning("Arquivos ignorados (tabela não reconhecida pelo nome): %s",
+                            sorted(c.name for c in ignorados))
+    else:
+        combustivel = pipeline.localizar_arquivos(args.entrada, "combustivel")
+        marca_modelo = pipeline.localizar_arquivos(args.entrada, "marca_modelo")
+    if not combustivel and not marca_modelo:
+        raise SystemExit("Nenhum arquivo de frota por combustível ou por marca/modelo encontrado.")
+
+    tabelas = {}
+    if combustivel:
+        longo = pipeline.processar_arquivos(combustivel, carregar_tabela(args.tabela_combustiveis))
+        tabelas |= pipeline.construir_base_combustivel(longo)
+    if marca_modelo:
+        tabelas |= processar_arquivos_modelo(marca_modelo, carregar_regras(args.regras_modelos))
+    if combustivel and marca_modelo:
+        tabelas |= conciliar_bases(tabelas)
+
     for caminho in pipeline.salvar(tabelas, args.saida, csv=not args.sem_csv):
         print(caminho)
 
-    regra = tabelas["combustiveis_classificados"].query("origem_classificacao == 'regra'")
-    if not regra.empty:
-        logging.warning("Rótulos classificados por regra (revise e inclua em dados/combustiveis.csv):\n%s",
-                        regra[["combustivel", "classe", "qtd_veiculos"]].to_string(index=False))
+    if "combustiveis_classificados" in tabelas:
+        regra = tabelas["combustiveis_classificados"].query("origem_classificacao == 'regra'")
+        if not regra.empty:
+            logging.warning("Rótulos de combustível classificados por regra (revise e inclua em "
+                            "dados/combustiveis.csv):\n%s",
+                            regra[["combustivel", "classe", "qtd_veiculos"]].to_string(index=False))
+    if "modelos_classificados" in tabelas:
+        revisar = tabelas["modelos_classificados"].query("revisar")
+        if not revisar.empty:
+            logging.warning("Modelos de marcas eletrificadas sem regra (revise dados/modelos.csv):\n%s",
+                            revisar[["ano", "mes", "marca_modelo_norm", "qtd_veiculos"]]
+                            .head(50).to_string(index=False))
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -73,11 +104,12 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--sobrescrever", action="store_true", help="baixa de novo arquivos já existentes")
     p.set_defaults(func=_baixar)
 
-    p = sub.add_parser("processar", help="gera a base de eletromobilidade a partir dos arquivos baixados")
+    p = sub.add_parser("processar", help="gera as bases (combustível, modelo e conciliação) a partir dos arquivos")
     p.add_argument("arquivos", nargs="*", help="arquivos específicos (padrão: todos em --entrada)")
     p.add_argument("--entrada", type=Path, default=RAW)
     p.add_argument("--saida", type=Path, default=PROCESSED)
     p.add_argument("--tabela-combustiveis", type=Path, help="CSV alternativo combustível -> classe")
+    p.add_argument("--regras-modelos", type=Path, help="CSV alternativo de regras modelo -> classe")
     p.add_argument("--sem-csv", action="store_true", help="grava apenas Parquet")
     p.set_defaults(func=_processar)
 
