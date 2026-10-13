@@ -46,6 +46,8 @@ def classificar_por_regra(combustivel_norm: str) -> str:
         return "celula_combustivel"
     if "ELETRIC" in c:
         return "hibrido" if any(t in c for t in _TERMICOS) else "eletrico"
+    if "HIBRID" in c:
+        return "hibrido"
     return "combustao"
 
 

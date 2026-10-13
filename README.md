@@ -13,22 +13,29 @@ São duas bases, construídas por caminhos independentes e depois conciliadas:
 
 ## Fontes de dados
 
-| Fonte (`--fontes`) | Onde | Tabelas usadas |
+| Fonte (`--fontes`) | Onde | O que tem |
 |---|---|---|
-| `ckan` | API CKAN do [portal de dados abertos](https://dados.transportes.gov.br/dataset/12686da0-3d71-4499-b432-d270f785c907), conjunto RENAVAM | `marca_modelo` (zip mensal) |
-| `portal` | Páginas anuais [`frota-de-veiculos-{ano}`](https://www.gov.br/transportes/pt-br/assuntos/transito/conteudo-Senatran/frota-de-veiculos-2025) do gov.br | `combustivel`, `municipio_tipo`, `uf_tipo` |
+| `ckan` | API CKAN do [portal de dados abertos](https://dados.transportes.gov.br/dataset/12686da0-3d71-4499-b432-d270f785c907), conjunto RENAVAM | Só `marca_modelo`, zip mensal desde 2013 (até 2015 parte em `.rar`, não suportado) |
+| `portal` | Páginas anuais [`frota-de-veiculos-{ano}`](https://www.gov.br/transportes/pt-br/assuntos/transito/conteudo-Senatran/frota-de-veiculos-2026) do gov.br | Oito tabelas mensais em `.xlsx` (abaixo) |
 
-Tabelas reconhecidas (`--tabela`):
+Tabelas reconhecidas (`--tabela`), conforme verificado no portal em outubro/2026:
 
-| Tabela | Arquivo da SENATRAN | Colunas |
+| Tabela | Arquivo da SENATRAN | Usada no processamento |
 |---|---|---|
-| `marca_modelo` | Frota por UF, Município, Marca e Modelo, Ano | UF, Município, Marca Modelo, Ano Fabricação Veículo CRV, Qtd. Veículos |
-| `combustivel` | Frota por UF, Município e Combustível | UF, Município, Combustível Veículo, Qtd. Veículos |
-| `municipio_tipo` | Frota por Município e Tipo | — |
-| `uf_tipo` | Frota por UF e Tipo de Veículo | — |
+| `marca_modelo` | `I_` Frota por UF, Município, Marca e Modelo, Ano (CKAN) | sim (base por modelo) |
+| `combustivel` | `D_` Frota por UF, Município e Combustível | sim (base por combustível) |
+| `municipio_tipo` | Frota por Município e Tipo | não (próximo passo) |
+| `uf_tipo` | Frota por UF e Tipo de Veículo | não |
+| `ano_fabricacao` | `F_` Frota por UF, Município, Ano de Fabricação e Ano Modelo | não |
+| `tipo_especie_eixos` | `G_` Frota por UF, Município, Tipo, Espécie e Eixos | não |
+| `potencia` | `E_` Frota por UF, Município e Potência | não |
+| `restricao`, `cor`, `cep` | `H_`, `C_`, `A_` | não |
 
 Quando o mesmo mês aparece nas duas fontes, vale a primeira listada em
-`--fontes` (padrão: `ckan portal`). Os nomes dos arquivos não são estáveis
+`--fontes` (padrão: `ckan portal`). Os servidores do gov.br são instáveis
+(503, conexões que caem no meio de downloads de 137 MB): as requisições são
+repetidas com espera exponencial e downloads interrompidos são retomados do
+ponto em que pararam (HTTP `Range`). Os nomes dos arquivos não são estáveis
 (`copy_of_…`, `Maro` para "Março"), por isso a tabela e o período são inferidos
 do nome e do título de cada recurso. A UF vem por extenso; o pacote acrescenta
 sigla, código IBGE da UF e região.
@@ -110,14 +117,30 @@ e pode ser editada ou substituída (`--tabela-combustiveis`). Rótulos que não
 constam da tabela são classificados por regra textual e aparecem com
 `origem_classificacao = "regra"` na auditoria; a CLI emite um aviso listando-os.
 
-| Classe | Rótulos (exemplos) |
-|---|---|
-| `eletrico` | ELETRICO/FONTE EXTERNA, ELETRICO/FONTE INTERNA |
-| `hibrido_plug_in` | HIBRIDO PLUG-IN |
-| `hibrido` | GASOLINA/ELETRICO, GASOLINA/ALCOOL/ELETRICO, DIESEL/ELETRICO |
-| `celula_combustivel` | CELULA COMBUSTIVEL, HIDROGENIO (se aparecerem) |
-| `combustao` | GASOLINA, ALCOOL/GASOLINA, DIESEL, GNV… |
-| `sem_informacao` | SEM INFORMACAO, NAO IDENTIFICADO, VIDE/CAMPO/OBSERVACAO |
+Rótulos encontrados no arquivo de setembro/2026 (136,4 milhões de veículos):
+
+| Classe | Rótulo RENAVAM | Veículos (set/2026) |
+|---|---|---:|
+| `eletrico` | ELETRICO/FONTE EXTERNA | 391.095 |
+| | ELETRICO/FONTE INTERNA | 53.093 |
+| | ELETRICO | 40.219 |
+| `hibrido_plug_in` | HIBRIDO PLUG-IN | 83.987 |
+| `hibrido` | GASOLINA/ELETRICO | 408.068 |
+| | GASOLINA/ALCOOL/ELETRICO | 299.481 |
+| | HIBRIDO | 41.033 |
+| | DIESEL/ELETRICO | 13.710 |
+| | ETANOL/ELETRICO, HIBRIDO/GAS NATURAL VEICULAR | 4 |
+| `celula_combustivel` | CELULA COMBUSTIVEL | 13 |
+| `combustao` | ALCOOL/GASOLINA, GASOLINA, DIESEL, ALCOOL, combinações com GNV… | 130,1 milhões |
+| `sem_informacao` | Sem Informação, VIDE/CAMPO/OBSERVACAO, Não Identificado, Não se Aplica | 4,96 milhões |
+
+**Plug-in vs. híbrido convencional.** `hibrido_plug_in` (PHEV) recarrega na
+tomada; `hibrido` (HEV) só recarrega a bateria pelo motor a combustão e pela
+frenagem regenerativa. Na base por modelo a separação é feita pelo nome
+(PHEV, DM, T8, 4xe, 330e…). Na base por combustível ela é parcial: só o rótulo
+HIBRIDO PLUG-IN identifica PHEV com segurança; GASOLINA/ELETRICO e HIBRIDO podem
+conter PHEV (limitação 3) e os rótulos X/ELETRICO podem conter híbridos leves
+(limitação 5). A conciliação compara as duas parcelas separadamente e somadas.
 
 ## Classificação por modelo
 
@@ -151,7 +174,8 @@ lista esses casos ao final.
 ## Conciliação
 
 Para cada mês presente nas duas bases e cada recorte (Brasil, UF, município):
-`total`, `eletrico`, `hibridos` (plug-in + convencional) e `eletrificada`, com
+`total`, `eletrico`, `hibrido_plug_in`, `hibrido`, `hibridos` (soma dos dois) e
+`eletrificada`, com
 `_combustivel`, `_modelo`, `_diferenca` (modelo − combustível) e `_razao`
 (modelo / combustível); mais `hibrido_leve_modelo`. Leitura:
 
@@ -159,7 +183,44 @@ Para cada mês presente nas duas bases e cada recorte (Brasil, UF, município):
   (verificar antes de interpretar o resto).
 - `eletrico_razao < 1`: modelos elétricos sem regra (falso negativo).
   `> 1`: regra capturando modelo a combustão (falso positivo).
-- `hibridos`: comparar com cautela, ver limitação 3.
+- `hibrido_plug_in` e `hibrido`: comparar com cautela (limitações 3 e 5);
+  a soma `hibridos` é mais comparável entre as bases.
+
+### Resultado com dados reais (setembro/2026)
+
+Primeira conciliação com os dois arquivos do mesmo mês, depois da calibração
+das regras (arquivo de marca/modelo: 22 milhões de linhas, 40,5 mil modelos
+distintos, processado em 1,5 min):
+
+| Indicador | Combustível | Modelo | Modelo / combustível |
+|---|---:|---:|---:|
+| Frota total | 136.424.856 | 136.424.856 | 1,000 |
+| Elétrico (UFs válidas) | 395.132 | 377.785 | 0,956 |
+| Elétrico (Brasil, inclui "Sem Informação") | 484.407 | 436.855 | 0,902 |
+| Híbrido plug-in (UFs válidas) | 79.245 | 352.706 | 4,45 |
+| Híbrido convencional (UFs válidas) | 709.697 | 255.345 | 0,36 |
+| Híbridos, soma (UFs válidas) | 788.942 | 608.051 | 0,77 |
+| Híbridos + híbridos leves do modelo (UFs válidas) | 788.942 | 725.658 | 0,92 |
+
+Leitura:
+
+- A frota total coincide em todas as UFs: os dois arquivos cobrem o mesmo
+  universo.
+- Elétricos: a base por modelo recupera 95,6% nas UFs válidas (de 93% a 99%
+  por UF). O resíduo maior está no grupo de UF/município "Sem Informação"
+  (3,1 milhões de veículos, quase todos sem ano de fabricação), onde só 66% dos
+  elétricos foram identificados pelo nome.
+- **O campo combustível não separa plug-in de híbrido convencional.** A base
+  por modelo tem 4,5 vezes mais plug-ins que o rótulo HIBRIDO PLUG-IN: a maior
+  parte dos PHEV está registrada como GASOLINA/ELETRICO ou similar. Para a
+  separação PHEV × HEV, usar a base por modelo.
+- **O campo combustível conta híbridos leves como híbridos.** Somando os
+  híbridos leves da base por modelo, os híbridos fecham em 92%. Como a decisão
+  do projeto é excluir híbridos leves, a base por combustível superestima a
+  frota híbrida.
+
+Pendências da calibração (modelos sem regra, a confirmar):
+Shineray PT2/PT3/PT4 (~8 mil veículos) e GAC GS4 (~6 mil).
 
 ## Limitações conhecidas
 
@@ -177,7 +238,12 @@ Para cada mês presente nas duas bases e cada recorte (Brasil, UF, município):
    `frota_hibrido_plug_in` não devem ser lidas como série de vendas de PHEV.
 4. **Frota registrada ≠ frota circulante.** A base do RENAVAM inclui veículos
    que já não circulam e não foram baixados.
-5. **Regras por nome de modelo.** Algumas classificações dependem de
+5. **Híbridos leves no campo combustível.** Híbridos leves flex (ex.: Fiat
+   "Hybrid" 12 V) podem estar registrados como GASOLINA/ALCOOL/ELETRICO e
+   entrar em `hibrido` na base por combustível, enquanto na base por modelo
+   ficam fora (`hibrido_leve`). A conciliação (`hibrido_diferenca` vs.
+   `hibrido_leve_modelo`) mede esse efeito.
+6. **Regras por nome de modelo.** Algumas classificações dependem de
    conhecimento de mercado, não do texto: "Hybrid" da Stellantis e da Caoa
    Chery como híbrido leve; Audi "HIBRIDO" (pode ser híbrido leve 48 V) como
    híbrido; Jaecoo 7 como plug-in; BYD sem "DM" como elétrico. Cada caso está
@@ -194,7 +260,7 @@ e, para o classificador por modelo, textos reais do campo "Marca Modelo".
 
 ## Próximos passos
 
-- Rodar com os arquivos reais do mesmo mês e ajustar as regras pela conciliação.
+- Resolver as pendências da calibração e estender a série a outros meses.
 - Código IBGE do município (junção por nome normalizado + UF com a tabela do IBGE).
 - Cruzamento com "Frota por Município e Tipo" para isolar veículos leves.
 - Validação contra séries publicadas (ABVE, ANFAVEA).

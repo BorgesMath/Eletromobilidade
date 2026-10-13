@@ -82,3 +82,25 @@ def test_le_marca_modelo_em_blocos(zip_marca_modelo_jan):
     assert df["ano_fabricacao"].dtype == "Int64"
     assert df["ano_fabricacao"].isna().sum() == 1  # "Sem Informação"
     assert df.loc[0, "marca_modelo"] == "I/BYD DOLPHIN GS 180EV"
+
+
+@pytest.mark.parametrize("nome, tabela, periodo", [
+    # nomes reais do portal (outubro/2026)
+    ("D_Frota_por_UF_Municipio_COMBUSTIVEL_Setembro_2026.xlsx", "combustivel", (2026, 9)),
+    ("i_frota_por_uf_municipio_marca_e_modelo_ano_setembro_2026.zip", "marca_modelo", (2026, 9)),
+    ("F_Frota_por_UF_Municipio_ANO_FAB_MOD_Setembro_2026.xlsx", "ano_fabricacao", (2026, 9)),
+    ("G_Frota_por_UF_Municipio_TIPO_ESPECIE_EIXOS_Julho_2026.xlsx", "tipo_especie_eixos", (2026, 7)),
+    ("H_Frota_por_UF_Municipio_RESTRICAO_Julho_2026.xlsx", "restricao", (2026, 7)),
+    ("E_Frota_por_UF_Municipio_POTENCIA_Julho_2026.xlsx", "potencia", (2026, 7)),
+    ("A_Frota_por_UF_Municipio_CEP_Julho_2026.xlsx", "cep", (2026, 7)),
+    ("C_Frota_por_UF_Municipio_COR_Julho_2026.xlsx", "cor", (2026, 7)),
+    ("Frota_por_municipio_e_tipo_Junho_2026.xlsx", "municipio_tipo", (2026, 6)),
+    ("Frota_por_uf_e_tipo_de_veiculo_Junho_2026.xlsx", "uf_tipo", (2026, 6)),
+    ("frotapormunicipioetipofevereiro2026.xlsx", "municipio_tipo", (2026, 2)),
+    ("frotaporufetipodeveiculofevereiro2026.xlsx", "uf_tipo", (2026, 2)),
+])
+def test_identificar_tabela_e_periodo_nomes_reais(nome, tabela, periodo):
+    from eletromobilidade.leitura import identificar_tabela
+
+    assert identificar_tabela(nome) == tabela
+    assert inferir_periodo(nome) == periodo

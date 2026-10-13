@@ -58,21 +58,43 @@ def inferir_periodo(nome: str | Path) -> tuple[int, int] | None:
     numerico = re.search(r"\b((?:19|20)\d{2}) (0[1-9]|1[0-2])\b", texto)
     if numerico:
         return int(numerico.group(1)), int(numerico.group(2))
+    # Nomes sem separador ("frotaporufetipodeveiculofevereiro2026"): busca por substring.
+    colado = texto.replace(" ", "")
+    meses = {MESES[m] for m in MESES if m in colado}
+    anos = set(re.findall(r"(?:19|20)\d{2}", colado))
+    if len(meses) == 1 and len(anos) == 1:
+        return int(anos.pop()), meses.pop()
     return None
 
 
-def identificar_tabela(texto: str) -> str:
-    """Tabela da SENATRAN a que um nome de arquivo ou título se refere.
+# Tabelas mensais da SENATRAN. No portal gov.br os arquivos levam prefixo de letra
+# (A_ CEP, C_ COR, D_ COMBUSTIVEL, E_ POTENCIA, F_ ANO_FAB_MOD, G_ TIPO_ESPECIE_EIXOS,
+# H_ RESTRICAO); no portal de dados abertos, I_ marca/modelo. A ordem dos testes importa:
+# "TIPO_ESPECIE_EIXOS" e textos de restrição também contêm "TIPO".
+_TABELAS = (
+    ("combustivel", r"COMBUSTIVEL"),
+    ("marca_modelo", r"MARCA"),
+    ("ano_fabricacao", r"ANO ?FAB|FABRICACAO"),
+    ("tipo_especie_eixos", r"ESPECIE|EIXOS"),
+    ("restricao", r"RESTRICAO"),
+    ("potencia", r"POTENCIA"),
+    ("cep", r"\bCEP\b"),
+    ("cor", r"\bCOR\b"),
+    ("municipio_tipo", r"MUNICIPIO.*TIPO|TIPO.*MUNICIPIO"),
+    ("uf_tipo", r"TIPO"),
+)
 
-    ``"combustivel"``, ``"marca_modelo"``, ``"municipio_tipo"``, ``"uf_tipo"`` ou ``"outro"``.
+
+def identificar_tabela(texto: str) -> str:
+    """Tabela da SENATRAN a que um nome de arquivo ou título se refere (``"outro"`` se nenhuma).
+
+    Ex.: ``"combustivel"``, ``"marca_modelo"``, ``"municipio_tipo"``, ``"uf_tipo"``.
+    Funciona também com nomes sem separador (``frotapormunicipioetipofevereiro2026``).
     """
     t = normalizar(texto).replace("_", " ")
-    if "COMBUSTIVEL" in t:
-        return "combustivel"
-    if "MARCA" in t or "MODELO" in t:
-        return "marca_modelo"
-    if "TIPO" in t:
-        return "municipio_tipo" if "MUNICIPIO" in t else "uf_tipo"
+    for tabela, padrao in _TABELAS:
+        if re.search(padrao, t):
+            return tabela
     return "outro"
 
 
