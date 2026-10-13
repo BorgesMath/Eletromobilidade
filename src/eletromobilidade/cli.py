@@ -6,6 +6,7 @@ Exemplos::
     eletromobilidade baixar --tabela marca_modelo --anos 2026 --meses 9
     eletromobilidade baixar --tabela combustivel --anos 2025 2026
     eletromobilidade processar --entrada data/raw --saida data/processed
+    eletromobilidade publicar
 """
 
 from __future__ import annotations
@@ -20,10 +21,12 @@ from .classificacao import carregar_tabela
 from .conciliacao import conciliar_bases
 from .leitura import identificar_tabela
 from .modelos import carregar_regras
+from .publicacao import publicar
 
 RAW = Path("data/raw")
 PROCESSED = Path("data/processed")
 CACHE = Path("data/interim/marca_modelo")
+RESULTADOS = Path("resultados")
 
 
 def _links(args) -> None:
@@ -85,6 +88,11 @@ def _processar(args) -> None:
                             .head(50).to_string(index=False))
 
 
+def _publicar(args) -> None:
+    for caminho in publicar(args.entrada, args.saida):
+        print(caminho)
+
+
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(prog="eletromobilidade", description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -119,6 +127,11 @@ def main(argv: list[str] | None = None) -> None:
                    help="agregados mensais da base por modelo (padrão: data/interim/marca_modelo)")
     p.add_argument("--sem-cache", action="store_true", help="relê todos os arquivos de marca/modelo")
     p.set_defaults(func=_processar)
+
+    p = sub.add_parser("publicar", help="copia painéis, conciliação e auditorias para resultados/ (versionado)")
+    p.add_argument("--entrada", type=Path, default=PROCESSED)
+    p.add_argument("--saida", type=Path, default=RESULTADOS)
+    p.set_defaults(func=_publicar)
 
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.INFO if args.verbose else logging.WARNING,

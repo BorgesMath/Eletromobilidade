@@ -62,7 +62,15 @@ eletromobilidade baixar --tabela combustivel --anos 2025 2026
 
 # 3. gerar as bases (lê tudo em data/raw, grava em data/processed)
 eletromobilidade -v processar
+
+# 4. publicar painéis, conciliação e auditorias em resultados/ (versionado)
+eletromobilidade publicar
 ```
+
+`data/raw` e `data/processed` não vão para o repositório; a pasta
+[`resultados/`](resultados/LEIAME.md) vai, com o LEIAME descrevendo cobertura e
+arquivos. Painéis nacionais e por UF, conciliação e qualidade em CSV; tabelas
+por município e de detalhe em Parquet.
 
 `processar` monta a base por combustível se houver arquivos de combustível, a
 base por modelo se houver arquivos de marca/modelo e a conciliação para os meses
