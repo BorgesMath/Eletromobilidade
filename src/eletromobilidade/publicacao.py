@@ -110,9 +110,118 @@ def leiame(tabelas: dict[str, pd.DataFrame], gerado_em: pd.Timestamp) -> str:
         "",
         "CSV: separador `;`, decimal `,`, UTF-8 com BOM (abre direto no Excel pt-BR). "
         "Parquet: ler com `pandas.read_parquet` ou no Power BI/R/DuckDB.",
-        "Definições das classes, limitações e método de conciliação: ver o README do repositório.",
+        "Colunas, tipos, fontes e classes: [DICIONARIO.md](DICIONARIO.md). "
+        "Limitações e método de conciliação: README do repositório.",
         "",
     ]
+    return "\n".join(linhas)
+
+
+# --- dicionário de dados -----------------------------------------------------------------
+
+FONTES = """\
+| Base | Arquivo da SENATRAN | Onde | Colunas originais |
+|---|---|---|---|
+| Combustível | `D_Frota_por_UF_Municipio_COMBUSTIVEL_<Mês>_<Ano>.xlsx` (mensal) | Páginas anuais [frota-de-veiculos-{ano}](https://www.gov.br/transportes/pt-br/assuntos/transito/conteudo-Senatran/frota-de-veiculos-2026) no gov.br (Ministério dos Transportes/SENATRAN) | UF, Município, Combustível Veículo, Qtd. Veículos |
+| Modelo | `I_Frota_por_UF_Municipio_Marca_e_Modelo_Ano_<Mês>_<Ano>.zip` (mensal, ~22 mi de linhas) | Conjunto RENAVAM no [portal de dados abertos](https://dados.transportes.gov.br/dataset/12686da0-3d71-4499-b432-d270f785c907) (API CKAN); alguns meses de 2019–2022 também no gov.br | UF, Município, Marca Modelo, Ano Fabricação Veículo CRV, Qtd. Veículos |
+
+Ambos são extrações do RENAVAM: frota **registrada** no mês de referência (inclui
+veículos que já não circulam e não foram baixados). UF vem por extenso; sigla,
+código IBGE da UF e região são acrescentados pelo pacote (tabela fixa em
+`src/eletromobilidade/ufs.py`). O município é identificado pelo nome
+(`municipio_norm` + `uf_sigla`); o código IBGE do município ainda não está na base.
+Classificação: `src/eletromobilidade/dados/combustiveis.csv` (base por
+combustível) e `src/eletromobilidade/dados/modelos.csv` (base por modelo).
+"""
+
+CLASSES = {
+    "eletrico": "Tração 100% elétrica (a bateria). Combustível: ELETRICO/FONTE EXTERNA, ELETRICO/FONTE INTERNA, ELETRICO.",
+    "hibrido_plug_in": "Híbrido recarregável na tomada (PHEV), incluindo elétricos com extensor de autonomia (REEV).",
+    "hibrido": "Híbrido convencional (HEV): bateria recarregada só pelo motor a combustão e pela frenagem regenerativa.",
+    "hibrido_leve": "Só na base por modelo. Híbrido leve (12/48 V): o motor elétrico não traciona sozinho. Fora da frota eletrificada.",
+    "celula_combustivel": "Elétrico a célula de combustível (hidrogênio).",
+    "combustao": "Somente motor a combustão (inclui flex e GNV).",
+    "nao_motorizado": "Só na base por modelo. Reboques (R/) e semirreboques (SR/).",
+    "sem_informacao": "Sem informação de combustível ou de modelo.",
+}
+
+_COLUNAS = {
+    "ano": "Ano do mês de referência do arquivo mensal.",
+    "mes": "Mês de referência (1 a 12).",
+    "data_referencia": "Primeiro dia do mês de referência (para eixos de tempo).",
+    "uf": "UF como publicada pela SENATRAN (por extenso; inclui 'Sem Informação').",
+    "uf_sigla": "Sigla da UF; nula quando a UF publicada não é válida ('Sem Informação' etc.).",
+    "cod_uf_ibge": "Código IBGE da UF (2 dígitos).",
+    "regiao": "Grande região (Norte, Nordeste, Sudeste, Sul, Centro-Oeste).",
+    "municipio": "Município como publicado pela SENATRAN.",
+    "municipio_norm": "Município sem acentos, em caixa alta. Chave do município junto com uf_sigla.",
+    "combustivel": "Rótulo do campo combustível do RENAVAM, como publicado.",
+    "combustivel_norm": "Rótulo de combustível normalizado (sem acentos, caixa alta, grafias unificadas).",
+    "classe": "Classe de tecnologia atribuída (ver a tabela de classes).",
+    "eletrificado": "Verdadeiro para eletrico, hibrido_plug_in, hibrido e celula_combustivel.",
+    "origem_classificacao": "'tabela' (rótulo listado em combustiveis.csv) ou 'regra' (inferido; revisar).",
+    "qtd_veiculos": "Número de veículos registrados.",
+    "arquivo_origem": "Arquivo da SENATRAN de onde o dado veio.",
+    "marca_modelo": "Texto 'Marca Modelo' do RENAVAM, como publicado (prefixo I/ = importado).",
+    "marca_modelo_norm": "Marca Modelo normalizado (sem acentos, caixa alta).",
+    "ano_fabricacao": "Ano de fabricação (campo do CRV); nulo quando 'Sem Informação'.",
+    "regra": "Número da linha de modelos.csv que definiu a classe (0 = nenhuma regra; classe padrão combustao).",
+    "padrao": "Expressão regular da regra aplicada.",
+    "revisar": "Verdadeiro para modelo de marca com linha eletrificada que não casou com nenhuma regra.",
+    "primeiro_mes": "Primeiro mês em que o rótulo aparece na série.",
+    "ultimo_mes": "Último mês em que o rótulo aparece na série.",
+    "frota_total": "Frota total do recorte (todas as classes).",
+    "frota_eletrificada": "Soma de eletrico, hibrido_plug_in, hibrido e celula_combustivel (sem hibrido_leve).",
+    "participacao_eletrificada": "frota_eletrificada / frota_total (fração entre 0 e 1).",
+    "hibrido_leve_modelo": "Híbridos leves na base por modelo (sem equivalente na base por combustível).",
+    "arquivo": "Arquivo mensal da SENATRAN.",
+    "linhas": "Linhas lidas do arquivo.",
+    "ajuste": "Correção aplicada ao arquivo (vazio se nenhuma).",
+    "incluido": "Se o mês entrou na série (falso para mês idêntico ao anterior).",
+}
+
+_INDICADORES = {"total": "frota total", "eletrico": "elétricos", "hibrido_plug_in": "híbridos plug-in",
+                "hibrido": "híbridos convencionais", "hibridos": "híbridos plug-in + convencionais",
+                "eletrificada": "frota eletrificada"}
+_SUFIXOS = {"combustivel": "pela base por combustível", "modelo": "pela base por modelo",
+            "diferenca": "diferença modelo − combustível", "razao": "razão modelo / combustível (nula se combustível = 0)"}
+
+
+def descrever_coluna(nome: str) -> str:
+    if nome in _COLUNAS:
+        return _COLUNAS[nome]
+    if nome.startswith("frota_") and nome[len("frota_"):] in CLASSES:
+        return f"Veículos da classe {nome[len('frota_'):]}."
+    for ind, rotulo in _INDICADORES.items():
+        for suf, texto in _SUFIXOS.items():
+            if nome == f"{ind}_{suf}":
+                return f"{rotulo.capitalize()}: {texto}."
+    return ""
+
+
+def _tipo(dtype) -> str:
+    t = str(dtype).lower()
+    if "datetime" in t:
+        return "data"
+    if "int" in t:
+        return "inteiro"
+    if "float" in t:
+        return "decimal"
+    if "bool" in t:
+        return "lógico"
+    return "texto"
+
+
+def dicionario(tabelas: dict[str, pd.DataFrame]) -> str:
+    linhas = ["# Dicionário de dados", "", "Gerado por `eletromobilidade publicar` a partir das tabelas publicadas.",
+              "", "## Fontes", "", FONTES, "## Classes de tecnologia", "", "| Classe | Definição |", "|---|---|"]
+    linhas += [f"| `{c}` | {d} |" for c, d in CLASSES.items()]
+    linhas += ["", "## Tabelas", ""]
+    for nome, df in tabelas.items():
+        formato, descricao = PUBLICADAS[nome]
+        linhas += [f"### `{nome}.{formato}`", "", descricao, "", "| Coluna | Tipo | Descrição |", "|---|---|---|"]
+        linhas += [f"| `{c}` | {_tipo(t)} | {descrever_coluna(c)} |" for c, t in df.dtypes.items()]
+        linhas.append("")
     return "\n".join(linhas)
 
 
@@ -142,5 +251,8 @@ def publicar(entrada: str | Path, saida: str | Path, agora: pd.Timestamp | None 
     agora = agora or pd.Timestamp.now(tz="UTC").tz_localize(None)
     caminho = saida / "LEIAME.md"
     caminho.write_text(leiame(tabelas, agora), encoding="utf-8")
+    gravados.append(caminho)
+    caminho = saida / "DICIONARIO.md"
+    caminho.write_text(dicionario(tabelas), encoding="utf-8")
     gravados.append(caminho)
     return gravados

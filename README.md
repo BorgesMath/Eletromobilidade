@@ -126,9 +126,17 @@ O painel do Brasil inclui registros sem UF válida; o de UF, não.
 
 ## Série histórica e qualidade dos arquivos
 
-Disponibilidade verificada em outubro/2026: o arquivo por combustível existe de
-janeiro/2019 a setembro/2026 (faltam janeiro a maio/2020 no portal); o de
-marca/modelo, de 2019 em diante no CKAN (e alguns meses de 2013, 2014 e 2018).
+A série começa em **janeiro/2020** (`processar --desde`, padrão `2020-01`;
+`--desde ''` usa todos os arquivos baixados). Como o portal não publicou o
+arquivo por combustível de janeiro a maio/2020, a base por combustível começa
+de fato em junho/2020.
+
+Disponibilidade verificada em outubro/2026: o arquivo por combustível existe
+em 2013 (6 meses), 2014, 2016 (6 meses), 2017, 2018 e de janeiro/2019 em
+diante (faltam janeiro a maio/2020); o de marca/modelo, de 2019 em diante no
+CKAN (e alguns meses de 2013, 2014 e 2018, parte em `.rar`).
+
+Colunas, tipos e fontes de cada tabela publicada: [`resultados/DICIONARIO.md`](resultados/DICIONARIO.md).
 
 Defeitos encontrados nos arquivos publicados e tratados automaticamente
 (`qualidade.py`, registrados em `qualidade_*`):
