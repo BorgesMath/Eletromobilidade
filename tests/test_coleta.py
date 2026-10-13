@@ -253,3 +253,22 @@ def test_baixar_tabela_desiste_da_fonte_fora_do_ar(tmp_path, monkeypatch):
     r = coleta.baixar_tabela("marca_modelo", [2026], tmp_path)
     assert len(tentativas) == coleta.FALHAS_PARA_DESISTIR
     assert len(r.falhas) == 5 and "fora do ar" in r.falhas[-1][1]
+
+
+def test_baixar_tabela_conta_arquivo_existente_mesmo_com_fonte_fora(tmp_path, monkeypatch):
+    from eletromobilidade import coleta
+
+    links = [Link(f"https://a/marca_{m}_2026.zip", "", "marca_modelo", (2026, i), "ckan")
+             for i, m in enumerate(["janeiro", "fevereiro", "marco", "abril"], start=1)]
+    existente = coleta.caminho_local(links[-1], tmp_path)
+    existente.parent.mkdir(parents=True)
+    existente.write_bytes(b"ok")
+    monkeypatch.setattr(coleta, "listar", lambda *a, **k: links)
+
+    def baixar_falso(link, *args):
+        raise requests.exceptions.HTTPError("503")
+
+    monkeypatch.setattr(coleta, "baixar", baixar_falso)
+    r = coleta.baixar_tabela("marca_modelo", [2026], tmp_path)
+    assert r.baixados == [existente]
+    assert len(r.falhas) == 3
