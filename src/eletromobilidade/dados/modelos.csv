@@ -7,11 +7,13 @@ eletrico;VOLVO.*(\b(EX30|EX40|EC40|EX90|ES90|C40)\b|\b(XC40|C40) ?[68]\b|\bP[68]
 hibrido_plug_in;VOLVO.*\b(T5H|T6H|T8|RECHARGE|TWIN ENGINE)\b;Volvo T8 e T5/T6 'H'/'Recharge' são híbridos plug-in. T5 sem sufixo é combustão.
 hibrido_plug_in;(BYD|DENZA|JETOUR).*\b(I-?)?DM(-?[IPO])?\b;BYD/Denza DM, DM-i, DM-p, DM-o e Jetour i-DM: híbrido plug-in.
 eletrico;\b(BYD|DENZA)\b;Demais BYD e Denza (Dolphin, Yuan, Seal, Tan, Han, Denza Z9/D9 EV, ônibus): elétricos a bateria. As marcas não vendem combustão no Brasil.
-eletrico;\b(TESLA|VOLTZ|ZEEKR|NETA|AION|XPENG|AIMA|NIU|TAILG|TAILING|YADEA|SUNRA|LUYUAN|HORWIN|VMOTO|VAMMO|WATTS|ORIGEM|GCX|LVNENG)\b|^(I/|IMP/)?POLESTAR\b|\bMOTTU-?E\b|\bGAC HYPTEC\b|^SHINERAY/SE\d;Marcas/linhas só com elétricos no Brasil (carros e motos/scooters), mais Shineray SE1/SE2/SE3 e GAC Hyptec. POLESTAR só como marca (Volvo 'Polestar' é tratado antes).
+eletrico;\b(TESLA|VOLTZ|ZEEKR|NETA|AION|XPENG|AIMA|NIU|TAILG|TAILING|YADEA|SUNRA|LUYUAN|HORWIN|VMOTO|VAMMO|WATTS|ORIGEM|GCX|LVNENG)\b|^(I/|IMP/)?POLESTAR\b|\bMOTTU-?E\b|\bGAC HYPTEC\b|^(I/)?SHINERAY/(PT|SE)\d;Marcas/linhas só com elétricos no Brasil (carros e motos/scooters), mais Shineray PT2/PT3/PT4/PT7 e SE1/SE2/SE3 e GAC Hyptec. POLESTAR só como marca (Volvo 'Polestar' é tratado antes).
 hibrido_plug_in;\b(REEV|EREV)\b;Elétrico com extensor de autonomia (Leapmotor C10/B10 REEV): recarrega na tomada e tem motor a combustão, tratado como plug-in.
 eletrico;\b(LPM|LEAPMOTOR)\b;Leapmotor sem REEV: elétrico a bateria.
 hibrido_plug_in;GEELY.*\bEM-?I\b;Geely EX5 EM-i: híbrido plug-in.
 eletrico;GEELY.*\b(EX\d|E5|GEOMETRY)\b;Geely EX2 e EX5 (sem EM-i): elétricos a bateria.
+hibrido;GAC.*\bGS4\b;GAC GS4: híbrido convencional (HEV) a gasolina no Brasil.
+combustao;GWM.*\b(HAVAL H9|POER)\b|GAC.*\bGS3\b;Combustão confirmada em marcas com linha eletrificada (Haval H9 gasolina, Poer P30 diesel, GAC GS3 Emzoom), para não aparecerem em 'revisar'.
 eletrico;GWM.*(\bORA\b|\bBEV\d*\b);GWM Ora.
 hibrido_plug_in;GWM.*(PHEV|\bH6 GT\b|\bWEY\b);Haval H6 GT e Wey 07 são vendidos como híbridos plug-in no Brasil.
 eletrico;OMODA.*\bE5\b;Omoda E5.

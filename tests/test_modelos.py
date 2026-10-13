@@ -64,6 +64,11 @@ CASOS = [
     ("VAMMO/VMOTO COMFORT 4KW", "eletrico"),
     ("I/MG MG4 64 KWH COM", "eletrico"),
     ("SHINERAY/SE1", "eletrico"),
+    ("SHINERAY/PT3", "eletrico"),
+    ("I/GAC GS4 ELITE", "hibrido"),
+    ("I/GAC GS3 ELITE", "combustao"),
+    ("I/GWM HAVAL H9 EXC", "combustao"),
+    ("I/GWM POER P30 EXC", "combustao"),
     ("MOTTU/MOTTU-E", "eletrico"),
     # armadilhas: "E", "EV" e "HEV" que não indicam eletrificação
     ("VW/8.150E DELIVERY", "combustao"),
@@ -103,7 +108,7 @@ def test_hibrido_leve_nao_conta_como_eletrificado():
 
 
 def test_a_revisar_marca_eletrificada_sem_regra():
-    r = classificar_modelos(pd.Series(["I/GAC GS4 ELITE", "VW/GOL 1.0", "I/BYD DOLPHIN GS 180EV"]))
+    r = classificar_modelos(pd.Series(["I/GAC GS9 ULTRA", "VW/GOL 1.0", "I/BYD DOLPHIN GS 180EV"]))
     assert list(a_revisar(r)) == [True, False, False]
 
 
