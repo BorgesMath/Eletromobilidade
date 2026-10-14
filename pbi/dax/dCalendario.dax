@@ -1,0 +1,58 @@
+// dCalendario — tabela calculada
+//
+// Modelagem > Nova tabela, cole a expressão abaixo. Depois marque a tabela como
+// tabela de datas (Ferramentas de tabela > Marcar como tabela de data > Data),
+// senão DATEADD e as medidas de variação não funcionam.
+//
+// É um calendário DIÁRIO, não mensal, de propósito: DATEADD exige datas
+// contíguas na coluna de data. Os fatos só têm o dia 1º de cada mês, então só
+// esses dias casam — o resto do calendário fica vazio, o que é esperado. Use a
+// hierarquia Ano > Mês nos visuais, nunca o dia.
+//
+// Vai de 1º de janeiro do primeiro ano da série até o fim do último mês com
+// dado. Anos cheios no início para YTD e comparações anuais não truncarem.
+//
+// Nomes dos meses escritos à mão em português: FORMAT depende da localidade do
+// arquivo e quebra quando o .pbix abre em outra máquina.
+
+dCalendario =
+VAR _primeira = MIN( fFrotaCombustivel[data_referencia] )
+VAR _ultima   = MAX( fFrotaCombustivel[data_referencia] )
+VAR _dias =
+    CALENDAR( DATE( YEAR( _primeira ), 1, 1 ), EOMONTH( _ultima, 0 ) )
+RETURN
+    ADDCOLUMNS(
+        _dias,
+        "Ano", YEAR( [Date] ),
+        "Mês (número)", MONTH( [Date] ),
+        "Mês",
+            SWITCH(
+                MONTH( [Date] ),
+                1, "jan", 2, "fev", 3, "mar", 4, "abr",  5, "mai",  6, "jun",
+                7, "jul", 8, "ago", 9, "set", 10, "out", 11, "nov", 12, "dez"
+            ),
+        "Mês/Ano",
+            SWITCH(
+                MONTH( [Date] ),
+                1, "jan", 2, "fev", 3, "mar", 4, "abr",  5, "mai",  6, "jun",
+                7, "jul", 8, "ago", 9, "set", 10, "out", 11, "nov", 12, "dez"
+            ) & "/" & YEAR( [Date] ),
+        "Ano-mês", YEAR( [Date] ) * 100 + MONTH( [Date] ),
+        "Trimestre", "T" & QUARTER( [Date] ),
+        "Trimestre/Ano", "T" & QUARTER( [Date] ) & "/" & YEAR( [Date] ),
+        "Primeiro dia do mês", DAY( [Date] ) = 1
+    )
+
+// --------------------------------------------------------------------------
+// Depois de criar a tabela, configure (uma vez cada):
+//
+//   Data            → renomeie de "Date" para "Data"; Ocultar: não
+//   Mês             → Classificar por coluna: Mês (número)
+//   Mês/Ano         → Classificar por coluna: Ano-mês
+//   Trimestre/Ano   → Classificar por coluna: Ano-mês
+//   Ano             → Resumo padrão: Não resumir
+//   Mês (número)    → Resumo padrão: Não resumir; Ocultar: sim
+//   Ano-mês         → Resumo padrão: Não resumir; Ocultar: sim
+//
+// Hierarquia sugerida "Tempo": Ano > Trimestre/Ano > Mês/Ano
+// --------------------------------------------------------------------------

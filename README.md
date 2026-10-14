@@ -1,7 +1,23 @@
 # eletromobilidade
 
-Tratamento da base de frota de veículos da SENATRAN (RENAVAM) e construção de
-uma base específica de eletromobilidade, por município, UF e Brasil, mês a mês.
+Base de eletromobilidade a partir da frota de veículos da SENATRAN (RENAVAM),
+por município, UF e Brasil, mês a mês — e o painel de Power BI construído sobre
+ela.
+
+O projeto tem três camadas, e a divisão entre elas é deliberada:
+
+| Camada | Onde | O que faz |
+|---|---|---|
+| **Dados** | [`src/`](src/eletromobilidade), [`tests/`](tests) | Coleta, trata, classifica e concilia. É onde está a lógica e o teste automatizado. Publica [`resultados/`](resultados/LEIAME.md). |
+| **Painel** | [`pbi/`](pbi/MODELO.md) | Modelo estrela, Power Query, DAX e tema. Lê só `resultados/` — nunca a SENATRAN direto. |
+| **Entrega** | [`docs/`](docs/ROTEIRO.md) | Roteiro do que falta e subsídio para documento do MME. |
+
+Nada de regra de negócio no Power BI: o que decide se um veículo é eletrificado
+mora no Python, onde um teste pega a mudança. O PBI apresenta e agrega.
+
+Comece por [`pbi/MODELO.md`](pbi/MODELO.md) se o assunto é o painel, por
+[`docs/ROTEIRO.md`](docs/ROTEIRO.md) se é o que vem depois, e pelo resto deste
+arquivo se é o tratamento dos dados.
 
 São duas bases, construídas por caminhos independentes e depois conciliadas:
 
@@ -310,9 +326,29 @@ pytest
 Os testes usam arquivos sintéticos no leiaute da SENATRAN (`tests/conftest.py`)
 e, para o classificador por modelo, textos reais do campo "Marca Modelo".
 
+## O painel
+
+A camada de apresentação está em [`pbi/`](pbi/MODELO.md), especificada em
+arquivos de texto em vez de um `.pbix` versionado — binário em Git não rende
+revisão nem diff. O `.pbix` se monta a partir deles em cerca de vinte minutos,
+pelo passo a passo de [`pbi/MODELO.md`](pbi/MODELO.md#como-montar-o-pbix).
+
+| Arquivo | O que é |
+|---|---|
+| [`pbi/MODELO.md`](pbi/MODELO.md) | Modelo estrela: tabelas, grão, relacionamentos, decisões, ressalvas e tabela de validação |
+| [`pbi/PAGINAS.md`](pbi/PAGINAS.md) | As cinco páginas do relatório, com a forma de cada visual e o porquê |
+| [`pbi/REFRESH.md`](pbi/REFRESH.md) | Ciclo de atualização mensal e publicação no Service |
+| [`pbi/powerquery/`](pbi/powerquery) | Nove consultas M, uma por tabela do modelo |
+| [`pbi/dax/`](pbi/dax) | `dCalendario` e as medidas |
+| [`pbi/tema.json`](pbi/tema.json) | Tema do Power BI, com paleta categórica verificada para daltonismo |
+
+Duas coisas que o painel precisa deixar claro, e que estão documentadas nos dois
+arquivos: **frota é estoque registrado, não emplacamento** — somar meses não dá
+o ano, e a variação mensal é saldo, não venda; e **a divisão entre plug-in e
+híbrido convencional só vale pela base por combustível**.
+
 ## Próximos passos
 
-- Estender a série a outros meses e acompanhar a lista `revisar` a cada mês novo.
-- Código IBGE do município (junção por nome normalizado + UF com a tabela do IBGE).
-- Cruzamento com "Frota por Município e Tipo" para isolar veículos leves.
-- Validação contra séries publicadas (ABVE, ANFAVEA).
+Em [`docs/ROTEIRO.md`](docs/ROTEIRO.md), em ordem de valor. Os quatro primeiros:
+código IBGE de município, ampliar a série da base por modelo, tipo de veículo
+(automóvel × motocicleta × ônibus) e o furo de jan/2022.

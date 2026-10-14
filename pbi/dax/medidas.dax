@@ -1,0 +1,433 @@
+// =============================================================================
+// Medidas — painel de eletromobilidade
+// =============================================================================
+//
+// Cole uma a uma em Modelagem > Nova medida. A ordem importa: as medidas de um
+// grupo usam as do grupo anterior.
+//
+// LEIA ISTO ANTES DE USAR
+//
+// Frota é ESTOQUE, não fluxo. Cada linha do fato é a frota registrada no
+// RENAVAM naquele mês — não são emplacamentos do mês. Somar doze meses de
+// estoque não dá o ano: dá doze vezes o ano. É por isso que quase toda medida
+// aqui termina em "(fim do período)": ela devolve a frota do último mês com
+// dado dentro do que estiver selecionado.
+//
+//   REGRA PRÁTICA: use sempre as medidas "(fim do período)" nos visuais.
+//   No grão de mês elas são idênticas às aditivas; nos grãos de trimestre, ano
+//   e no total geral, só elas estão certas. [Frota] e [Frota (classe)] existem
+//   como peça de construção, não para arrastar para um visual.
+//
+// A série por combustível vai de jun/2020 a set/2026 e NÃO TEM jan/2022 (o
+// arquivo publicado era idêntico ao de dez/2021 e foi excluído). Esse mês fica
+// em branco nos visuais, de propósito — as medidas não interpolam. Num gráfico
+// de linha a série se interrompe ali; é o comportamento correto.
+//
+// A base por modelo tem só dez/2020 e set/2026, e sua divisão entre plug-in e
+// híbrido convencional NÃO É CONFIÁVEL (ver o grupo 6). Use-a para marca,
+// modelo e ano de fabricação; para os números oficiais use a base por
+// combustível.
+
+
+// -----------------------------------------------------------------------------
+// 1. Base e mês de referência
+// -----------------------------------------------------------------------------
+
+// Aditiva. Respeita todos os filtros, inclusive dClasse. Peça de construção.
+Frota =
+SUM( fFrotaCombustivel[frota] )
+
+
+// Último mês COM DADO dentro do período selecionado.
+//
+// ALLEXCEPT mantém o filtro de dCalendario e descarta os de classe e
+// localidade: o mês de referência tem de ser o mesmo em todas as linhas de uma
+// matriz, senão São Paulo e Roraima apareceriam em meses diferentes.
+//
+// Fica em branco quando o período selecionado não tem nenhum mês publicado —
+// é o que faz jan/2022 aparecer vazio em vez de repetir dez/2021.
+Mês de referência =
+CALCULATE(
+    MAX( fFrotaCombustivel[data_referencia] ),
+    ALLEXCEPT( fFrotaCombustivel, dCalendario )
+)
+
+
+// Semi-aditiva: a frota no mês de referência. Esta é a medida para visual.
+Frota (fim do período) =
+VAR _ref = [Mês de referência]
+RETURN
+    CALCULATE(
+        [Frota],
+        REMOVEFILTERS( dCalendario ),
+        dCalendario[Data] = _ref
+    )
+
+
+// -----------------------------------------------------------------------------
+// 2. Frota por classe de tecnologia
+// -----------------------------------------------------------------------------
+//
+// Cada medida ignora o filtro de dClasse e impõe o seu. Assim ela devolve o
+// mesmo número esteja ou não a classe num eixo ou numa segmentação — uma medida
+// de elétricos que zera porque o usuário filtrou "combustão" é uma armadilha.
+
+Frota total =
+CALCULATE( [Frota (fim do período)], REMOVEFILTERS( dClasse ) )
+
+
+// Elétrico + plug-in + híbrido convencional + célula de combustível.
+// Híbrido leve fica fora, conforme resultados/DICIONARIO.md.
+Frota eletrificada =
+CALCULATE(
+    [Frota (fim do período)],
+    REMOVEFILTERS( dClasse ),
+    dClasse[eletrificado] = TRUE()
+)
+
+Frota elétrica =
+CALCULATE(
+    [Frota (fim do período)],
+    REMOVEFILTERS( dClasse ),
+    dClasse[classe] = "eletrico"
+)
+
+Frota híbrida plug-in =
+CALCULATE(
+    [Frota (fim do período)],
+    REMOVEFILTERS( dClasse ),
+    dClasse[classe] = "hibrido_plug_in"
+)
+
+Frota híbrida =
+CALCULATE(
+    [Frota (fim do período)],
+    REMOVEFILTERS( dClasse ),
+    dClasse[classe] = "hibrido"
+)
+
+Frota célula de combustível =
+CALCULATE(
+    [Frota (fim do período)],
+    REMOVEFILTERS( dClasse ),
+    dClasse[classe] = "celula_combustivel"
+)
+
+Frota a combustão =
+CALCULATE(
+    [Frota (fim do período)],
+    REMOVEFILTERS( dClasse ),
+    dClasse[classe] = "combustao"
+)
+
+// Sem informação de combustível no RENAVAM. Entra no denominador de
+// [Participação eletrificada]: tratá-lo como zero inflaria a participação.
+Frota sem informação =
+CALCULATE(
+    [Frota (fim do período)],
+    REMOVEFILTERS( dClasse ),
+    dClasse[classe] = "sem_informacao"
+)
+
+// Plug-in + elétrico puro: a frota que depende de recarga externa. É o recorte
+// relevante para dimensionar infraestrutura, e o que o painel deve destacar.
+Frota recarregável =
+CALCULATE(
+    [Frota (fim do período)],
+    REMOVEFILTERS( dClasse ),
+    dClasse[classe] IN { "eletrico", "hibrido_plug_in" }
+)
+
+
+// -----------------------------------------------------------------------------
+// 3. Participação
+// -----------------------------------------------------------------------------
+//
+// Razão entre dois estoques do mesmo mês: correta em qualquer grão, porque
+// numerador e denominador usam o mesmo mês de referência.
+// Formate como Porcentagem com 2 decimais — a ordem de grandeza hoje é 1%.
+
+Participação eletrificada =
+DIVIDE( [Frota eletrificada], [Frota total] )
+
+Participação elétrica =
+DIVIDE( [Frota elétrica], [Frota total] )
+
+Participação recarregável =
+DIVIDE( [Frota recarregável], [Frota total] )
+
+// Composição da própria frota eletrificada (soma 100% entre as quatro classes).
+Participação na frota eletrificada =
+DIVIDE(
+    CALCULATE( [Frota (fim do período)], dClasse[eletrificado] = TRUE() ),
+    [Frota eletrificada]
+)
+
+// Por 10 mil veículos. Lê melhor que "0,98%" em mapa e em matriz por UF.
+Eletrificados por 10 mil veículos =
+DIVIDE( [Frota eletrificada], [Frota total] ) * 10000
+
+
+// -----------------------------------------------------------------------------
+// 4. Variação no tempo
+// -----------------------------------------------------------------------------
+//
+// ATENÇÃO À LEITURA: variação de estoque não é emplacamento. O saldo do mês é
+// entradas (veículos novos e importados) menos baixas e mais correções de
+// cadastro. Chamar isso de "vendas" num documento oficial é erro material.
+//
+// Dependem de dCalendario estar marcada como tabela de data.
+// Fevereiro de 2022 fica em branco na variação mensal: jan/2022 não existe.
+
+Frota eletrificada (mês anterior) =
+CALCULATE( [Frota eletrificada], DATEADD( dCalendario[Data], -1, MONTH ) )
+
+Saldo do mês =
+VAR _anterior = [Frota eletrificada (mês anterior)]
+RETURN
+    IF( NOT ISBLANK( _anterior ), [Frota eletrificada] - _anterior )
+
+Saldo do mês % =
+DIVIDE( [Saldo do mês], [Frota eletrificada (mês anterior)] )
+
+Frota eletrificada (12 meses antes) =
+CALCULATE( [Frota eletrificada], DATEADD( dCalendario[Data], -12, MONTH ) )
+
+Variação a.a. =
+VAR _antes = [Frota eletrificada (12 meses antes)]
+RETURN
+    IF( NOT ISBLANK( _antes ), [Frota eletrificada] - _antes )
+
+Variação a.a. % =
+DIVIDE( [Variação a.a.], [Frota eletrificada (12 meses antes)] )
+
+// Frota eletrificada no último mês de cada ano anterior. Serve de base para
+// gráfico de crescimento acumulado desde o início da série.
+Frota eletrificada (início da série) =
+VAR _primeiro =
+    CALCULATE( MIN( fFrotaCombustivel[data_referencia] ), REMOVEFILTERS() )
+RETURN
+    CALCULATE(
+        [Frota eletrificada],
+        REMOVEFILTERS( dCalendario ),
+        dCalendario[Data] = _primeiro
+    )
+
+Multiplicador desde o início da série =
+DIVIDE( [Frota eletrificada], [Frota eletrificada (início da série)] )
+
+
+// -----------------------------------------------------------------------------
+// 5. Base por modelo (marca, modelo e ano de fabricação)
+// -----------------------------------------------------------------------------
+//
+// Fato separado, cobertura separada: só dez/2020 e set/2026. Por isso tem o seu
+// próprio mês de referência — reaproveitar o da base por combustível deixaria
+// tudo em branco em 73 dos 75 meses.
+
+Frota modelo =
+SUM( fFrotaModelo[qtd_veiculos] )
+
+Mês de referência (modelo) =
+CALCULATE(
+    MAX( fFrotaModelo[data_referencia] ),
+    ALLEXCEPT( fFrotaModelo, dCalendario )
+)
+
+Frota modelo (fim do período) =
+VAR _ref = [Mês de referência (modelo)]
+RETURN
+    CALCULATE(
+        [Frota modelo],
+        REMOVEFILTERS( dCalendario ),
+        dCalendario[Data] = _ref
+    )
+
+Frota modelo eletrificada =
+CALCULATE(
+    [Frota modelo (fim do período)],
+    REMOVEFILTERS( dClasse ),
+    dClasse[eletrificado] = TRUE()
+)
+
+Modelos distintos =
+CALCULATE(
+    DISTINCTCOUNT( fFrotaModelo[marca_modelo] ),
+    REMOVEFILTERS( dCalendario ),
+    dCalendario[Data] = [Mês de referência (modelo)]
+)
+
+Marcas distintas =
+CALCULATE(
+    DISTINCTCOUNT( dModelo[marca] ),
+    REMOVEFILTERS( dCalendario ),
+    dCalendario[Data] = [Mês de referência (modelo)]
+)
+
+// Idade média ponderada pela frota. ano_fabricacao nulo (1.853 linhas) sai da
+// conta — por isso o denominador é recontado, e não [Frota modelo].
+Idade média da frota eletrificada =
+VAR _ref = [Mês de referência (modelo)]
+VAR _comAno =
+    CALCULATETABLE(
+        fFrotaModelo,
+        REMOVEFILTERS( dCalendario ),
+        dCalendario[Data] = _ref,
+        NOT ISBLANK( fFrotaModelo[ano_fabricacao] )
+    )
+VAR _soma =
+    SUMX( _comAno, fFrotaModelo[qtd_veiculos] * ( YEAR( _ref ) - fFrotaModelo[ano_fabricacao] ) )
+VAR _peso = SUMX( _comAno, fFrotaModelo[qtd_veiculos] )
+RETURN
+    DIVIDE( _soma, _peso )
+
+Participação de importados =
+DIVIDE(
+    CALCULATE( [Frota modelo (fim do período)], dModelo[importado] = TRUE() ),
+    CALCULATE( [Frota modelo (fim do período)], REMOVEFILTERS( dModelo ) )
+)
+
+
+// -----------------------------------------------------------------------------
+// 6. Conciliação — a página de auditoria
+// -----------------------------------------------------------------------------
+//
+// Mede o erro de inferir a tecnologia pelo nome do modelo, comparando com o
+// campo combustível do RENAVAM no mesmo mês e no mesmo recorte.
+//
+// O que a conciliação mostra hoje (set/2026, Brasil):
+//
+//   total          razão 1,000  as duas bases cobrem o mesmo universo
+//   eletrificada   razão 0,823  a base por modelo acha 18% menos eletrificados
+//   elétrico       razão 0,919
+//   plug-in        razão 4,510  ← superestima em 4,5x
+//   híbrido        razão 0,356  ← subestima em 2,8x
+//
+// A leitura: a regra por nome de modelo acerta razoavelmente o agregado, mas
+// NÃO SEPARA plug-in de híbrido convencional — confunde um com o outro, nas
+// duas direções. Nome comercial não diz se o carro recarrega na tomada.
+//
+// Consequência para o painel: a divisão plug-in × HEV vem SEMPRE da base por
+// combustível. A base por modelo responde "quais modelos" e "de que ano", não
+// "quantos de cada tecnologia".
+//
+// As razões são calculadas aqui, e não lidas da coluna *_razao do arquivo:
+// média de razões não é razão das somas, e qualquer agregação por UF ou região
+// daria errado.
+
+Eletrificada (combustível) = SUM( fConciliacao[eletrificada_combustivel] )
+Eletrificada (modelo)      = SUM( fConciliacao[eletrificada_modelo] )
+Eletrificada (diferença)   = SUM( fConciliacao[eletrificada_diferenca] )
+Eletrificada (razão)       = DIVIDE( [Eletrificada (modelo)], [Eletrificada (combustível)] )
+
+Elétrico (combustível) = SUM( fConciliacao[eletrico_combustivel] )
+Elétrico (modelo)      = SUM( fConciliacao[eletrico_modelo] )
+Elétrico (razão)       = DIVIDE( [Elétrico (modelo)], [Elétrico (combustível)] )
+
+Plug-in (combustível) = SUM( fConciliacao[hibrido_plug_in_combustivel] )
+Plug-in (modelo)      = SUM( fConciliacao[hibrido_plug_in_modelo] )
+Plug-in (razão)       = DIVIDE( [Plug-in (modelo)], [Plug-in (combustível)] )
+
+Híbrido (combustível) = SUM( fConciliacao[hibrido_combustivel] )
+Híbrido (modelo)      = SUM( fConciliacao[hibrido_modelo] )
+Híbrido (razão)       = DIVIDE( [Híbrido (modelo)], [Híbrido (combustível)] )
+
+// Plug-in + convencional juntos. A razão aqui é muito melhor que a de cada um
+// isolado, e é essa a evidência de que o erro é de CLASSIFICAÇÃO entre os dois,
+// não de cobertura.
+Híbridos (combustível) = SUM( fConciliacao[hibridos_combustivel] )
+Híbridos (modelo)      = SUM( fConciliacao[hibridos_modelo] )
+Híbridos (razão)       = DIVIDE( [Híbridos (modelo)], [Híbridos (combustível)] )
+
+Total (combustível) = SUM( fConciliacao[total_combustivel] )
+Total (modelo)      = SUM( fConciliacao[total_modelo] )
+Total (razão)       = DIVIDE( [Total (modelo)], [Total (combustível)] )
+
+// Erro absoluto em pontos percentuais da razão. Use num mapa ou numa matriz por
+// UF para achar onde a classificação por modelo vai pior.
+Erro da classificação por modelo =
+VAR _razao = [Eletrificada (razão)]
+RETURN
+    IF( NOT ISBLANK( _razao ), ABS( _razao - 1 ) )
+
+
+// -----------------------------------------------------------------------------
+// 7. Cobertura e qualidade
+// -----------------------------------------------------------------------------
+//
+// Alimentam a página de transparência metodológica. Num painel oficial, saber
+// que falta um mês é tão importante quanto o número do mês que existe.
+
+Meses na série =
+CALCULATE(
+    DISTINCTCOUNT( fCobertura[data_referencia] ),
+    fCobertura[incluido] = TRUE()
+)
+
+Meses excluídos =
+CALCULATE(
+    DISTINCTCOUNT( fCobertura[data_referencia] ),
+    fCobertura[incluido] = FALSE()
+)
+
+Arquivos com ajuste =
+CALCULATE( COUNTROWS( fCobertura ), fCobertura[tem_ajuste] = TRUE() )
+
+Linhas lidas = SUM( fCobertura[linhas] )
+
+// Primeiro e último mês publicados, como texto, para a caixa de rodapé.
+Período da série =
+VAR _min = CALCULATE( MIN( fFrotaCombustivel[data_referencia] ), REMOVEFILTERS() )
+VAR _max = CALCULATE( MAX( fFrotaCombustivel[data_referencia] ), REMOVEFILTERS() )
+VAR _mes =
+    SWITCH(
+        MONTH( _min ),
+        1, "jan", 2, "fev", 3, "mar", 4, "abr",  5, "mai",  6, "jun",
+        7, "jul", 8, "ago", 9, "set", 10, "out", 11, "nov", 12, "dez"
+    )
+VAR _mesMax =
+    SWITCH(
+        MONTH( _max ),
+        1, "jan", 2, "fev", 3, "mar", 4, "abr",  5, "mai",  6, "jun",
+        7, "jul", 8, "ago", 9, "set", 10, "out", 11, "nov", 12, "dez"
+    )
+RETURN
+    _mes & "/" & YEAR( _min ) & " a " & _mesMax & "/" & YEAR( _max )
+
+// Modelos que a regra não classificou mas cuja marca tem linha eletrificada.
+// É a fila de revisão das regras de dados/modelos.csv.
+Modelos a revisar =
+CALCULATE(
+    DISTINCTCOUNT( fModelosClassificados[marca_modelo_norm] ),
+    fModelosClassificados[revisar] = TRUE()
+)
+
+
+// -----------------------------------------------------------------------------
+// 8. Rótulos para os visuais
+// -----------------------------------------------------------------------------
+//
+// Cartões e títulos dinâmicos. Num painel de estoque, dizer qual é o mês de
+// referência ao lado do número evita a maior parte das leituras erradas.
+
+Rótulo do mês de referência =
+VAR _ref = [Mês de referência]
+VAR _mes =
+    SWITCH(
+        MONTH( _ref ),
+        1, "janeiro", 2, "fevereiro", 3, "março",     4, "abril",
+        5, "maio",    6, "junho",     7, "julho",     8, "agosto",
+        9, "setembro", 10, "outubro", 11, "novembro", 12, "dezembro"
+    )
+RETURN
+    IF( ISBLANK( _ref ), "sem dado no período", _mes & " de " & YEAR( _ref ) )
+
+Título da frota eletrificada =
+"Frota eletrificada — " & [Rótulo do mês de referência]
+
+// Aviso que só aparece quando o recorte selecionado não tem mês publicado.
+Aviso de cobertura =
+IF(
+    ISBLANK( [Mês de referência] ),
+    "Não há arquivo da SENATRAN publicado para o período selecionado."
+)
