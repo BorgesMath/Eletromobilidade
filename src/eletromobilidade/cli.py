@@ -71,9 +71,11 @@ def _processar(args) -> None:
     if not combustivel and not marca_modelo:
         raise SystemExit("Nenhum arquivo de frota por combustível ou por marca/modelo encontrado.")
 
+    ate = tuple(int(x) for x in args.ate.split("-")) if args.ate else None
+
     tabelas = {}
     if combustivel:
-        longo = pipeline.processar_arquivos(combustivel, carregar_tabela(args.tabela_combustiveis))
+        longo = pipeline.processar_arquivos(combustivel, carregar_tabela(args.tabela_combustiveis), ate)
         tabelas |= pipeline.construir_base_combustivel(longo)
     if marca_modelo:
         tabelas |= processar_arquivos_modelo(marca_modelo, carregar_regras(args.regras_modelos),
@@ -146,6 +148,8 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--saida", type=Path, default=PROCESSED)
     p.add_argument("--desde", default=INICIO_SERIE,
                    help=f"primeiro mês da série, AAAA-MM (padrão: {INICIO_SERIE}; '' para usar todos os arquivos)")
+    p.add_argument("--ate", help="último mês publicado pela fonte, AAAA-MM (use a saída de 'links'); "
+                                 "sem ele, um mês faltando na ponta da série não é detectado")
     p.add_argument("--tabela-combustiveis", type=Path, help="CSV alternativo combustível -> classe")
     p.add_argument("--regras-modelos", type=Path, help="CSV alternativo de regras modelo -> classe")
     p.add_argument("--sem-csv", action="store_true", help="grava apenas Parquet")

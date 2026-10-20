@@ -187,10 +187,13 @@ _COLUNAS = {
     "frota_eletrificada": "Soma de eletrico, hibrido_plug_in, hibrido e celula_combustivel (sem hibrido_leve).",
     "participacao_eletrificada": "frota_eletrificada / frota_total (fração entre 0 e 1).",
     "hibrido_leve_modelo": "Híbridos leves na base por modelo (sem equivalente na base por combustível).",
-    "arquivo": "Arquivo mensal da SENATRAN.",
+    "arquivo": "Arquivo mensal da SENATRAN; vazio quando o mês do calendário não chegou na entrada.",
     "linhas": "Linhas lidas do arquivo.",
-    "ajuste": "Correção aplicada ao arquivo (vazio se nenhuma).",
-    "incluido": "Se o mês entrou na série (falso para mês idêntico ao anterior).",
+    "ajuste": "Correção ou ressalva do mês: escala x10, mês idêntico ao anterior, mês ausente, "
+              "ou classe que só passa a existir no cadastro a partir dali. Vazio se nenhuma.",
+    "incluido": "Se o mês entrou na série (falso para mês idêntico ao anterior e para mês ausente).",
+    "sem_informacao": "frota_sem_informacao / frota_total no mês (fração entre 0 e 1): parte da frota "
+                      "sem rótulo de combustível aproveitável, que é o piso de incerteza das participações.",
 }
 
 _INDICADORES = {"total": "frota total", "eletrico": "elétricos", "hibrido_plug_in": "híbridos plug-in",

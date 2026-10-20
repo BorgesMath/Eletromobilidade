@@ -23,7 +23,8 @@ import pandas as pd
 
 from .classificacao import CLASSES, CLASSES_ELETRIFICADAS, carregar_tabela, classificar
 from .leitura import EXTENSOES_DADOS, identificar_tabela, inferir_periodo, ler_frota_combustivel
-from .qualidade import assinatura, corrigir_escala, meses_repetidos
+from .qualidade import (CLASSE_TARDIA, MES_AUSENTE, assinatura, classes_tardias, corrigir_escala,
+                        meses_ausentes, meses_repetidos, participacao_sem_informacao)
 from .texto import normalizar
 from .ufs import resolver_uf
 
@@ -167,11 +168,17 @@ def registro_qualidade(periodo: tuple[int, int], arquivo: str, linhas: int, tota
             "ajuste": "; ".join(a for a in ajustes if a), "incluido": incluido}
 
 
-def processar_arquivos(caminhos: list[Path], tabela: dict[str, str] | None = None) -> pd.DataFrame:
+def processar_arquivos(caminhos: list[Path], tabela: dict[str, str] | None = None,
+                       ate: tuple[int, int] | None = None) -> pd.DataFrame:
     """Processa vários arquivos mensais por combustível; falha se dois cobrirem o mesmo mês.
 
-    Aplica as verificações de ``qualidade.py`` (escala x10, mês repetido). O registro
-    por arquivo fica em ``resultado.attrs["qualidade"]``.
+    Aplica as verificações de ``qualidade.py`` (escala x10, mês repetido, mês
+    ausente). O registro por mês fica em ``resultado.attrs["qualidade"]``, com uma
+    linha sem arquivo para cada mês do calendário que não chegou na entrada.
+
+    ``ate`` é o último mês que a fonte publicou, e deve vir da listagem de
+    ``coleta`` — sem ele, um mês faltando na ponta não é detectável, porque o
+    intervalo fecha no último arquivo presente.
     """
     if not caminhos:
         raise FileNotFoundError("Nenhum arquivo de frota por combustível para processar.")
@@ -192,6 +199,11 @@ def processar_arquivos(caminhos: list[Path], tabela: dict[str, str] | None = Non
         qualidade.append(registro_qualidade(periodo, df["arquivo_origem"].iloc[0], len(df),
                                             int(df["qtd_veiculos"].sum()), ajustes, periodo not in repetidos))
 
+    for periodo in meses_ausentes(meses.keys(), ate):
+        log.warning("%d-%02d: %s.", periodo[0], periodo[1], MES_AUSENTE)
+        qualidade.append(registro_qualidade(periodo, "", 0, 0, [MES_AUSENTE], False))
+    qualidade.sort(key=lambda r: (r["ano"], r["mes"]))
+
     resultado = pd.concat([df for p, df in meses.items() if p not in repetidos], ignore_index=True).sort_values(
         ["ano", "mes", "uf_sigla", "municipio_norm", "combustivel_norm"], na_position="last"
     ).reset_index(drop=True)
@@ -208,6 +220,28 @@ def auditoria_combustiveis(longo: pd.DataFrame) -> pd.DataFrame:
             .sort_values(["classe", "qtd_veiculos"], ascending=[True, False]))
 
 
+def anotar_serie(qualidade: pd.DataFrame, painel_brasil: pd.DataFrame) -> pd.DataFrame:
+    """Acrescenta ao registro mensal o que só aparece olhando a série inteira.
+
+    Duas coisas: a fração da frota sem rótulo de combustível em cada mês, que é o
+    piso de incerteza das participações; e, no mês em que uma classe tardia passa a
+    contar, a nota de que o zero anterior é ausência de código, não de veículo (ver
+    ``qualidade.classes_tardias``).
+    """
+    if qualidade.empty or painel_brasil.empty:
+        return qualidade
+    anotado = qualidade.copy()
+    fracao = participacao_sem_informacao(painel_brasil).to_dict()
+    anotado["sem_informacao"] = [fracao.get((a, m)) for a, m in zip(anotado["ano"], anotado["mes"])]
+    for coluna, periodo in classes_tardias(painel_brasil, [f"frota_{c}" for c in CLASSES]).items():
+        nota = f"{coluna}: " + CLASSE_TARDIA.format(f"{periodo[0]}-{periodo[1]:02d}")
+        log.warning("%s", nota)
+        alvo = (anotado["ano"] == periodo[0]) & (anotado["mes"] == periodo[1])
+        anotado.loc[alvo, "ajuste"] = anotado.loc[alvo, "ajuste"].apply(
+            lambda atual: "; ".join(parte for parte in (atual, nota) if parte))
+    return anotado
+
+
 def construir_base_combustivel(longo: pd.DataFrame) -> dict[str, pd.DataFrame]:
     qualidade = longo.attrs.get("qualidade")
     longo = longo.copy(deep=False)
@@ -219,5 +253,5 @@ def construir_base_combustivel(longo: pd.DataFrame) -> dict[str, pd.DataFrame]:
         "combustiveis_classificados": auditoria_combustiveis(longo),
     }
     if qualidade is not None:
-        tabelas["qualidade_combustivel"] = qualidade
+        tabelas["qualidade_combustivel"] = anotar_serie(qualidade, tabelas["combustivel_brasil"])
     return tabelas

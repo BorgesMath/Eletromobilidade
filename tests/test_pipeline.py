@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from eletromobilidade import pipeline
+from eletromobilidade import pipeline, qualidade
 from eletromobilidade.base_modelo import processar_arquivos_modelo
 from eletromobilidade.cli import main
 from eletromobilidade.conciliacao import conciliar_bases
@@ -181,6 +181,47 @@ def test_qualidade_combustivel_escala_e_mes_repetido(tmp_path, poucas_linhas_bas
     assert "divididas por 10" in q.loc[(2021, 11), "ajuste"]
     assert q.loc[(2022, 1), "ajuste"].startswith("idêntico a 2021-12")
     assert not q.loc[(2022, 1), "incluido"] and q.loc[(2021, 11), "incluido"]
+
+
+def test_meses_ausentes_pega_lacuna_no_meio_e_na_ponta():
+    presentes = [(2026, 1), (2026, 2), (2026, 4)]
+    assert qualidade.meses_ausentes(presentes) == [(2026, 3)]
+    # sem `ate`, o intervalo fecha no último presente e a falta na ponta some
+    assert qualidade.meses_ausentes(presentes, ate=(2026, 6)) == [(2026, 3), (2026, 5), (2026, 6)]
+    assert qualidade.meses_ausentes([(2025, 12), (2026, 1)]) == []
+    assert qualidade.meses_ausentes([]) == []
+
+
+def test_classes_tardias_separa_zero_inicial_de_classe_que_nasce_depois():
+    painel = pd.DataFrame({
+        "ano": [2026] * 4, "mes": [1, 2, 3, 4],
+        "frota_hibrido_plug_in": [0, 0, 131, 179],    # código só passa a existir em março
+        "frota_eletrico": [10, 12, 14, 16],           # conta desde o primeiro mês
+        "frota_celula_combustivel": [0, 0, 0, 0],     # nunca aparece: nada a sinalizar
+    })
+    colunas = ["frota_hibrido_plug_in", "frota_eletrico", "frota_celula_combustivel"]
+    assert qualidade.classes_tardias(painel, colunas) == {"frota_hibrido_plug_in": (2026, 3)}
+
+
+def test_participacao_sem_informacao_por_mes():
+    painel = pd.DataFrame({"ano": [2026, 2026], "mes": [1, 2],
+                           "frota_sem_informacao": [10, 30], "frota_total": [100, 100]})
+    assert qualidade.participacao_sem_informacao(painel).to_dict() == {(2026, 1): 0.1, (2026, 2): 0.3}
+
+
+def test_qualidade_combustivel_registra_mes_ausente_inclusive_na_ponta(tmp_path, poucas_linhas_bastam):
+    escrever_xlsx(tmp_path / "combustivel_Janeiro_2026.xlsx", LINHAS_JAN)
+    marco = [(*l[:3], l[3] + 1) for l in LINHAS_JAN]  # conteúdo diferente de janeiro
+    escrever_xlsx(tmp_path / "combustivel_Marco_2026.xlsx", marco)
+
+    base = pipeline.construir_base_combustivel(
+        pipeline.processar_arquivos(pipeline.localizar_arquivos(tmp_path, "combustivel"), ate=(2026, 4)))
+    q = base["qualidade_combustivel"].set_index(["ano", "mes"])
+    for faltante in [(2026, 2), (2026, 4)]:  # fevereiro no meio, abril na ponta
+        assert q.loc[faltante, "ajuste"] == qualidade.MES_AUSENTE
+        assert not q.loc[faltante, "incluido"]
+        assert q.loc[faltante, "arquivo"] == ""
+    assert q.loc[(2026, 1), "incluido"] and q.loc[(2026, 3), "incluido"]
 
 
 def test_qualidade_modelo_escala_e_mes_repetido(tmp_path, poucas_linhas_bastam):
