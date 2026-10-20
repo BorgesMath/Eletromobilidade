@@ -10,7 +10,7 @@ O projeto tem três camadas, e a divisão entre elas é deliberada:
 |---|---|---|
 | **Dados** | [`src/`](src/eletromobilidade), [`tests/`](tests) | Coleta, trata, classifica e concilia. É onde está a lógica e o teste automatizado. Publica [`resultados/`](resultados/LEIAME.md). |
 | **Painel** | [`pbi/`](pbi/MODELO.md) | Modelo estrela, Power Query, DAX e tema. Lê só `resultados/` — nunca a SENATRAN direto. |
-| **Entrega** | [`docs/`](docs/ROTEIRO.md) | Roteiro do que falta e subsídio para documento do MME. |
+| **Roteiro** | [`docs/`](docs/ROTEIRO.md) | O que falta, em ordem de valor, e o que a base sustenta hoje. |
 
 Nada de regra de negócio no Power BI: o que decide se um veículo é eletrificado
 mora no Python, onde um teste pega a mudança. O PBI apresenta e agrega.

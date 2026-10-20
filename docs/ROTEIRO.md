@@ -1,6 +1,6 @@
 # Roteiro
 
-Estado em 19/10/2026. O pipeline Python está fechado e testado (171 testes); a
+Estado em 20/10/2026. O pipeline Python está fechado e testado (188 testes); a
 camada do Power BI está especificada em [`pbi/`](../pbi/MODELO.md) e o `.pbix`
 ainda precisa ser montado. O que falta está abaixo, em ordem de valor.
 
@@ -76,7 +76,7 @@ vez de classificar 613 modelos do zero, basta classificar o resíduo não casado
 usar o PBE como verificação de quem já se sabe leve. Combinar com `G_`
 (`tipo_especie_eixos`) como total de controle por município, do mesmo jeito que a
 base por combustível concilia a base por modelo, transformaria a inferência em
-erro medido — e é isso que torna o número por tipo defensável num documento.
+erro medido — e é isso que torna o número por tipo defensável, não só plausível.
 
 ## 4. Fechar o furo de jan/2022 e esticar a série para trás
 
@@ -144,7 +144,7 @@ entram.
 **Agrupamento por fabricante não foi feito.** `marca` é marca comercial:
 CHEVROLET e GMC seguem separadas, como VOLVO e GEELY, como CHERY e OMODA. Somar
 por grupo econômico pede outra coluna e outra tabela, com decisão de fronteira
-em cada caso — e errar isso num documento do MME é pior que não ter.
+em cada caso — e errar isso é pior que não ter.
 
 ## 6. Publicar a tabela longa por classe
 
@@ -166,23 +166,11 @@ com município dá uma proxy de porte da frota. Só depois do resto.
 
 ---
 
-# Entrega para o MME
+# O que a base sustenta
 
-O painel é meio, não fim. A entrega é um documento no padrão SEI, e ele depende
-de três decisões que ainda não estão tomadas:
-
-**Gênero.** Nota técnica propositiva, nota informativa de subsídio a autoridade,
-ou despacho de contribuições a plano de outro órgão — são três estruturas
-diferentes e a escolha muda o documento inteiro, não só o cabeçalho.
-
-**Destinatário e finalidade.** Subsídio a reunião, instrução de processo,
-contribuição ao PDE ou ao PLANTE, resposta a proposição legislativa. Define o
-nível de detalhe metodológico: numa nota informativa as ressalvas vão em uma
-frase; numa nota técnica que embasa decisão, vão em seção própria.
-
-**Recorte.** Frota eletrificada nacional e sua trajetória? Concentração
-territorial? Comparação entre as duas bases como avaliação da qualidade do dado
-público? Cada um usa uma parte diferente do que já está pronto.
+Critério de qualidade: o que está medido, o que é indício e o que não se pode
+afirmar a partir destes dados. Vale para qualquer uso — o roteiro não presume
+formato nem destino de entrega.
 
 ## O que já está disponível para citar
 
@@ -213,7 +201,7 @@ Concentração: São Paulo tem 371.659 eletrificados (28% do total nacional), ma
 Distrito Federal lidera em intensidade, com 376 eletrificados por 10 mil
 veículos contra 103 de São Paulo e 98 da média nacional.
 
-## Duas ressalvas que precisam entrar em qualquer documento
+## Duas ressalvas que acompanham estes números em qualquer uso
 
 **Frota é estoque registrado, não emplacamento.** A variação mensal é saldo —
 entradas menos baixas, mais correção de cadastro. Escrever "vendas" ou
