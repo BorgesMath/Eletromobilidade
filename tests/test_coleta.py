@@ -6,7 +6,7 @@ import pytest
 import requests
 
 from eletromobilidade.coleta import (Link, baixar, extrair_links, extrair_recursos_ckan, listar_recursos_ckan,
-                                     selecionar, url_download)
+                                     selecionar, url_canonica)
 
 BASE = "https://www.gov.br/transportes/pt-br/assuntos/transito/conteudo-Senatran/frota-de-veiculos-2025"
 
@@ -46,9 +46,18 @@ CKAN = {
 }
 
 
-def test_url_download_remove_sufixos_plone():
-    assert url_download("https://x/arq.xlsx/view") == "https://x/arq.xlsx"
-    assert url_download("https://x/arq.xlsx/@@download/file") == "https://x/arq.xlsx"
+def test_url_canonica_remove_sufixos_plone():
+    assert url_canonica("https://x/arq.xlsx/view") == "https://x/arq.xlsx"
+    assert url_canonica("https://x/arq.xlsx/@@download/file") == "https://x/arq.xlsx"
+
+
+def test_url_arquivo_devolve_o_sufixo_de_download_no_portal():
+    """O portal serve a página na URL do objeto; o arquivo só vem em /@@download/file."""
+    portal = Link("https://x/arq.xlsx", "arq", "combustivel", (2026, 1), fonte="portal")
+    assert portal.url_arquivo == "https://x/arq.xlsx/@@download/file"
+    assert portal.nome_arquivo == "arq.xlsx"  # o nome sai da URL canônica, não da de download
+    ckan = Link("https://y/download/arq.zip", "arq", "marca_modelo", (2026, 1), fonte="ckan")
+    assert ckan.url_arquivo == ckan.url  # CKAN já publica URL direta
 
 
 def test_extrair_links_portal():
@@ -163,9 +172,35 @@ def test_baixar_rejeita_download_incompleto(tmp_path):
     assert not any((tmp_path / "marca_modelo" / "2026").iterdir())
 
 
-def test_baixar_rejeita_zip_invalido(tmp_path):
-    with pytest.raises(IOError, match="zip válido"):
+def test_baixar_rejeita_html_no_lugar_do_zip(tmp_path):
+    with pytest.raises(IOError, match="não é um arquivo zip"):
         baixar(LINK_ZIP, tmp_path, _Sessao(b"<html>erro</html>"))
+
+
+def test_baixar_rejeita_zip_corrompido(tmp_path):
+    """Começa com PK, então passa pela assinatura; só a estrutura denuncia."""
+    with pytest.raises(IOError, match="zip válido"):
+        baixar(LINK_ZIP, tmp_path, _Sessao(b"PK\x03\x04" + b"\x00" * 64))
+
+
+LINK_XLSX = Link("https://www.gov.br/x/D_Frota_por_UF_Municipio_COMBUSTIVEL_Setembro_2026.xlsx", "",
+                 "combustivel", (2026, 9), "portal")
+
+
+def test_baixar_rejeita_pagina_html_servida_como_xlsx(tmp_path):
+    """O portal responde 200 com a casca React quando a URL de download está errada.
+
+    Sem ``Content-Length``, status e tamanho passam; só o formato denuncia. Foi esse
+    buraco que gravou 76 planilhas como páginas de 277 KB.
+    """
+    with pytest.raises(IOError, match="não é um arquivo xlsx"):
+        baixar(LINK_XLSX, tmp_path, _Sessao(b"<!doctype html>\n<html lang=\"pt-br\">"))
+    assert not list(tmp_path.rglob("*.xlsx"))  # nada de parcial deixado para trás
+
+
+def test_baixar_aceita_xlsx_de_verdade(tmp_path):
+    caminho = baixar(LINK_XLSX, tmp_path, _Sessao(_zip_bytes()))
+    assert caminho.read_bytes()[:2] == b"PK"
 
 
 def _zip_grande() -> bytes:

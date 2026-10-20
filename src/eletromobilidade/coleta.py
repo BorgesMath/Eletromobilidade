@@ -12,6 +12,17 @@ Duas fontes:
 Os nomes dos arquivos não seguem padrão estável (prefixos ``copy_of_``, ``Maro``
 para "Março" etc.), por isso a tabela e o período são inferidos do nome e do
 título de cada recurso.
+
+Duas armadilhas do portal, ambas silenciosas:
+
+* **A URL que identifica não é a que baixa.** No Plone do gov.br a URL do objeto
+  devolve a página; o arquivo só vem em ``/@@download/file``. Pior, a página de
+  resposta é HTTP 200, ``text/html`` e sem ``Content-Length`` — passa por
+  verificação de status e de tamanho. Daí a separação entre ``Link.url``
+  (identidade, nome do arquivo, deduplicação) e ``Link.url_arquivo`` (download).
+* **Por isso o formato é conferido.** ``_verificar`` olha os bytes iniciais: um
+  ``.xlsx`` tem de começar com ``PK``. Sem essa conferência, uma página de 277 KB
+  é gravada com nome de planilha e só estoura muito depois, na leitura.
 """
 
 from __future__ import annotations
@@ -73,6 +84,19 @@ class Link:
     def nome_arquivo(self) -> str:
         return Path(unquote(urlparse(self.url).path)).name
 
+    @property
+    def url_arquivo(self) -> str:
+        """URL que entrega o arquivo em si, que não é a que identifica o recurso.
+
+        No Plone do gov.br a URL do objeto devolve a **página**; quem serve o binário
+        é ``/@@download/file``. Sem o sufixo vem a casca React do portal: HTTP 200,
+        ``text/html``, sem ``Content-Length`` — ou seja, passa por verificação de
+        status e de tamanho, e só não passa por conferência de formato.
+
+        O CKAN publica URL direta; lá o sufixo não se aplica.
+        """
+        return self.url + SUFIXO_DOWNLOAD if self.fonte == "portal" else self.url
+
 
 def _criar_link(url: str, texto: str, fonte: str) -> Link | None:
     """Monta um ``Link`` se a URL apontar para um arquivo de dados."""
@@ -88,9 +112,18 @@ def _criar_link(url: str, texto: str, fonte: str) -> Link | None:
     )
 
 
-def url_download(href: str) -> str:
-    """Remove sufixos de visualização do Plone (``/view``, ``/@@download/file``)."""
-    for sufixo in ("/view", "/@@download/file", "/@@download"):
+SUFIXO_DOWNLOAD = "/@@download/file"
+
+
+def url_canonica(href: str) -> str:
+    """URL do recurso sem os sufixos do Plone, que é o que identifica o arquivo.
+
+    Serve para deduplicar links e para tirar o nome do arquivo: a mesma planilha
+    aparece na página como ``.../X.xlsx``, ``.../X.xlsx/view`` e
+    ``.../X.xlsx/@@download/file``. Para **baixar**, use ``Link.url_arquivo`` — o
+    sufixo de download tem de voltar, senão o portal devolve HTML.
+    """
+    for sufixo in ("/view", SUFIXO_DOWNLOAD, "/@@download"):
         if href.endswith(sufixo):
             return href[: -len(sufixo)]
     return href
@@ -104,7 +137,7 @@ def extrair_links(html: str, url_base: str) -> list[Link]:
     vistos: set[str] = set()
     links: list[Link] = []
     for a in sopa.find_all("a", href=True):
-        url = url_download(urljoin(url_base, a["href"].strip()))
+        url = url_canonica(urljoin(url_base, a["href"].strip()))
         if url in vistos:
             continue
         link = _criar_link(url, a.get_text(" ", strip=True), "portal")
@@ -208,11 +241,30 @@ def selecionar(links: list[Link], tabela: str, meses: list[int] | None = None,
     return [grupo[0] for grupo in candidatos_por_periodo(links, tabela, meses, fontes).values()]
 
 
+# Bytes iniciais de cada formato. xlsx e xlsm são zips (OOXML); xls é OLE2.
+ASSINATURAS = {".zip": b"PK", ".xlsx": b"PK", ".xlsm": b"PK", ".xls": b"\xd0\xcf\x11\xe0"}
+
+
 def _verificar(arquivo: Path, nome_final: str, esperado: int | None) -> None:
+    """Confere tamanho e formato antes de aceitar o arquivo.
+
+    A conferência de formato não é zelo excessivo: o portal responde **200 com uma
+    página HTML** quando a URL de download está errada, e sem ``Content-Length``,
+    de modo que status e tamanho passam. Só o primeiro byte denuncia — foi assim
+    que 76 planilhas viraram páginas React de 277 KB sem um aviso sequer.
+    """
     tamanho = arquivo.stat().st_size
     if esperado is not None and tamanho != esperado:
         raise IOError(f"Download incompleto de {nome_final}: {tamanho} de {esperado} bytes.")
-    if nome_final.lower().endswith(".zip") and not zipfile.is_zipfile(arquivo):
+    extensao = Path(nome_final).suffix.lower()
+    assinatura = ASSINATURAS.get(extensao)
+    if assinatura:
+        with open(arquivo, "rb") as f:
+            inicio = f.read(len(assinatura))
+        if inicio != assinatura:
+            raise IOError(f"{nome_final} não é um arquivo {extensao.lstrip('.')} (começa com "
+                          f"{inicio!r}); a fonte provavelmente devolveu uma página em vez do arquivo.")
+    if extensao == ".zip" and not zipfile.is_zipfile(arquivo):
         raise IOError(f"{nome_final} não é um zip válido.")
 
 
@@ -240,8 +292,10 @@ def baixar(link: Link, destino: str | Path, sessao: requests.Session | None = No
 
     O arquivo é gravado como ``.parcial``. Se a conexão cair no meio, o download é
     retomado do ponto em que parou (cabeçalho ``Range``), com espera exponencial,
-    até ``tentativas`` vezes. Só depois de conferido o tamanho e, para ``.zip``, a
-    estrutura do arquivo, o ``.parcial`` é renomeado.
+    até ``tentativas`` vezes. Só depois de conferidos o tamanho e o formato (ver
+    ``_verificar``) o ``.parcial`` é renomeado.
+
+    Busca em ``link.url_arquivo``, não em ``link.url``: no portal as duas diferem.
     """
     sessao = sessao or criar_sessao()
     caminho = caminho_local(link, destino)
@@ -257,7 +311,7 @@ def baixar(link: Link, destino: str | Path, sessao: requests.Session | None = No
             ja_baixado = temporario.stat().st_size if temporario.exists() else 0
             cabecalhos = {"Range": f"bytes={ja_baixado}-"} if ja_baixado else {}
             try:
-                with sessao.get(link.url, headers=cabecalhos, stream=True, timeout=300) as resposta:
+                with sessao.get(link.url_arquivo, headers=cabecalhos, stream=True, timeout=300) as resposta:
                     resposta.raise_for_status()
                     if ja_baixado and resposta.status_code != 206:
                         ja_baixado = 0  # servidor ignorou o Range: recomeça do zero
