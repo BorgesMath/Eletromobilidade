@@ -93,8 +93,10 @@ dados por baixo dela têm duas limitações sérias:
 | Frota eletrificada por ano de fabricação | **Coluna** | Magnitude sobre escala ordenada | sequencial azul |
 | Nacional × importado | **Barra empilhada** única, 2 séries | Parte-todo de duas classes. Rosca de duas fatias é pior. | slots 1 e 2, rótulo direto |
 
-Não agregue por marca sem ressalva: `CHEV` e `CHEVROLET` são linhas diferentes
-no RENAVAM. O grão confiável desta página é o modelo.
+Agregue por `marca`, não por `marca_renavam`: a primeira une as grafias da mesma
+empresa (`GM`, `CHEVROLET` e `CHEV` viram `CHEVROLET`), a segunda é a grafia
+original do RENAVAM e serve para auditar. A normalização cobre as grafias
+conferidas à mão, então uma marca de frota pequena ainda pode aparecer dividida.
 
 ---
 

@@ -1,0 +1,34 @@
+marca_renavam;marca;nota
+GM;CHEVROLET;no RENAVAM a linha Chevrolet aparece como GM, CHEVROLET e CHEV
+CHEV;CHEVROLET;abreviação
+VW;VOLKSWAGEN;abreviação
+VOLKS;VOLKSWAGEN;abreviação, usada em chassi de ônibus (VOLKS/COMIL, VOLKS/BUSSCAR)
+M.BENZ;MERCEDES-BENZ;abreviação
+MBENZ;MERCEDES-BENZ;abreviação sem ponto
+MERCEDES;MERCEDES-BENZ;grafia parcial
+MERCEDES BENZ;MERCEDES-BENZ;grafia sem hífen
+M.BENZ313CDI;MERCEDES-BENZ;modelo (Sprinter 313 CDI) colado na marca
+MMC;MITSUBISHI;Mitsubishi Motors Corporation
+LR;LAND ROVER;abreviação
+JAG;JAGUAR;abreviação
+HYD;HYUNDAI;abreviação, em Kona e Ioniq importados
+CAOACHERY;CHERY;Caoa Chery é a operação brasileira da Chery
+CAOACHANGAN;CHANGAN;Caoa Changan
+LPM;LEAPMOTOR;abreviação, em C10 REEV e B10
+JTA-SUZUKI;SUZUKI;montadora brasileira (J. Toledo da Amazônia) colada na marca
+HARLEY DAVIDSON;HARLEY-DAVIDSON;grafia sem hífen
+H.DAVIDSON;HARLEY-DAVIDSON;abreviação
+RE;ROYAL ENFIELD;abreviação
+ROYAL;ROYAL ENFIELD;grafia parcial
+IVECOFIAT;IVECO;razão social antiga (Iveco Fiat) colada
+MOTO TRAXX;TRAXX;nome comercial completo
+MPOLO;MARCOPOLO;abreviação
+MGUZZI;MOTO GUZZI;abreviação
+GUZZI;MOTO GUZZI;grafia parcial
+LMABORGHINI;LAMBORGHINI;erro de grafia no RENAVAM
+FCA;CHRYSLER;Fiat Chrysler Automobiles no lugar da marca, na Pacifica importada
+CIVIC;HONDA;modelo lido como marca, em I/CIVIC HYBRID
+GIGA;GIGA WATTS;marca com espaço separada por barra (GIGA/WATTS)
+DONGGUAN;TAILG;cidade do fabricante no lugar da marca
+JIANGXI;JMEV;província do fabricante no lugar da marca
+ANHUI;JAC;província do fabricante no lugar da marca

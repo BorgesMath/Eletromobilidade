@@ -25,8 +25,10 @@ from pathlib import Path
 
 import pandas as pd
 
+from .inmetro import auditar_com_pbev, carregar_pbev, propulsoes_por_modelo
 from .leitura import ler_frota_marca_modelo
-from .modelos import CLASSES_ELETRIFICADAS_MODELO, CLASSES_MODELO, ClassificadorModelos, a_revisar
+from .modelos import (CLASSES_ELETRIFICADAS_MODELO, CLASSES_MODELO, ClassificadorModelos, a_revisar,
+                      carregar_marcas, dimensao_modelo, marca, marca_renavam)
 from .pipeline import enriquecer, paineis, periodos_por_arquivo, registro_qualidade
 from .qualidade import AJUSTE_ESCALA, assinatura, escala_suspeita, meses_repetidos, todas_multiplas_de_10
 
@@ -143,13 +145,21 @@ def processar_arquivos_modelo(caminhos: list[Path], regras: pd.DataFrame | None 
     modelos["revisar"] = a_revisar(modelos)
     regras_usadas = classificador.regras.set_index("regra")["padrao"]
     modelos["padrao"] = modelos["regra"].map(regras_usadas)
+    equivalencias = carregar_marcas()
+    depois_do_texto = modelos.columns.get_loc("marca_modelo_norm") + 1
+    modelos.insert(depois_do_texto, "marca", marca(modelos["marca_modelo_norm"], equivalencias))
+    modelos.insert(depois_do_texto, "marca_renavam", marca_renavam(modelos["marca_modelo_norm"]))
+    modelos = auditar_com_pbev(modelos, propulsoes_por_modelo(carregar_pbev(), equivalencias=equivalencias),
+                               equivalencias)
+    eletrificados = pd.concat(detalhe, ignore_index=True).sort_values(
+        ["ano", "mes", "uf_sigla", "municipio_norm", "classe", "marca_modelo"], na_position="last"
+    ).reset_index(drop=True)
     return {
-        "modelo_eletrificados": pd.concat(detalhe, ignore_index=True).sort_values(
-            ["ano", "mes", "uf_sigla", "municipio_norm", "classe", "marca_modelo"], na_position="last"
-        ).reset_index(drop=True),
+        "modelo_eletrificados": eletrificados,
         **paineis(totais, "modelo", CLASSES_MODELO, CLASSES_ELETRIFICADAS_MODELO),
         "modelos_classificados": modelos.sort_values(
             ["ano", "mes", "classe", "qtd_veiculos"], ascending=[True, True, True, False]
         ).reset_index(drop=True),
+        "modelos_dimensao": dimensao_modelo(eletrificados["marca_modelo"], equivalencias),
         "qualidade_modelo": pd.DataFrame(qualidade),
     }

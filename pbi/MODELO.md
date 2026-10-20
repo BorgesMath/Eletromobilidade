@@ -66,7 +66,7 @@ previsível que filtro cruzado automático.
 | `dCalendario` | dia | ~2.465 | tabela calculada em DAX |
 | `dLocalidade` | município | 5.581 | `combustivel_municipio.parquet` (distinto) |
 | `dClasse` | classe de tecnologia | 8 | digitada no Power Query |
-| `dModelo` | marca_modelo | 935 | `modelo_eletrificados.parquet` (distinto) |
+| `dModelo` | marca_modelo | 935 | `modelos_dimensao.parquet` |
 
 ### Relacionamentos
 
@@ -161,6 +161,17 @@ Os dois erros se cancelam quando somados: o problema é de **classificação ent
 plug-in e HEV**, não de cobertura. Nome comercial não diz se o carro recarrega
 na tomada — "HYBRID" no fim do modelo pode ser qualquer um dos dois.
 
+**De que lado está o erro, a auditoria do Inmetro dá indício.** Confrontada com a
+tabela PBE Veicular, que traz a propulsão declarada pelo fabricante versão por
+versão, a classificação por nome tem só 20 modelos e 8.177 veículos marcados
+como classe eletrificada que o PBE não registra para aquele modelo
+(`pbe_aviso = 'sem_versao_no_pbe'`) — ordem de grandeza nenhuma perto dos 273 mil
+plug-ins de diferença entre as duas bases. Isso aponta para o campo combustível
+subnotificando PHEV, como o README já supunha, e não para a regra inventando
+plug-in. **Indício, não prova:** a cobertura do PBE é de 79% da frota
+eletrificada e a chave de junção é marca + modelo, não versão, então ela não vê
+toda troca de classe. Até medir isso direito, a regra do painel não muda.
+
 Portanto, no painel:
 
 - a divisão por tecnologia vem **sempre** da base por combustível;
@@ -174,9 +185,13 @@ Portanto, no painel:
 - **Sem código IBGE de município.** As tabelas publicadas identificam município
   por nome normalizado. Impede mapa coroplético confiável por município e
   cruzamento com população. Item do [roteiro](../docs/ROTEIRO.md).
-- **Marca não normalizada.** `dModelo[marca]` sai do RENAVAM como está: `CHEV` e
-  `CHEVROLET` são a mesma empresa em linhas diferentes, `CAOACHERY` e `CHERY`
-  também, e `CIVIC` é modelo lido como marca. Agregue por marca com ressalva.
+- **Marca normalizada só até onde a tabela alcança.** `dModelo[marca]` já une as
+  grafias conferidas à mão (`GM`, `CHEVROLET` e `CHEV` viram `CHEVROLET`;
+  `CAOACHERY` vira `CHERY`; `CIVIC`, que é modelo lido como marca, vira `HONDA`),
+  por `src/eletromobilidade/dados/marcas.csv`. Grafia fora da tabela segue como
+  está: das 110 marcas da dimensão, as conferidas são as que têm frota
+  relevante. Para auditar, compare com `dModelo[marca_renavam]`, que é a grafia
+  original.
 - **Falta jan/2022** na série por combustível (o arquivo publicado era idêntico
   ao de dez/2021). Fica em branco; as medidas não interpolam.
 - **A base por modelo tem dois meses** (dez/2020 e set/2026). Não há série

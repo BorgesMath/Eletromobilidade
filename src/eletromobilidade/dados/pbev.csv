@@ -1,0 +1,973 @@
+ciclo;categoria;marca;modelo;versao;motor;propulsao;transmissao;classe
+2026;Grande;AUDI;A3 Sedan;Advanced;2.0 - 16V;Combustão;DCT-7;combustao
+2026;Grande;AUDI;A3 Sedan;Performance;2.0 - 16V;Combustão;DCT-7;combustao
+2026;Grande;AUDI;A3 Sedan;Performance Black;2.0 - 16V;Combustão;DCT-7;combustao
+2026;Médio;AUDI;A3 Spotback;Peformance;2.0 - 16V;Combustão;DCT-7;combustao
+2026;Médio;AUDI;A3 Spotback;Performance Black;2.0 - 16V;Combustão;DCT-7;combustao
+2026;Extra Grande;AUDI;A5;Performance S Edition;2.0 - 16V;Combustão;DCT-7;combustao
+2026;Extra Grande;AUDI;A5 Avant;S line;2.0 - 16V;Combustão;DCT-7;combustao
+2026;Extra Grande;AUDI;A5 Sedan;S line;2.0 - 16V;Combustão;DCT-7;combustao
+2026;Extra Grande;AUDI;A5 Sedan;S line (ed.0);2.0 - 16V;Combustão;DCT-7;combustao
+2026;Extra Grande;AUDI;A6 Avant e-tron;S line;Elétrico;Elétrico;A-1;eletrico
+2026;Extra Grande;AUDI;A6 e-tron;Performance black;Elétrico;Elétrico;A-1;eletrico
+2026;Extra Grande;AUDI;A6 e-tron;S line;Elétrico;Elétrico;A-1;eletrico
+2026;Grande;AUDI;Q3 SUV;Launch edition;2.0 - 16V;Combustão;DCT-7;combustao
+2026;Grande;AUDI;Q3 SUV;Launch edition;2.0 - 16V;Combustão;DCT-7;combustao
+2026;Grande;AUDI;Q3 SUV;Launch edition (ed.0);2.0 - 16V;Combustão;DCT-7;combustao
+2026;Grande;AUDI;Q3 SUV;Launch edition (ed.0);2.0 - 16V;Combustão;DCT-7;combustao
+2026;Grande;AUDI;Q3 Sportback;Launch edition;2.0 - 16V;Combustão;DCT-7;combustao
+2026;Grande;AUDI;Q3 Sportback;Launch edition;2.0 - 16V;Combustão;DCT-7;combustao
+2026;Grande;AUDI;Q3 Sportback;Launch edition (ed.0);2.0 - 16V;Combustão;DCT-7;combustao
+2026;Grande;AUDI;Q3 Sportback;Launch edition (ed.0);2.0 - 16V;Combustão;DCT-7;combustao
+2026;Extra Grande;AUDI;Q5 SUV;Advanced;2.0 - 16V;Combustão;DCT-7;combustao
+2026;Extra Grande;AUDI;Q5 SUV;S line;2.0 - 16V;Combustão;DCT-7;combustao
+2026;Extra Grande;AUDI;Q5 Sportback;Advanced;2.0 - 16V;Combustão;DCT-7;combustao
+2026;Extra Grande;AUDI;Q5 Sportback;S line;2.0 - 16V;Combustão;DCT-7;combustao
+2026;Extra Grande;AUDI;Q6 Sportback e-tron Quattro;Performance black;Elétrico;Elétrico;A-1;eletrico
+2026;Extra Grande;AUDI;Q6 Sportback e-tron Quattro;S line;Elétrico;Elétrico;A-1;eletrico
+2026;Extra Grande;AUDI;Q6 e-tron Quattro;Dynamic;Elétrico;Elétrico;A-1;eletrico
+2026;Extra Grande;AUDI;Q6 e-tron Quattro;Performance;Elétrico;Elétrico;A-1;eletrico
+2026;Extra Grande;AUDI;Q6 e-tron Quattro;Performance black;Elétrico;Elétrico;A-1;eletrico
+2026;Extra Grande;AUDI;Q6 e-tron Quattro;S line;Elétrico;Elétrico;A-1;eletrico
+2026;Extra Grande;AUDI;Q6 e-tron RWD;Performance;Elétrico;Elétrico;A-1;eletrico
+2026;Extra Grande;AUDI;Q7;S Line;3.0 - 24V;Híbrido;A-8;hibrido
+2026;Extra Grande;AUDI;Q8 Sportback;Performance Black;3.0 - 24V;Híbrido;A-8;hibrido
+2026;Extra Grande;AUDI;RS 6 Avant;Performance;4.0 - 32V;Híbrido;A-8;hibrido
+2026;Extra Grande;AUDI;RS e-tron GT;Performance;Elétrico;Elétrico;A-1;eletrico
+2026;Grande;AUDI;RS3 Sedan;-;2.5 - 20V;Combustão;DCT-7;combustao
+2026;Grande;AUDI;RS3 Sedan;Track;2.5 - 20V;Combustão;DCT-7;combustao
+2026;Extra Grande;AUDI;RSQ8;Performance;4.0 - 32V;Combustão;A-8;combustao
+2026;Extra Grande;AUDI;SQ5 SUV;-;3.0 - 24V;Combustão;DCT-7;combustao
+2026;Extra Grande;AUDI;SQ5 Sportback;-;3.0 - 24V;Combustão;DCT-7;combustao
+2026;Extra Grande;AUDI;SQ6 Sportback e-tron Quattro;-;Elétrico;Elétrico;A-1;eletrico
+2026;Extra Grande;AUDI;SQ6 Sportback e-tron Quattro;-;Elétrico;Elétrico;A-1;eletrico
+2026;Grande;BMW;220;-;2.0 - 16V;Combustão;A-7;combustao
+2026;Grande;BMW;220;MSP;2.0 - 16V;Combustão;A-7;combustao
+2026;Extra Grande;BMW;320i;Active Flex;2.0 - 16V;Combustão;A-8;combustao
+2026;Extra Grande;BMW;320i;GP Flex;2.0 - 16V;Combustão;A-8;combustao
+2026;Extra Grande;BMW;320i;M Sport Flex;2.0 - 16V;Combustão;A-8;combustao
+2026;Extra Grande;BMW;320i;Sport GP Flex;2.0 - 16V;Combustão;A-8;combustao
+2026;Extra Grande;BMW;330e;-;2.0 - 16V;Plug-in;A-8;hibrido_plug_in
+2026;Extra Grande;BMW;420i;Cabrio;2.0 - 16V;Combustão;A-8;combustao
+2026;Extra Grande;BMW;530e;M SPORT;2.0 - 16V;Plug-in;A-8;hibrido_plug_in
+2026;Extra Grande;BMW;I5;M60;Elétrico;Elétrico;A;eletrico
+2026;Extra Grande;BMW;IX;xDrive 50;Elétrico;Elétrico;A;eletrico
+2026;Médio;BMW;M135;xDrive;2.0 - 16V;Combustão;A-7;combustao
+2026;Esportivo;BMW;M2;CUP;3.0 - 24V;Combustão;A-8;combustao
+2026;Esportivo;BMW;M2;CUP;3.0 - 24V;Combustão;A-8;combustao
+2026;Esportivo;BMW;M2;Coupe;3.0 - 24V;Combustão;A-8;combustao
+2026;Esportivo;BMW;M2;Coupe Track;3.0 - 24V;Combustão;A-8;combustao
+2026;Grande;BMW;M235;xDrive;2.0 - 16V;Combustão;A-7;combustao
+2026;Esportivo;BMW;M3;COMP TRACK;3.0 - 24V;Combustão;A-8;combustao
+2026;Esportivo;BMW;M3;Competition;3.0 - 24V;Combustão;A-8;combustao
+2026;Esportivo;BMW;M4;COMP TRACK;3.0 - 24V;Combustão;A-8;combustao
+2026;Esportivo;BMW;M4;Competition;3.0 - 24V;Combustão;A-8;combustao
+2026;Utilitário Esportivo Grande;BMW;X1;S20i GP;2.0 - 16V;Combustão;A-7;combustao
+2026;Utilitário Esportivo Grande;BMW;X1;S20i M Sport;2.0 - 16V;Combustão;A-7;combustao
+2026;Utilitário Esportivo Grande;BMW;X1;S20i X Line;2.0 - 16V;Combustão;A-7;combustao
+2026;Grande;BMW;X2;M35i;2.0 - 16V;Combustão;A-7;combustao
+2026;Utilitário Esportivo Grande;BMW;X2;xDrive20i MSP;2.0 - 16V;Combustão;A-7;combustao
+2026;Utilitário Esportivo Grande 4x4;BMW;X3;30 XDRIVE;2.0 - 16V;Híbrido;A-8;hibrido
+2026;Utilitário Esportivo Grande 4x4;BMW;X3;M50i;3.0 - 24V;Híbrido;A-8;hibrido
+2026;Utilitário Esportivo Grande 4x4;BMW;X5;xDrive50e MSP;3.0 - 24V;Plug-in;A-8;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;BMW;X5;xDrive50e XLINE;3.0 - 24V;Plug-in;A-8;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;BMW;X6;40I MSP DARK ED;3.0 - 24V;Híbrido;A-8;hibrido
+2026;Utilitário Esportivo Grande 4x4;BMW;X6;xDrive40i MSP;3.0 - 24V;Híbrido;A-8;hibrido
+2026;Utilitário Esportivo Grande 4x4;BMW;X7;xDrive40i;3.0 - 24V;Híbrido;A-8;hibrido
+2026;Extra Grande;BMW;i7;xDrive60;Elétrico;Elétrico;A;eletrico
+2026;Grande;BMW;iX1;eDrive20;Elétrico;Elétrico;A;eletrico
+2026;Grande;BMW;iX1;xDrive30;Elétrico;Elétrico;A;eletrico
+2026;Grande;BMW;iX2;xDrive30 MSP;Elétrico;Elétrico;A;eletrico
+2026;Extra Grande;BMW;iX3;50 XDRIVE MSP;Elétrico;Elétrico;A;eletrico
+2026;Grande;BYD;ATTO 2;GL DM FLEX;1.5-16V;Plug-in;A-1;hibrido_plug_in
+2026;Grande;BYD;ATTO 2;GS DM FLEX;1.5-16V;Plug-in;A-1;hibrido_plug_in
+2026;Extra Grande;BYD;ATTO 8;GS DM;1.5-16V;Plug-in;A-1;hibrido_plug_in
+2026;Médio;BYD;DOLPHIN;GS 180EV;Elétrico;Elétrico;N.A.;eletrico
+2026;Médio;BYD;DOLPHIN;PLUS 310EV;Elétrico;Elétrico;N.A.;eletrico
+2026;Médio;BYD;DOLPHIN;SE 290EV;Elétrico;Elétrico;N.A.;eletrico
+2026;Sub Compacto;BYD;DOLPHIN MINI;GL 5 EV;Elétrico;Elétrico;A-1;eletrico
+2026;Sub Compacto;BYD;DOLPHIN MINI;GS 5 EV;Elétrico;Elétrico;N.A.;eletrico
+2026;Sub Compacto;BYD;DOLPHIN MINI;GS EV;Elétrico;Elétrico;N.A.;eletrico
+2026;Comercial;BYD;ET3;---;Elétrico;Elétrico;N.A.;eletrico
+2026;Extra Grande;BYD;HAN;AWD GS 680EV;Elétrico;Elétrico;N.A.;eletrico
+2026;Extra Grande;BYD;KING;GL DM;1.5-16V;Plug-in;A-1;hibrido_plug_in
+2026;Extra Grande;BYD;KING;GS DM;1.5-16V;Plug-in;A-1;hibrido_plug_in
+2026;Extra Grande;BYD;SEAL;AWD GS 590EV;Elétrico;Elétrico;N.A.;eletrico
+2026;Extra Grande;BYD;SEALION 7;GS 690EV;Elétrico;Elétrico;A-1;eletrico
+2026;Picape;BYD;SHARK;GL DM;1.5-16V;Plug-in;A-1;hibrido_plug_in
+2026;Picape;BYD;SHARK;GS DM;1.5-16V;Plug-in;A-1;hibrido_plug_in
+2026;Extra Grande;BYD;SONG PLUS;GS DM;1.5-16V;Plug-in;A-1;hibrido_plug_in
+2026;Extra Grande;BYD;SONG PLUS;PREM DM;1.5-16V;Plug-in;A-1;hibrido_plug_in
+2026;Extra Grande;BYD;SONG PLUS;PREM DM (MY27);1.5-16V;Plug-in;A-1;hibrido_plug_in
+2026;Extra Grande;BYD;SONG PRO;GL DM;1.5-16V;Plug-in;A-1;hibrido_plug_in
+2026;Extra Grande;BYD;SONG PRO;GL DM FLEX;1.5-16V;Plug-in;A-1;hibrido_plug_in
+2026;Extra Grande;BYD;SONG PRO;GS DM;1.5-16V;Plug-in;A-1;hibrido_plug_in
+2026;Extra Grande;BYD;SONG PRO;GS DM FLEX;1.5-16V;Plug-in;A-1;hibrido_plug_in
+2026;Extra Grande;BYD;TAN;AWD GS 700EV;Elétrico;Elétrico;N.A.;eletrico
+2026;Utilitário Esportivo Grande;BYD;YUAN PLUS;GL310 EV;Elétrico;Elétrico;N.A.;eletrico
+2026;Grande;BYD;YUAN PLUS;GS 560EV;Elétrico;Elétrico;N.A.;eletrico
+2026;Utilitário Esportivo Grande;BYD;YUAN PLUS;GS310 EV;Elétrico;Elétrico;N.A.;eletrico
+2026;Médio;BYD;YUAN PRO;GS 290EV;Elétrico;Elétrico;N.A.;eletrico
+2026;Extra Grande;CAOA CHANGAN;AVATR 11;EV;Elétrico;Elétrico;A;eletrico
+2026;Utilitário Esportivo Grande;CAOA CHANGAN;Uni-T;INFINITY (LEV4);1.5 - 16V;Combustão;DCT-7;combustao
+2026;Utilitário Esportivo Compacto;CAOA CHERY;TIGGO 5X;PRO;1.5T -16V;Combustão;CVT;combustao
+2026;Utilitário Esportivo Compacto;CAOA CHERY;TIGGO 5X;PRO;1.5T -16V;Combustão;CVT;combustao
+2026;Utilitário Esportivo Compacto;CAOA CHERY;TIGGO 5X;PRO HA;1.5T -16V;Híbrido;CVT;hibrido
+2026;Utilitário Esportivo Compacto;CAOA CHERY;TIGGO 5X;SPORT;1.5T -16V;Combustão;CVT;combustao
+2026;Utilitário Esportivo Compacto;CAOA CHERY;TIGGO 5X;SPORT;1.5T -16V;Combustão;CVT;combustao
+2026;Grande;CAOA CHERY;TIGGO 7;PHEV;1.5T -16V;Plug-in;DHT;hibrido_plug_in
+2026;Grande;CAOA CHERY;TIGGO 7;PHEV;1.5T -16V;Plug-in;DHT;hibrido_plug_in
+2026;Utilitário Esportivo Grande;CAOA CHERY;TIGGO 7;PRO 16TA;1.6T - 16V;Combustão;DCT-7;combustao
+2026;Utilitário Esportivo Grande;CAOA CHERY;TIGGO 7;PRO 16TA;1.6T - 16V;Combustão;DCT-7;combustao
+2026;Utilitário Esportivo Grande;CAOA CHERY;TIGGO 7;PRO HA;1.5T -16V;Híbrido;CVT;hibrido
+2026;Utilitário Esportivo Grande;CAOA CHERY;TIGGO 7;PRO HA;1.5T -16V;Híbrido;CVT - 9;hibrido
+2026;Utilitário Esportivo Grande;CAOA CHERY;TIGGO 7;SPORT;1.5T -16V;Combustão;CVT 9;combustao
+2026;Utilitário Esportivo Grande;CAOA CHERY;TIGGO 7;SPORT;1.5T - 16V;Combustão;CVT -9;combustao
+2026;Utilitário Esportivo Grande;CAOA CHERY;TIGGO 8;16TA;1.6T - 16V;Combustão;DCT-7;combustao
+2026;Utilitário Esportivo Grande;CAOA CHERY;TIGGO 8;16TA;1.6T - 16V;Combustão;DCT-7;combustao
+2026;Extra Grande;CAOA CHERY;TIGGO 8;PHEV;1.5T - 16V;Plug-in;DHT;hibrido_plug_in
+2026;Utilitário Esportivo Grande;CAOA CHERY;TIGGO 8;PHEV;1.5T - 16V;Plug-in;DHT;hibrido_plug_in
+2026;Extra Grande;CAOACHANGAN;AVATR 11;EV;Elétrico;Elétrico;A;eletrico
+2026;Utilitário Esportivo Grande;CAOACHANGAN;CS75;INFINITY (LEV4);;Combustão;A-8;combustao
+2026;Utilitário Esportivo Grande;CAOACHANGAN;UNI-T;INFINITY (LEV4);;Combustão;DCT-7;combustao
+2026;Extra Grande;CHEVROLET;BLAZER EV;RS;Elétrico;Elétrico;Automática (A);eletrico
+2026;Extra Grande;CHEVROLET;CAPTIVA EV;PR;Elétrico;Elétrico;Automática (A);eletrico
+2026;Extra Grande;CHEVROLET;EQUINOX;ACTIV;1.5T -16V;Combustão;A-8;combustao
+2026;Extra Grande;CHEVROLET;EQUINOX;RS;1.5T -16V;Combustão;A-8;combustao
+2026;Extra Grande;CHEVROLET;EQUINOX EV;-;Elétrico;Elétrico;Automática (A);eletrico
+2026;Picape Compacta;CHEVROLET;MONTANA;LT;1.2T - 12V;Combustão;M-6;combustao
+2026;Picape Compacta;CHEVROLET;MONTANA;LTZ;1.2T - 12V;Combustão;A-6;combustao
+2026;Picape Compacta;CHEVROLET;MONTANA;MT;1.2T - 12V;Combustão;M-6;combustao
+2026;Picape Compacta;CHEVROLET;MONTANA;PREMIER;1.2T - 12V;Combustão;A-6;combustao
+2026;Picape Compacta;CHEVROLET;MONTANA;RS;1.2T - 12V;Combustão;A-6;combustao
+2026;Comercial;CHEVROLET;ONIX;10MT LOG;1.0 - 12 V;Combustão;M-6;combustao
+2026;Médio;CHEVROLET;ONIX;10TAT HB ALC;1.0T - 12V;Combustão;A-6;combustao
+2026;Médio;CHEVROLET;ONIX;10TAT LT1 ALC;1.0T - 12V;Combustão;A-6;combustao
+2026;Médio;CHEVROLET;ONIX;10TAT LTZ ALC;1.0T - 12V;Combustão;A-6;combustao
+2026;Médio;CHEVROLET;ONIX;10TAT PR2 ALC;1.0T - 12V;Combustão;A-6;combustao
+2026;Médio;CHEVROLET;ONIX;AT;1.0T - 12V;Combustão;A-6;combustao
+2026;Comercial;CHEVROLET;ONIX;LOG;1.0 - 12 V;Combustão;M-6;combustao
+2026;Médio;CHEVROLET;ONIX;LT;1.0T - 12V;Combustão;A-6;combustao
+2026;Médio;CHEVROLET;ONIX;LTZ;1.0T - 12V;Combustão;A-6;combustao
+2026;Médio;CHEVROLET;ONIX;MT;1.0T - 12V;Combustão;M-6;combustao
+2026;Médio;CHEVROLET;ONIX;MT;1.0 - 12 V;Combustão;M-6;combustao
+2026;Médio;CHEVROLET;ONIX;PREMIER;1.0T - 12V;Combustão;A-6;combustao
+2026;Médio;CHEVROLET;ONIX;RS;1.0T - 12V;Combustão;A-6;combustao
+2026;Médio;CHEVROLET;ONIX PLUS;10TAT LT1 ALC;1.0T - 12V;Combustão;A-6;combustao
+2026;Médio;CHEVROLET;ONIX PLUS;10TAT LTZ ALC;1.0T - 12V;Combustão;A-6;combustao
+2026;Médio;CHEVROLET;ONIX PLUS;10TAT NB ALC;1.0T - 12V;Combustão;A-6;combustao
+2026;Médio;CHEVROLET;ONIX PLUS;10TAT PR2 ALC;1.0T - 12V;Combustão;A-6;combustao
+2026;Médio;CHEVROLET;ONIX PLUS;AT;1.0T - 12V;Combustão;A-6;combustao
+2026;Médio;CHEVROLET;ONIX PLUS;LT;1.0T - 12V;Combustão;A-6;combustao
+2026;Médio;CHEVROLET;ONIX PLUS;LTZ;1.0T - 12V;Combustão;A-6;combustao
+2026;Médio;CHEVROLET;ONIX PLUS;MT;1.0T - 12V;Combustão;M-6;combustao
+2026;Médio;CHEVROLET;ONIX PLUS;MT;1.0 - 12 V;Combustão;M-6;combustao
+2026;Médio;CHEVROLET;ONIX PLUS;PREMIER;1.0T - 12V;Combustão;A-6;combustao
+2026;Picape;CHEVROLET;S10;HC DD4A;2.8 - 16V;Combustão;A-8;combustao
+2026;Picape;CHEVROLET;S10;HIGH COUNTRY Cabine Dupla;2.8 - 16V;Combustão;A-8;combustao
+2026;Picape;CHEVROLET;S10;LTZ Cabine Dupla;2.8 - 16V;Combustão;A-8;combustao
+2026;Picape;CHEVROLET;S10;LTZ DD4A;2.8 - 16V;Combustão;A-8;combustao
+2026;Picape;CHEVROLET;S10;LTZ DD4A;2.8 - 16V;Combustão;A-8;combustao
+2026;Picape;CHEVROLET;S10;WT Cabine Chassis;2.8 - 16V;Combustão;M-6;combustao
+2026;Picape;CHEVROLET;S10;WT Cabine Duple;2.8 - 16V;Combustão;A-8;combustao
+2026;Picape;CHEVROLET;S10;WT Cabine Simples;2.8 - 16V;Combustão;M-6;combustao
+2026;Picape;CHEVROLET;S10;WT DD4;2.8 - 16V;Combustão;M-6;combustao
+2026;Picape;CHEVROLET;S10;WT DD4A;2.8 - 16V;Combustão;A-8;combustao
+2026;Picape;CHEVROLET;S10;WT DS4;2.8 - 16V;Combustão;M-6;combustao
+2026;Picape;CHEVROLET;S10;WT DS4C;2.8 - 16V;Combustão;M-6;combustao
+2026;Picape;CHEVROLET;S10;Z71;2.8 - 16V;Combustão;A-8;combustao
+2026;Picape;CHEVROLET;S10;Z71 Cabine Dupla;2.8 - 16V;Combustão;A-8;combustao
+2026;Picape;CHEVROLET;SILVERADO;HIGH COUNTRY;5.3 V8;Combustão;A-10;combustao
+2026;Utilitário Esportivo Compacto;CHEVROLET;SONIC;10T AT PR;1.0T - 12V;Combustão;A-6;combustao
+2026;Utilitário Esportivo Compacto;CHEVROLET;SONIC;10T AT RS;1.0T - 12V;Combustão;A-6;combustao
+2026;Médio;CHEVROLET;SPARK EUV;ACTIV;Elétrico;Elétrico;A;eletrico
+2026;Médio;CHEVROLET;SPIN;1.8L AT;1.8L - 8V;Combustão;A-6;combustao
+2026;Minivan;CHEVROLET;SPIN;1.8L AT LTZ;1.8L - 8V;Combustão;A-6;combustao
+2026;Médio;CHEVROLET;SPIN;1.8L AT LTZ5;1.8L - 8V;Combustão;A-6;combustao
+2026;Médio;CHEVROLET;SPIN;1.8L MT LT;1.8L - 8V;Combustão;M-6;combustao
+2026;Minivan;CHEVROLET;SPIN;18L AT PREMIER;1.8L - 8V;Combustão;A-6;combustao
+2026;Utilitário Esportivo Compacto;CHEVROLET;TRACKER;AT;1.0T - 12V;Combustão;A-6;combustao
+2026;Utilitário Esportivo Compacto;CHEVROLET;TRACKER;LT;1.0T - 12V;Combustão;A-6;combustao
+2026;Utilitário Esportivo Compacto;CHEVROLET;TRACKER;LT;1.0T - 12V;Combustão;A-6;combustao
+2026;Utilitário Esportivo Compacto;CHEVROLET;TRACKER;LTZ;1.0T - 12V;Combustão;A-6;combustao
+2026;Utilitário Esportivo Compacto;CHEVROLET;TRACKER;LTZ;1.0T - 12V;Combustão;A-6;combustao
+2026;Utilitário Esportivo Compacto;CHEVROLET;TRACKER;PREMIER;1.2T - 12V;Combustão;A-6;combustao
+2026;Utilitário Esportivo Compacto;CHEVROLET;TRACKER;PREMIER;1.2T - 12V;Combustão;A-6;combustao
+2026;Utilitário Esportivo Compacto;CHEVROLET;TRACKER;RS;1.2T - 12V;Combustão;A-6;combustao
+2026;Fora de Estrada Grande;CHEVROLET;TRAILBLAZER;HC D4A;2.8 - 16V;Combustão;A-8;combustao
+2026;Fora de Estrada Grande;CHEVROLET;TRAILBLAZER;HC MID;2.8 - 16V;Combustão;A-8;combustao
+2026;Fora de Estrada Grande;CHEVROLET;TRAILBLAZER;LT D4A;2.8 - 16V;Combustão;A-8;combustao
+2026;Utilitário Esportivo Compacto;CITROEN;AIRCROSS;7 FL;1.0T-12V;Combustão;CVT-7;combustao
+2026;Utilitário Esportivo Compacto;CITROEN;AIRCROSS;7 FL PK;1.0T-12V;Combustão;CVT-7;combustao
+2026;Utilitário Esportivo Compacto;CITROEN;AIRCROSS;7 SH;1.0T-12V;Combustão;CVT-7;combustao
+2026;Utilitário Esportivo Compacto;CITROEN;AIRCROSS;FL;1.0T-12V;Combustão;CVT-7;combustao
+2026;Utilitário Esportivo Compacto;CITROEN;AIRCROSS;FL PK;1.0T-12V;Combustão;CVT-7;combustao
+2026;Utilitário Esportivo Compacto;CITROEN;AIRCROSS;SH;1.0T-12V;Combustão;CVT-7;combustao
+2026;Utilitário Esportivo Compacto;CITROEN;AIRCROSS;XTR;1.0T-12V;Combustão;CVT-7;combustao
+2026;Utilitário Esportivo Compacto;CITROEN;AIRCROSS;XTR 7;1.0T-12V;Combustão;CVT-7;combustao
+2026;Utilitário Esportivo Compacto;CITROEN;BASALT;FEEL 1.0;1.0-6V;Combustão;M-5;combustao
+2026;Utilitário Esportivo Compacto;CITROEN;BASALT;FL PKT200;1.0T-12V;Combustão;CVT-7;combustao
+2026;Utilitário Esportivo Compacto;CITROEN;BASALT;LIVE 1.0;1.0-6V;Combustão;M-5;combustao
+2026;Utilitário Esportivo Compacto;CITROEN;BASALT;SHINE T200;1.0T-12V;Combustão;CVT-7;combustao
+2026;Utilitário Esportivo Compacto;CITROEN;BASALT;T200 DARK;1.0T-12V;Combustão;CVT-7;combustao
+2026;Utilitário Esportivo Compacto;CITROEN;C3;FEEL 1.0;1.0-6V;Combustão;M-5;combustao
+2026;Utilitário Esportivo Compacto;CITROEN;C3;FEEL PLUS 1.0;1.0-6V;Combustão;M-5;combustao
+2026;Utilitário Esportivo Compacto;CITROEN;C3;LIVE 1.0;1.0-6V;Combustão;M-5;combustao
+2026;Utilitário Esportivo Compacto;CITROEN;C3;LIVE GO 1.0;1.0-6V;Combustão;M-5;combustao
+2026;Utilitário Esportivo Compacto;CITROEN;C3;LIVE PK 1.0;1.0-6V;Combustão;M-5;combustao
+2026;Utilitário Esportivo Compacto;CITROEN;C3;LIVE PLUS 1.0;1.0-6V;Combustão;M-5;combustao
+2026;Utilitário Esportivo Compacto;CITROEN;C3;XTR 1.0;1.0-6V;Combustão;M-5;combustao
+2026;Utilitário Esportivo Compacto;CITROEN;C3;YOU 1.0T CVT;1.0T-12V;Combustão;CVT-7;combustao
+2026;Comercial;CITROEN;E-JUMPY;CARGO;ELÉTRICO;Elétrico;A-1;eletrico
+2026;Comercial;CITROEN;JUMPER;CARGOPK;2.2T-16V;Combustão;M-6;combustao
+2026;Comercial;CITROEN;JUMPER;COMFORT;2.2T-16V;Combustão;M-6;combustao
+2026;Comercial;CITROEN;JUMPER;FURG PK;2.2T-16V;Combustão;M-6;combustao
+2026;Comercial;CITROEN;JUMPER;L3H2AMB;2.2T-16V;Combustão;M-6;combustao
+2026;Comercial;CITROEN;JUMPER;MB16;2.2T-16V;Combustão;M-6;combustao
+2026;Comercial;CITROEN;JUMPER;VITRE;2.2T-16V;Combustão;M-6;combustao
+2026;Comercial;CITROEN;JUMPY;CARGO;2.2T-16V;Combustão;M-6;combustao
+2026;Comercial;CITROEN;JUMPY;VITRE;2.2T-16V;Combustão;M-6;combustao
+2026;Fora de Estrada Grande;DENZA;B5;GS DM;1.5-16V;Plug-in;A-1;hibrido_plug_in
+2026;Comercial;FARIZON;SV;AIR 11M3;Elétrico;Elétrico;A-1;eletrico
+2026;Comercial;FARIZON;SV;AIR 8M3;Elétrico;Elétrico;A-1;eletrico
+2026;Comercial;FARIZON;SV;AIR PRO 8M3;Elétrico;Elétrico;A-1;eletrico
+2026;Comercial;FARIZON;SV;AIR PRO11M3;Elétrico;Elétrico;A-1;eletrico
+2026;Comercial;FARIZON;SV;LUX 11M3;Elétrico;Elétrico;A-1;eletrico
+2026;Comercial;FARIZON;SV;LUX 8M3;Elétrico;Elétrico;A-1;eletrico
+2026;Comercial;FARIZON;SV;LUX PRO 8M3;Elétrico;Elétrico;A-1;eletrico
+2026;Comercial;FARIZON;SV;LUX PRO11M3;Elétrico;Elétrico;A-1;eletrico
+2026;Comercial;FARIZON;V6E;--;Elétrico;Elétrico;A-1;eletrico
+2026;Esportivo;FERRARI;12CILINDRI;--;6.5-48V;Combustão;DCT-8;combustao
+2026;Esportivo;FERRARI;12CILINDRI;SPI;6.5-48V;Combustão;DCT-8;combustao
+2026;Esportivo;FERRARI;296;GTB;3.0-24V;Plug-in;DCT-8;hibrido_plug_in
+2026;Esportivo;FERRARI;296;GTS;3.0-24V;Plug-in;DCT-8;hibrido_plug_in
+2026;Esportivo;FERRARI;PUROSANGUE;--;6.5-48V;Combustão;DCT-8;combustao
+2026;Esportivo;FERRARI;ROMA;SPIDER;3.9-32V;Combustão;DCT-8;combustao
+2026;Sub Compacto;FIAT;500E;ICON;ELÉTRICO;Elétrico;A-1;eletrico
+2026;Compacto;FIAT;ARGO;1.0;1.0-6V;Combustão;M-5;combustao
+2026;Compacto;FIAT;ARGO;DRIVE 1.0;1.0-6V;Combustão;M-5;combustao
+2026;Compacto;FIAT;ARGO;DRIVE 1.3 AT;1.3-8V;Combustão;CVT-7;combustao
+2026;Utilitário Esportivo Compacto;FIAT;ARGO;ENDUR 1.3 MT;1.3-8V;Combustão;M-5;combustao
+2026;Utilitário Esportivo Compacto;FIAT;ARGO;TREKKING 1.3;1.3-8V;Combustão;M-5;combustao
+2026;Utilitário Esportivo Compacto;FIAT;ARGO;TREKKING 1.3AT;1.3-8V;Combustão;CVT-7;combustao
+2026;Médio;FIAT;CRONOS;1.0;1.0-6V;Combustão;M-5;combustao
+2026;Médio;FIAT;CRONOS;DRIVE 1.0;1.0-6V;Combustão;M-5;combustao
+2026;Médio;FIAT;CRONOS;DRIVE 1.3;1.3-8V;Combustão;M-5;combustao
+2026;Médio;FIAT;CRONOS;DRIVE1.3AT;1.3-8V;Combustão;CVT-7;combustao
+2026;Médio;FIAT;CRONOS;PREC 1.3AT;1.3-8V;Combustão;CVT-7;combustao
+2026;Comercial;FIAT;DUCATO;FURGAO 13M;2.2T-16V;Combustão;M-6;combustao
+2026;Comercial;FIAT;DUCATO;L3H2AMB;2.2T-16V;Combustão;M-6;combustao
+2026;Comercial;FIAT;DUCATO;MB COMFORT;2.2T-16V;Combustão;M-6;combustao
+2026;Comercial;FIAT;DUCATO;MB LUXO 16;2.2T-16V;Combustão;M-6;combustao
+2026;Comercial;FIAT;DUCATO;MULTI 13M;2.2T-16V;Combustão;M-6;combustao
+2026;Comercial;FIAT;DUCATO;MXCARGO13M;2.2T-16V;Combustão;M-6;combustao
+2026;Utilitário Esportivo Compacto;FIAT;FASTBACK;ABARTH 270;1.3T-16V;Combustão;A-6;combustao
+2026;Utilitário Esportivo Compacto;FIAT;FASTBACK;AUDACE HYB;1.0T-12V;Híbrido;CVT-7;hibrido
+2026;Utilitário Esportivo Compacto;FIAT;FASTBACK;IMPETUS HY;1.0T-12V;Híbrido;CVT-7;hibrido
+2026;Utilitário Esportivo Compacto;FIAT;FASTBACK;LIMITED ED;1.3T-16V;Combustão;A-6;combustao
+2026;Utilitário Esportivo Compacto;FIAT;FASTBACK;TURBO 200;1.0T-12V;Combustão;CVT-7;combustao
+2026;Comercial;FIAT;FIORINO;ENDURANCE;1.3-8V;Combustão;M-5;combustao
+2026;Sub Compacto;FIAT;MOBI;LIKE;1.0-6V;Combustão;M-5;combustao
+2026;Sub Compacto;FIAT;MOBI;TREKKING;1.0-6V;Combustão;M-5;combustao
+2026;Utilitário Esportivo Compacto;FIAT;PULSE;ABARTH 270;1.3T-16V;Combustão;A-6;combustao
+2026;Utilitário Esportivo Compacto;FIAT;PULSE;AUDACE HYB;1.0T-12V;Híbrido;CVT-7;hibrido
+2026;Utilitário Esportivo Compacto;FIAT;PULSE;DRIVE AT;1.3-8V;Combustão;CVT-7;combustao
+2026;Utilitário Esportivo Compacto;FIAT;PULSE;DRIVE MT;1.3-8V;Combustão;M-5;combustao
+2026;Utilitário Esportivo Compacto;FIAT;PULSE;DRIVE TF 200;1.0T-12V;Combustão;CVT-7;combustao
+2026;Utilitário Esportivo Compacto;FIAT;PULSE;IMPETUS HYB;1.0T-12V;Híbrido;CVT-7;hibrido
+2026;Comercial;FIAT;SCUDO;CARGO TD;2.2T-16V;Combustão;M-6;combustao
+2026;Comercial;FIAT;SCUDO;MULTI TD;2.2T-16V;Combustão;M-6;combustao
+2026;Picape Compacta;FIAT;STRADA;ENDURAN CS13;1.3-8V;Combustão;M-5;combustao
+2026;Picape Compacta;FIAT;STRADA;FREEDOM CD13;1.3-8V;Combustão;M-5;combustao
+2026;Picape Compacta;FIAT;STRADA;FREEDOM CS13;1.3-8V;Combustão;M-5;combustao
+2026;Picape Compacta;FIAT;STRADA;RANCH T200AT;1.0T-12V;Combustão;CVT-7;combustao
+2026;Picape Compacta;FIAT;STRADA;ULTRA T200AT;1.0T-12V;Combustão;CVT-7;combustao
+2026;Picape Compacta;FIAT;STRADA;VOLCANO 13AT;1.3-8V;Combustão;CVT-7;combustao
+2026;Picape Compacta;FIAT;STRADA;VOLCANO CD13;1.3-8V;Combustão;M-5;combustao
+2026;Picape;FIAT;TITANO;ENDURANCE;2.2T-16V;Combustão;M-6;combustao
+2026;Picape;FIAT;TITANO;RANCH;2.2T-16V;Combustão;A-8;combustao
+2026;Picape;FIAT;TITANO;VOLCANO;2.2T-16V;Combustão;A-8;combustao
+2026;Picape;FIAT;TORO;ENDUR T270 AT;1.3T-16V;Combustão;A-6;combustao
+2026;Picape;FIAT;TORO;FREED T270 AT;1.3T-16V;Combustão;A-6;combustao
+2026;Picape;FIAT;TORO;FREED TD450 AT;2.2T-16V;Combustão;A-9;combustao
+2026;Picape;FIAT;TORO;RANCH TD450 AT;2.2T-16V;Combustão;A-9;combustao
+2026;Picape;FIAT;TORO;ULTRA T270 AT;1.3T-16V;Combustão;A-6;combustao
+2026;Picape;FIAT;TORO;ULTRA T270 HYB;1.3T-16V;Híbrido;A-6;hibrido
+2026;Picape;FIAT;TORO;VOLC T270 AT;1.3T-16V;Combustão;A-6;combustao
+2026;Picape;FIAT;TORO;VOLC T270 HYB;1.3T-16V;Híbrido;A-6;hibrido
+2026;Picape;FIAT;TORO;VOLC TD450 AT;2.2T-16V;Combustão;A-9;combustao
+2026;Fora de Estrada Grande;FORD;BRONCO SPORT;Badlands;2.0 - 16V;Combustão;A-8;combustao
+2026;Comercial;FORD;E-Transit;C35EBAB;Elétrico;Elétrico;A-1;eletrico
+2026;Comercial;FORD;E-Transit;C35LBAB;Elétrico;Elétrico;A-1;eletrico
+2026;Comercial;FORD;E-Transit;F35EAAB;Elétrico;Elétrico;A-1;eletrico
+2026;Comercial;FORD;E-Transit;F35LAAB;Elétrico;Elétrico;A-1;eletrico
+2026;Comercial;FORD;E-Transit;F35LMAB;Elétrico;Elétrico;A-1;eletrico
+2026;Comercial;FORD;E-Transit;F35MAAB;Elétrico;Elétrico;A-1;eletrico
+2026;Comercial;FORD;E-Transit;F35MMAB;Elétrico;Elétrico;A-1;eletrico
+2026;Picape;FORD;Maverick;Lariat Black;2.0 - 16V;Combustão;A-8;combustao
+2026;Picape;FORD;Maverick;Lariat Hybrid;2.5 - 16V;Híbrido;eCVT;hibrido
+2026;Picape;FORD;Maverick;Tremor;2.0 - 16V;Combustão;A-8;combustao
+2026;Esportivo;FORD;Mustang;GT AT;5.0 V8 - 32V;Combustão;A-10;combustao
+2026;Esportivo;FORD;Mustang Dark Horse;Dark Horse;5.0 V8 - 32V;Combustão;A-10;combustao
+2026;Picape;FORD;Nova F150;Lariat Black;5.0 - 32V;Combustão;A-10;combustao
+2026;Picape;FORD;Nova F150;Lariat Chrome;5.0 - 32V;Combustão;A-10;combustao
+2026;Picape;FORD;Nova F150;Tremor;5.0 - 32V;Combustão;A-10;combustao
+2026;Picape;FORD;Nova Ranger 4x2;Black;2.0 - 16V;Combustão;A-6;combustao
+2026;Picape;FORD;Nova Ranger 4x4;Cabine Simples;2.0 - 16V;Combustão;M-6;combustao
+2026;Picape;FORD;Nova Ranger 4x4;Cabine Simples;2.0 - 16V;Combustão;A-6;combustao
+2026;Picape;FORD;Nova Ranger 4x4;Chassis;2.0 - 16V;Combustão;M-6;combustao
+2026;Picape;FORD;Nova Ranger 4x4;Chassis;2.0 - 16V;Combustão;A-6;combustao
+2026;Picape;FORD;Nova Ranger 4x4;LTD;3.0 V6 - 24V;Combustão;A-10;combustao
+2026;Picape;FORD;Nova Ranger 4x4;LTD+;3.0 V6 - 24V;Combustão;A-10;combustao
+2026;Picape;FORD;Nova Ranger 4x4;XL;2.0 - 16V;Combustão;M-6;combustao
+2026;Picape;FORD;Nova Ranger 4x4;XLS;2.0 - 16V;Combustão;M-6;combustao
+2026;Picape;FORD;Nova Ranger 4x4;XLS;2.0 - 16V;Combustão;A-6;combustao
+2026;Picape;FORD;Nova Ranger 4x4;XLS;3.0 V6 - 24V;Combustão;A-10;combustao
+2026;Picape;FORD;Nova Ranger 4x4;XLT;3.0 V6 - 24V;Combustão;A-10;combustao
+2026;Extra Grande;FORD;TERRITORY;Titanium;1.5 - 16V;Combustão;A-7;combustao
+2026;Comercial;FORD;Transit;F35LAMA;2.0 - 16V;Combustão;M-6;combustao
+2026;Comercial;FORD;Transit;F35MAMA;2.0 - 16V;Combustão;M-6;combustao
+2026;Comercial;FORD;Transit;F35MMMA;2.0 - 16V;Combustão;M-6;combustao
+2026;Comercial;FORD;Transit;F38LAMA;2.0 - 16V;Combustão;M-6;combustao
+2026;Comercial;FOTON;ETOANO;PRO H;Elétrico;Elétrico;A-1;eletrico
+2026;Comercial;FOTON;ETOANO;PRO M;Elétrico;Elétrico;A-1;eletrico
+2026;Comercial;FOTON;EVIEW;GRAND53;Elétrico;Elétrico;A-1;eletrico
+2026;Comercial;FOTON;EVIEW;GRAND77;Elétrico;Elétrico;A-1;eletrico
+2026;Comercial;FOTON;EVIEW CONNECT;50S;Elétrico;Elétrico;A-1;eletrico
+2026;Comercial;FOTON;EWONDER;CHASSI;Elétrico;Elétrico;A-1;eletrico
+2026;Picape;FOTON;TUNLAND;V7;2.0-16V;Híbrido;A-8;hibrido
+2026;Picape;FOTON;TUNLAND;V9;2.0-16V;Híbrido;A-8;hibrido
+2026;Comercial;FOTON;WONDER;CHASSI;1.6-16V;Combustão;M-5;combustao
+2026;Comercial;FOTON;WONDER;CS;1.6-16V;Combustão;M-5;combustao
+2026;Extra Grande;GAC;AION ES;PLUS;Elétrico;Elétrico;A-1;eletrico
+2026;Grande;GAC;AION UT;ELITE;Elétrico;Elétrico;A-1;eletrico
+2026;Grande;GAC;AION UT;PREMIUM;Elétrico;Elétrico;A-1;eletrico
+2026;Extra Grande;GAC;AION V;ELITE;Elétrico;Elétrico;A-1;eletrico
+2026;Extra Grande;GAC;AION V;PREMIUM;Elétrico;Elétrico;A-1;eletrico
+2026;Grande;GAC;AION Y;ELITE;Elétrico;Elétrico;A-1;eletrico
+2026;Grande;GAC;AION Y;PREMIUM;Elétrico;Elétrico;A-1;eletrico
+2026;Utilitário Esportivo Grande;GAC;GS3;ELITE;1.5-16V;Combustão;DCT-7;combustao
+2026;Utilitário Esportivo Grande;GAC;GS3;ELITE PLUS;1.5-16V;Combustão;DCT-7;combustao
+2026;Utilitário Esportivo Grande;GAC;GS4;ELITE;2.0-16V;Híbrido;DHT-2;hibrido
+2026;Utilitário Esportivo Grande;GAC;GS4;PREMIUM;2.0-16V;Híbrido;DHT-2;hibrido
+2026;Utilitário Esportivo Grande 4x4;GAC;GS9;ULTRA;1.5-16V;Plug-in;A-1;hibrido_plug_in
+2026;Extra Grande;GAC;HYPTEC HT;ELITE;Elétrico;Elétrico;A-1;eletrico
+2026;Extra Grande;GAC;HYPTEC HT;ULTRA;Elétrico;Elétrico;A-1;eletrico
+2026;Médio;GEELY;EX2;MAX;Elétrico;Elétrico;A;eletrico
+2026;Médio;GEELY;EX2;PRO;Elétrico;Elétrico;A;eletrico
+2026;Utilitário Esportivo Grande;GWM;HAVAL H6;GT (MY26);1.5-16V;Plug-in;DHT - 2;hibrido_plug_in
+2026;Utilitário Esportivo Grande;GWM;HAVAL H6;GT FF;1.5 - 16V;Plug-in;DHT-4;hibrido_plug_in
+2026;Utilitário Esportivo Grande;GWM;HAVAL H6;HEV ESP;1.5-16V;Híbrido;DHT - 2;hibrido
+2026;Utilitário Esportivo Grande;GWM;HAVAL H6;HEV ONE (MY26);1.5-16V;Híbrido;DHT - 2;hibrido
+2026;Utilitário Esportivo Grande;GWM;HAVAL H6;HEV1 FLEX;1.5-16V;Híbrido;DHT-1A - 2;hibrido
+2026;Utilitário Esportivo Grande;GWM;HAVAL H6;HEV2 (MY26);1.5-16V;Híbrido;DHT - 2;hibrido
+2026;Utilitário Esportivo Grande;GWM;HAVAL H6;HEV2 FLEX;1.5-16V;Híbrido;DHT-1A - 2;hibrido
+2026;Utilitário Esportivo Grande;GWM;HAVAL H6;PHEV19 (MY26);1.5-16V;Plug-in;DHT - 2;hibrido_plug_in
+2026;Utilitário Esportivo Grande;GWM;HAVAL H6;PHEV19 FF;1.5 - 16V;Plug-in;DHT - 2;hibrido_plug_in
+2026;Utilitário Esportivo Grande;GWM;HAVAL H6;PHEV35 (MY26);1.5-16V;Plug-in;DHT - 2;hibrido_plug_in
+2026;Utilitário Esportivo Grande;GWM;HAVAL H6;PHEV35 FF;1.5 - 16V;Plug-in;DHT-4;hibrido_plug_in
+2026;Fora de Estrada Grande;GWM;HAVAL H9;EXC;2.4- 16V;Combustão;A-9;combustao
+2026;Fora de Estrada Grande;GWM;HAVAL H9;SELECTION;2.4-16V;Combustão;A-9;combustao
+2026;Grande;GWM;ORA;5;Elétrico;Elétrico;A-1;eletrico
+2026;Médio;GWM;ORA 03;BEV58;Elétrico;Elétrico;A-1;eletrico
+2026;Médio;GWM;ORA 03;BEV58 C;Elétrico;Elétrico;A-1;eletrico
+2026;Médio;GWM;ORA 03;GT BEV63;Elétrico;Elétrico;A-1;eletrico
+2026;Médio;GWM;ORA 03;SKIN BEV48;Elétrico;Elétrico;A-1;eletrico
+2026;Picape;GWM;POER P30;EXC;2.4 - 16V;Combustão;A-9;combustao
+2026;Picape;GWM;POER P30;EXC (MY27);2.4-16V;Combustão;A-9;combustao
+2026;Picape;GWM;POER P30;PRO;2.4-16V;Combustão;A-9;combustao
+2026;Picape;GWM;POER P30;PRO (MY27);2.4-16V;Combustão;A-9;combustao
+2026;Picape;GWM;POER P30;TRL;2.4 - 16V;Combustão;A-9;combustao
+2026;Picape;GWM;POER P30;TRL (MY27);2.4-16V;Combustão;A-9;combustao
+2026;Fora de Estrada Grande;GWM;TANK 300;PHEV;2.0 -16V;Plug-in;A-9;hibrido_plug_in
+2026;Fora de Estrada Grande;GWM;TANK 300;PHEV FLEX;2.0-16V;Plug-in;A-9;hibrido_plug_in
+2026;Utilitário Esportivo Grande;GWM;WEY;07;1.5 - 16V;Plug-in;A-4;hibrido_plug_in
+2026;Utilitário Esportivo Grande;GWM;WEY;07 DARK ED.;1.5 - 16V;Plug-in;DHT-4;hibrido_plug_in
+2026;Extra Grande;Geely;EX5;MAX;Elétrico;Elétrico;A;eletrico
+2026;Extra Grande;Geely;EX5;PRO;Elétrico;Elétrico;A;eletrico
+2026;Extra Grande;Geely;EX5 EM-i;MAX / PRO;1.5-16V;Plug-in;A;hibrido_plug_in
+2026;Extra Grande;Geely;EX5 EM-i;ULTRA;1.5-16V;Plug-in;A;hibrido_plug_in
+2026;Extra Grande;HONDA;ACCORD HYBRID;TOURING;2.0 - 16V;Híbrido;CVT;hibrido
+2026;Médio;HONDA;CITY;EX;1.5-16V;Combustão;CVT;combustao
+2026;Médio;HONDA;CITY;EXL;1.5-16V;Combustão;CVT;combustao
+2026;Médio;HONDA;CITY;LX;1.5-16V;Combustão;CVT;combustao
+2026;Médio;HONDA;CITY;TOURING;1.5-16V;Combustão;CVT;combustao
+2026;Médio;HONDA;CITY HATCH;EX;1.5-16V;Combustão;CVT;combustao
+2026;Médio;HONDA;CITY HATCH;EXL;1.5-16V;Combustão;CVT;combustao
+2026;Médio;HONDA;CITY HATCH;LX;1.5-16V;Combustão;CVT;combustao
+2026;Médio;HONDA;CITY HATCH;TOURING;1.5-16V;Combustão;CVT;combustao
+2026;Médio;HONDA;CITY HATCH;TOURING SPORT;1.5-16V;Combustão;CVT;combustao
+2026;Grande;HONDA;CIVIC HYBRID;TOURING;2.0 - 16V;Híbrido;CVT;hibrido
+2026;Utilitário Esportivo Grande;HONDA;CR-V;TOURING;2.0-16V;Híbrido;CVT;hibrido
+2026;Médio;HONDA;HR-V;ADVANCE;1.5T-16V;Combustão;CVT;combustao
+2026;Médio;HONDA;HR-V;EX;1.5-16V;Combustão;CVT;combustao
+2026;Médio;HONDA;HR-V;EXL;1.5-16V;Combustão;CVT;combustao
+2026;Médio;HONDA;HR-V;TOURING;1.5T-16V;Combustão;CVT;combustao
+2026;Médio;HONDA;HR-V (mod. 26);ADVANCE;1.5T-16V;Combustão;CVT;combustao
+2026;Médio;HONDA;HR-V (mod. 26);TOURING;1.5T-16V;Combustão;CVT;combustao
+2026;Extra Grande;HONDA;PRELUDE;SP;2.0 - 16V;Híbrido;CVT;hibrido
+2026;Extra Grande;HONDA;PRELUDE;TOP;2.0 - 16V;Híbrido;CVT;hibrido
+2026;Utilitário Esportivo Compacto;HONDA;WR-V;EX;1.5-16V;Combustão;CVT;combustao
+2026;Utilitário Esportivo Compacto;HONDA;WR-V;EXL;1.5-16V;Combustão;CVT;combustao
+2026;Grande;HONDA;ZR-V;TOURING;2.0 - 16V;Combustão;CVT;combustao
+2026;Utilitário Esportivo Compacto;HYUNDAI;CRETA;Comfort;1.0-12V T;Combustão;A-6;combustao
+2026;Utilitário Esportivo Compacto;HYUNDAI;CRETA;Comfort Safety;1.0-12V T;Combustão;A-6;combustao
+2026;Utilitário Esportivo Compacto;HYUNDAI;CRETA;Limited;1.0-12V T;Combustão;A-6;combustao
+2026;Utilitário Esportivo Compacto;HYUNDAI;CRETA;N Line;1.0-12V T;Combustão;A-6;combustao
+2026;Utilitário Esportivo Compacto;HYUNDAI;CRETA;N-line;1.6-16V T;Combustão;DCT-7;combustao
+2026;Utilitário Esportivo Compacto;HYUNDAI;CRETA;Platinum;1.0-12V T;Combustão;A-6;combustao
+2026;Utilitário Esportivo Compacto;HYUNDAI;CRETA;Ultimate;1.6-16V T;Combustão;DCT-7;combustao
+2026;Médio;HYUNDAI;HB20S;Comfort;1.0-12V;Combustão;M-5;combustao
+2026;Médio;HYUNDAI;HB20S;Limited;1.0-12V;Combustão;M-5;combustao
+2026;Médio;HYUNDAI;HB20S;Limited;1.0-12V T;Combustão;A-6;combustao
+2026;Médio;HYUNDAI;HB20S;Platinum;1.0-12V T;Combustão;A-6;combustao
+2026;Médio;HYUNDAI;I20;Comfort;1.0-12V;Combustão;M-5;combustao
+2026;Médio;HYUNDAI;I20;Comfort;1.0-12V;Combustão;M-5;combustao
+2026;Médio;HYUNDAI;I20;Comfort;1.0-12V T;Combustão;A-6;combustao
+2026;Médio;HYUNDAI;I20;Limited;1.0-12V;Combustão;M-5;combustao
+2026;Médio;HYUNDAI;I20;Limited;1.0-12V;Combustão;M-5;combustao
+2026;Médio;HYUNDAI;I20;Limited;1.0-12V T;Combustão;A-6;combustao
+2026;Médio;HYUNDAI;I20;Limited Plus;1.0-12V T;Combustão;A-6;combustao
+2026;Médio;HYUNDAI;I20;Platinum;1.0-12V T;Combustão;A-6;combustao
+2026;Médio;HYUNDAI;I20;Platinum Plus;1.0-12V T;Combustão;A-6;combustao
+2026;Médio;HYUNDAI;I20;Sense;1.0-12V;Combustão;M-5;combustao
+2026;Médio;HYUNDAI;I20;Sense;1.0-12V;Combustão;M-5;combustao
+2026;Médio;HYUNDAI;I20;Ultimate;1.0-12V T;Combustão;A-6;combustao
+2026;Médio;HYUNDAI;I20;Xline;1.0-12V T;Combustão;A-6;combustao
+2026;Médio;HYUNDAI;KONA;Signature;1.6-16V HEV;Híbrido;DCT-6;hibrido
+2026;Médio;HYUNDAI;KONA;Ultimate;1.6-16V HEV;Híbrido;DCT-6;hibrido
+2026;Utilitário Esportivo Grande  4x4;HYUNDAI;PALISADE;Signature;3.8-24V;Combustão;A-8;combustao
+2026;Compacto;Hyundai;HB20;Comfort;1.0-12V;Combustão;M-5;combustao
+2026;Compacto;Hyundai;HB20;Limited;1.0-12V;Combustão;M-5;combustao
+2026;Compacto;Hyundai;HB20;Limited;1.0-12V T;Combustão;A-6;combustao
+2026;Compacto;Hyundai;HB20;Platinum;1.0-12V T;Combustão;A-6;combustao
+2026;Compacto;Hyundai;HB20;Sense;1.0-12V;Combustão;M-5;combustao
+2026;Extra Grande;Hyundai;IONIQ 5;Platinum;Elétrico;Elétrico;A-1;eletrico
+2026;Extra Grande;Hyundai;IONIQ 5;Signature;Elétrico;Elétrico;A-1;eletrico
+2026;Extra Grande;Hyundai;IONIQ 5;Ultimate;Elétrico;Elétrico;A-1;eletrico
+2026;Comercial;JAC;EJV5.5;CARGO;Elétrico;Elétrico;A-1;eletrico
+2026;Picape;JAC;HUNTER;HUNTER 4WORK;2.0-16V;Combustão;A-8;combustao
+2026;Picape;JAC;HUNTER;HUNTER AT;2.0-16V;Combustão;A-8;combustao
+2026;Picape;JAC;HUNTER;HUNTER HD 4X4 AT;2.0-16V;Combustão;A-8;combustao
+2026;Picape;JAC;HUNTER;HUNTER HD 4X4 AT C;2.0-16V;Combustão;A-8;combustao
+2026;Picape;JAC;HUNTER;HUNTER HD AT;2.0-16V;Combustão;A-8;combustao
+2026;Picape;JAC;HUNTER;HUNTER HDX 4X4 AT;2.0-16V;Combustão;A-8;combustao
+2026;Picape;JAC;HUNTER;HUNTER HW 4X4 AT;2.0-16V;Combustão;A-8;combustao
+2026;Picape;JAC;HUNTER;HUNTER HW AT;2.0-16V;Combustão;A-8;combustao
+2026;Picape;JAC;IEV330P;IEV330;Elétrico;Elétrico;A-1;eletrico
+2026;Extra Grande;JAC;e-J7;e-J7;Elétrico;Elétrico;A-1;eletrico
+2026;Sub Compacto;JAC;e-JS1;e-JS1;Elétrico;Elétrico;A-1;eletrico
+2026;Sub Compacto;JAC;e-JS1;e-JS1 EXT;Elétrico;Elétrico;A-1;eletrico
+2026;Médio;JAC;e-JS4;e-JS4;Elétrico;Elétrico;A-1;eletrico
+2026;Grande;JAECOO;7;LUXURY;1.5-16V;Plug-in;A-1;hibrido_plug_in
+2026;Grande;JAECOO;7;PRESTIGE;1.5-16V;Plug-in;A-1;hibrido_plug_in
+2026;Utilitário Esportivo Compacto;JEEP;AVENGER;ALTIT HYB;1.0T-12V;Híbrido;CVT-7;hibrido
+2026;Utilitário Esportivo Compacto;JEEP;AVENGER;LIMITED HYB;1.0T-12V;Híbrido;CVT-7;hibrido
+2026;Utilitário Esportivo Compacto;JEEP;AVENGER;LONGT HYB;1.0T-12V;Híbrido;CVT-7;hibrido
+2026;Fora de Estrada Grande;JEEP;COMMANDER;BLA 2.0 G;2.0T-16V;Combustão;A-9;combustao
+2026;Fora de Estrada Grande;JEEP;COMMANDER;BLK GME (MY27);2.0T-16V;Combustão;A-9;combustao
+2026;Utilitário Esportivo Grande;JEEP;COMMANDER;LIM 7 270;1.3T-16V;Combustão;A-6;combustao
+2026;Utilitário Esportivo Grande;JEEP;COMMANDER;LMTD HYB;1.3T-16V;Híbrido;A-6;hibrido
+2026;Utilitário Esportivo Grande;JEEP;COMMANDER;LON 7 270;1.3T-16V;Combustão;A-6;combustao
+2026;Fora de Estrada Grande;JEEP;COMMANDER;OVE 2.2 D;2.2T-16V;Combustão;A-9;combustao
+2026;Utilitário Esportivo Grande;JEEP;COMMANDER;OVE 7 270;1.3T-16V;Combustão;A-6;combustao
+2026;Utilitário Esportivo Grande;JEEP;COMMANDER;OVER HYB;1.3T-16V;Híbrido;A-6;hibrido
+2026;Fora de Estrada Grande;JEEP;COMPASS;BLACKHAWK;2.0T-16V;Combustão;A-9;combustao
+2026;Fora de Estrada Grande;JEEP;COMPASS;BLACKHAWK F;2.0T-16V;Combustão;A-9;combustao
+2026;Utilitário Esportivo Grande;JEEP;COMPASS;LIMITED T;1.3T-16V;Combustão;A-6;combustao
+2026;Utilitário Esportivo Grande;JEEP;COMPASS;LONGITUDE T;1.3T-16V;Combustão;A-6;combustao
+2026;Utilitário Esportivo Grande;JEEP;COMPASS;SERIE S T;1.3T-16V;Combustão;A-6;combustao
+2026;Utilitário Esportivo Grande;JEEP;COMPASS;SPORT T;1.3T-16V;Combustão;A-6;combustao
+2026;Picape;JEEP;GLADIATOR;RUBICON;3.6-24V;Combustão;A-8;combustao
+2026;Utilitário Esportivo Compacto;JEEP;RENEGADE;ALTIT HYB;1.3T-16V;Híbrido;A-6;hibrido
+2026;Utilitário Esportivo Compacto;JEEP;RENEGADE;ALTIT T270;1.3T-16V;Combustão;A-6;combustao
+2026;Utilitário Esportivo Compacto;JEEP;RENEGADE;ALTIT T270 (MY27);1.3T-16V;Combustão;A-6;combustao
+2026;Utilitário Esportivo Compacto;JEEP;RENEGADE;LGTD T270;1.3T-16V;Combustão;A-6;combustao
+2026;Utilitário Esportivo Compacto;JEEP;RENEGADE;LONGIT HYB;1.3T-16V;Híbrido;A-6;hibrido
+2026;Utilitário Esportivo Compacto;JEEP;RENEGADE;SAHARA;1.3T-16V;Combustão;A-6;combustao
+2026;Utilitário Esportivo Compacto;JEEP;RENEGADE;SAHARA HYB;1.3T-16V;Híbrido;A-6;hibrido
+2026;Utilitário Esportivo Compacto;JEEP;RENEGADE;SPORT FLEX (MY27);1.3T-16V;Combustão;A-6;combustao
+2026;Utilitário Esportivo Compacto;JEEP;RENEGADE;SPORT T270 (MY27);1.3T-16V;Combustão;A-6;combustao
+2026;Utilitário Esportivo Compacto;JEEP;RENEGADE;SPT T FLEX;1.3T-16V;Combustão;A-6;combustao
+2026;Utilitário Esportivo Compacto;JEEP;RENEGADE;SPT TURBO;1.3T-16V;Combustão;A-6;combustao
+2026;Fora de Estrada Compacto;JEEP;RENEGADE;WILLYS 4X4T (MY27);1.3T-16V;Combustão;A-9;combustao
+2026;Fora de Estrada Compacto;JEEP;RENEGADE;WILLYS 4x4;1.3T-16V;Combustão;A-9;combustao
+2026;Fora de Estrada Grande;JEEP;WRANGLER;UNL RUBI;2.0T-16V;Combustão;A-8;combustao
+2026;Extra Grande;JETOUR;S06 DM;ADVANCE;1.5-16V;Plug-in;A-1;hibrido_plug_in
+2026;Extra Grande;JETOUR;S06 DM;PREMIUM;1.5-16V;Plug-in;A-1;hibrido_plug_in
+2026;Utilitário Esportivo Grande;JETOUR;T1 I-DM;ADVANCE;1.5-16V;Plug-in;A-1;hibrido_plug_in
+2026;Utilitário Esportivo Grande;JETOUR;T1 I-DM;PREMIUM;1.5-16V;Plug-in;A-1;hibrido_plug_in
+2026;Utilitário Esportivo Grande;JETOUR;T2 I-DM;ADVANCE;1.5-16V;Plug-in;A-1;hibrido_plug_in
+2026;Utilitário Esportivo Grande;JETOUR;T2 I-DM;PREMIUM;1.5-16V;Plug-in;A-1;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;JETOUR;T2 I-DM;PRM 4X4;1.5-16V;Plug-in;A-3;hibrido_plug_in
+2026;Comercial;KIA;BONGO K2500 4X4 SC;HD SC 4WD;2.5 - 16V;Combustão;M-6;combustao
+2026;Comercial;KIA;BONGO K2500 4X4 SC;HDDL 4WD;2.5 - 16V;Combustão;M-6;combustao
+2026;Minivan;KIA;CARNIVAL;HEV EX;1.6 - 16V;Híbrido;DCT-6;hibrido
+2026;Minivan;KIA;CARNIVAL;HEV LX;1.6 - 16V;Híbrido;DCT-6;hibrido
+2026;Minivan;KIA;CARNIVAL;HEV SX;1.6 - 16V;Híbrido;DCT-6;hibrido
+2026;Extra Grande;KIA;EV5 2WD;AIR 2WD;ELÉTRICO;Elétrico;A-1;eletrico
+2026;Extra Grande;KIA;EV5 2WD;LAND 2WD;ELÉTRICO;Elétrico;A-1;eletrico
+2026;Médio;KIA;NIRO;HEV 1.6 EX;1.6 - 16V;Híbrido;DCT-6;hibrido
+2026;Médio;KIA;NIRO;HEV 1.6 LX;1.6 - 16V;Híbrido;DCT-6;hibrido
+2026;Médio;KIA;NIRO;HEV 1.6 SX;1.6 - 16V;Híbrido;DCT-6;hibrido
+2026;Médio;KIA;NIRO;HEV 1.6 SX RIOPEN;1.6 - 16V;Híbrido;DCT-6;hibrido
+2026;Fora de Estrada Grande;KIA;SORENTO;EX;2.2 - 16V;Combustão;DCT - 8;combustao
+2026;Utilitário Esportivo Grande;KIA;SPORTAGE;TMHEV EX;1.6 - 16V;Híbrido;DCT-7;hibrido
+2026;Utilitário Esportivo Grande;KIA;SPORTAGE;TMHEV EXP;1.6 - 16V;Híbrido;DCT-7;hibrido
+2026;Utilitário Esportivo Grande;KIA;SPORTAGE;TMHEV GT;1.6 - 16V;Híbrido;DCT-7;hibrido
+2026;Utilitário Esportivo Grande;KIA;SPORTAGE;TMHEV LX;1.6 - 16V;Híbrido;DCT-7;hibrido
+2026;Utilitário Esportivo Grande;KIA;SPORTAGE;TMHEV SX;1.6 - 16V;Híbrido;DCT-7;hibrido
+2026;Picape;KIA;TASMAN;BASIC;2.2 - 16V;Combustão;A-8;combustao
+2026;Picape;KIA;TASMAN;X-LINE;2.2 - 16V;Combustão;A-8;combustao
+2026;Fora de Estrada Grande;LAND ROVER;DEFENDER 110 D350;HSEXD 7L;3.0-24V;Híbrido;A-8;hibrido
+2026;Fora de Estrada Grande;LAND ROVER;DEFENDER 110 D350;TROPHY;3.0-24V;Híbrido;A-8;hibrido
+2026;Fora de Estrada Grande;LAND ROVER;DEFENDER 110 D350;X 7L;3.0-24V;Híbrido;A-8;hibrido
+2026;Fora de Estrada Grande;LAND ROVER;DEFENDER 130 D350;X;3.0-24V;Híbrido;A-8;hibrido
+2026;Fora de Estrada Grande;LAND ROVER;DEFENDER 130 D350;X7L;3.0-24V;Híbrido;A-8;hibrido
+2026;Fora de Estrada Grande;LAND ROVER;DEFENDER 90 D350;HSE XD;3.0-24V;Híbrido;A-8;hibrido
+2026;Fora de Estrada Grande;LAND ROVER;DISCOVERY;D350 LE;3.0-24V;Híbrido;A-8;hibrido
+2026;Fora de Estrada Grande;LAND ROVER;DISCOVERY;D350 TEMPEST;3.0-24V;Híbrido;A-8;hibrido
+2026;Fora de Estrada Grande;LAND ROVER;DISCOVERY SPORT;P250FF LE;2.0-16V;Combustão;A-9;combustao
+2026;Fora de Estrada Grande;LAND ROVER;DISCOVERY SPORT;P250FF LE 7L;2.0-16V;Combustão;A-9;combustao
+2026;Fora de Estrada Grande;LAND ROVER;DISCOVERY SPORT;P250FF SE D;2.0-16V;Combustão;A-9;combustao
+2026;Fora de Estrada Grande;LAND ROVER;DISCOVERY SPORT;P250FF SED7L;2.0-16V;Combustão;A-9;combustao
+2026;Fora de Estrada Grande;LAND ROVER;EVOQUE;P250FF AB;2.0-16V;Combustão;A-9;combustao
+2026;Fora de Estrada Grande;LAND ROVER;RANGE ROVER;PHEV AB;3.0-24V;Plug-in;A-8;hibrido_plug_in
+2026;Fora de Estrada Grande;LAND ROVER;RANGE ROVER;PHEV HSE;3.0-24V;Plug-in;A-8;hibrido_plug_in
+2026;Fora de Estrada Grande;LAND ROVER;RANGE ROVER;PHEV SE;3.0-24V;Plug-in;A-8;hibrido_plug_in
+2026;Fora de Estrada Grande;LAND ROVER;RANGE ROVER;PHEV SV;3.0-24V;Plug-in;A-8;hibrido_plug_in
+2026;Fora de Estrada Grande;LAND ROVER;RANGE ROVER SPORT;PHEV AB;3.0-24V;Plug-in;A-8;hibrido_plug_in
+2026;Fora de Estrada Grande;LAND ROVER;RANGE ROVER SPORT;PHEV HSED;3.0-24V;Plug-in;A-8;hibrido_plug_in
+2026;Fora de Estrada Grande;LAND ROVER;RANGE ROVER SPORT;PHEV S;3.0-24V;Plug-in;A-8;hibrido_plug_in
+2026;Fora de Estrada Grande;LAND ROVER;RANGE ROVER SPORT;PHEV SE;3.0-24V;Plug-in;A-8;hibrido_plug_in
+2026;Fora de Estrada Grande;LAND ROVER;RANGE ROVER SPORT;PHEV SED;3.0-24V;Plug-in;A-8;hibrido_plug_in
+2026;Fora de Estrada Grande;LAND ROVER;VELAR;PHEV AB;2.0-16V;Plug-in;A-8;hibrido_plug_in
+2026;Extra Grande;LEAPMOTOR;B10;LIFE;ELÉTRICO;Elétrico;A-1;eletrico
+2026;Extra Grande;LEAPMOTOR;C10;Design;ELÉTRICO;Elétrico;A-1;eletrico
+2026;Extra Grande;LEAPMOTOR;C10;REEV;;Plug-In;A-1;hibrido_plug_in
+2026;Extra Grande;LEXUS;NX 450H PLUG-IN;NX450H PLUG-IN;2.5 - 16V;Plug-in;CVT;hibrido_plug_in
+2026;Extra Grande;LEXUS;NX350H;DYNAMIC;2.5 - 16V;Híbrido;CVT;hibrido
+2026;Extra Grande;LEXUS;NX350H;F-SPORT;2.5 - 16V;Híbrido;CVT;hibrido
+2026;Extra Grande;LEXUS;NX350H;LUXURY;2.5 - 16V;Híbrido;CVT;hibrido
+2026;Extra Grande;LEXUS;RX450H PLUG-IN;I/LEXUS RX450H PLUG-IN;2.5-16V;Plug-in;CVT;hibrido_plug_in
+2026;Extra Grande;LEXUS;RX500H;F-SPORT;2.4 - 16V;Híbrido;A-6;hibrido
+2026;Extra Grande;LEXUS;RZ;500e;Elétrico;Elétrico;CVT;eletrico
+2026;Grande;LEXUS;UX 300H;UX 300H;2.0 - 16V;Híbrido;CVT;hibrido
+2026;Esportivo;MCLAREN;750S;COUPE;4.0-32V;Combustão;DCT-8;combustao
+2026;Esportivo;MCLAREN;750S;SPIDER;4.0-32V;Combustão;DCT-8;combustao
+2026;Esportivo;MCLAREN;ARTURA;;3.0-24V;Plug-in;DCT-8;hibrido_plug_in
+2026;Esportivo;MCLAREN;ARTURA;SPIDER;3.0-24V;Plug-in;DCT-8;hibrido_plug_in
+2026;Comercial;MERCEDES-BENZ;315CDI STREET;Chassi;2.0-16V;Combustão;M-6;combustao
+2026;Comercial;MERCEDES-BENZ;315CDI STREET;Furgão;2.0-16V;Combustão;M-6;combustao
+2026;Comercial;MERCEDES-BENZ;320 E SPRINTER;Chassi;Elétrico;Elétrico;A-1;eletrico
+2026;Comercial;MERCEDES-BENZ;320 E SPRINTER;Furgão;Elétrico;Elétrico;A-1;eletrico
+2026;Fora de Estrada Grande;MERCEDES-BENZ;AMG G63;MFKT;4.0-32V;Híbrido;A-9;hibrido
+2026;Fora de Estrada Grande;MERCEDES-BENZ;AMG G63 4M;;4.0-32V;Híbrido;A-9;hibrido
+2026;Fora de Estrada Grande;MERCEDES-BENZ;AMG G63 4M;GRD;4.0-32V;Híbrido;A-9;hibrido
+2026;Esportivo;MERCEDES-BENZ;AMG GT63S EP;;4.0-32V;Plug-in;A-9;hibrido_plug_in
+2026;Esportivo;MERCEDES-BENZ;AMG GT63S EP;2P;4.0-32V;Plug-in;A-9;hibrido_plug_in
+2026;Esportivo;MERCEDES-BENZ;AMG SL63S EP;;4.0-32V;Plug-in;A-9;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;MERCEDES-BENZ;GLC300 4M;;2.0-16V;Híbrido;A-9;hibrido
+2026;Utilitário Esportivo Grande 4x4;MERCEDES-BENZ;GLC300 4M;CO;2.0-16V;Híbrido;A-9;hibrido
+2026;Utilitário Esportivo Grande 4x4;MERCEDES-BENZ;GLE450D;AMGL;3.0-24V;Híbrido;A-9;hibrido
+2026;Utilitário Esportivo Grande 4x4;MERCEDES-BENZ;GLE450D;CO AMGL;3.0-24V;Híbrido;A-9;hibrido
+2026;Esportivo;MG;CYBERSTER;77 KWH AWD;Elétrico;Elétrico;A-1;eletrico
+2026;Médio;MG;MG4;64 KWH AWD;Elétrico;Elétrico;A-1;eletrico
+2026;Médio;MG;MG4;64 KWH COM;Elétrico;Elétrico;A-1;eletrico
+2026;Médio;MG;MG4;64 KWH LUX;Elétrico;Elétrico;A-1;eletrico
+2026;Grande;MG;MG4;URB EV43KWH COM;Elétrico;Elétrico;A-1;eletrico
+2026;Grande;MG;MG4;URB EV43KWH LUX;Elétrico;Elétrico;A-1;eletrico
+2026;Grande;MG;MG4;URB EV54KWH COM;Elétrico;Elétrico;A-1;eletrico
+2026;Grande;MG;MG4;URB EV54KWH LUX;Elétrico;Elétrico;A-1;eletrico
+2026;Grande;MG;S5;EV 62KWH COM;Elétrico;Elétrico;A-1;eletrico
+2026;Grande;MG;S5;EV 62KWH LUX;Elétrico;Elétrico;A-1;eletrico
+2026;Médio;MINI;Aceman;E;Elétrico;Elétrico;A;eletrico
+2026;Médio;MINI;Aceman;SE;Elétrico;Elétrico;A;eletrico
+2026;Compacto;MINI;Cooper;E;Elétrico;Elétrico;A;eletrico
+2026;Compacto;MINI;Cooper;S 3P EXCLUSIVE;2.0 - 16V;Combustão;A-7;combustao
+2026;Compacto;MINI;Cooper;S 3P SPORT;2.0 - 16V;Combustão;A-7;combustao
+2026;Compacto;MINI;Cooper;S 3P TOP;2.0 - 16V;Combustão;A-7;combustao
+2026;Médio;MINI;Cooper;S 5P EXCLUSIVE;2.0 - 16V;Combustão;A-7;combustao
+2026;Médio;MINI;Cooper;S 5P TOP;2.0 - 16V;Combustão;A-7;combustao
+2026;Compacto;MINI;Cooper;S CABRIO;2.0 - 16V;Combustão;A-7;combustao
+2026;Compacto;MINI;Cooper;SE;Elétrico;Elétrico;A;eletrico
+2026;Grande;MINI;Countryman;SE EXCLUSIVE;Elétrico;Elétrico;A;eletrico
+2026;Grande;MINI;Countryman;SE TOP;Elétrico;Elétrico;A;eletrico
+2026;Compacto;MINI;JCW;3P;2.0 - 16V;Combustão;A-7;combustao
+2026;Compacto;MINI;JCW;CABRIO;2.0 - 16V;Combustão;A-7;combustao
+2026;Grande;MINI;JCW;COUNTRYMAN;2.0 - 16V;Combustão;A-7;combustao
+2026;Grande;MINI;JCW;COUNTRYMAN EX;2.0 - 16V;Combustão;A-7;combustao
+2026;Compacto;MINI;JCW-E;3P;Elétrico;Elétrico;A;eletrico
+2026;Médio;MINI;JCW-E;ACEMAN;Elétrico;Elétrico;A;eletrico
+2026;Utilitário Esportivo Grande;MITSUBISHI;Eclipse Cross;HPE;1.5T-16V;Combustão;CVT;combustao
+2026;Utilitário Esportivo Grande;MITSUBISHI;Eclipse Cross;HPE BLACK;1.5T-16V;Combustão;CVT;combustao
+2026;Utilitário Esportivo Grande;MITSUBISHI;Eclipse Cross;HPE-S;1.5T-16V;Combustão;CVT;combustao
+2026;Utilitário Esportivo Grande 4x4;MITSUBISHI;Eclipse Cross;HPE-S BLACK S-AWC;1.5T-16V;Combustão;CVT;combustao
+2026;Utilitário Esportivo Grande 4x4;MITSUBISHI;Eclipse Cross;HPE-S S-AWC;1.5T-16V;Combustão;CVT;combustao
+2026;Utilitário Esportivo Grande;MITSUBISHI;Eclipse Cross;RUSH;1.5T-16V;Combustão;CVT;combustao
+2026;Picape;MITSUBISHI;Triton;GL AT2;2.4-16V;Combustão;AT;combustao
+2026;Picape;MITSUBISHI;Triton;GL AT4;2.4-16V;Combustão;AT;combustao
+2026;Picape;MITSUBISHI;Triton;GL MT4;2.4-16V;Combustão;MT;combustao
+2026;Picape;MITSUBISHI;Triton;GLS AT2;2.4-16V;Combustão;AT;combustao
+2026;Picape;MITSUBISHI;Triton;GLS AT4;2.4-16V;Combustão;AT;combustao
+2026;Picape;MITSUBISHI;Triton;HPE AT4;2.4-16V;Combustão;AT;combustao
+2026;Picape;MITSUBISHI;Triton;HPE-S AT4;2.4-16V;Combustão;AT;combustao
+2026;Picape;MITSUBISHI;Triton;KATANA AT4;2.4-16V;Combustão;AT;combustao
+2026;Categoria;Marca;Modelo;Versão;Motor;Combustão;(A);combustao
+2026;Categoria;Marca;Modelo;Versão;Motor;Combustão;(A);combustao
+2026;Categoria;Marca;Modelo;Versão;Motor;Combustão;(A);combustao
+2026;Categoria;Marca;Modelo;Versão;Motor;Combustão;(A);combustao
+2026;Categoria;Marca;Modelo;Versão;Motor;Combustão;(A);combustao
+2026;Categoria;Marca;Modelo;Versão;Motor;Combustão;(A);combustao
+2026;Categoria;Marca;Modelo;Versão;Motor;Combustão;Manual;combustao
+2026;Grande;Mercedes-Benz;AMG A45S 4M;;2.0-16V;Combustão;DCT-8;combustao
+2026;Extra Grande;Mercedes-Benz;AMG C63S EP;;2.0-16V;Plug-in;A-9;hibrido_plug_in
+2026;Extra Grande;Mercedes-Benz;AMG C63S EP;F1;2.0-16V;Plug-in;A-9;hibrido_plug_in
+2026;Extra Grande;Mercedes-Benz;AMG CLA35 4M;;2.0-16V;Híbrido;DCT-8;hibrido
+2026;Extra Grande;Mercedes-Benz;AMG CLA45S 4M;;2.0-16V;Combustão;DCT-8;combustao
+2026;Grande;Mercedes-Benz;AMG GLA35 4M;;2.0-16V;Híbrido;DCT-8;hibrido
+2026;Extra Grande;Mercedes-Benz;AMG GLB35 4M;;2.0-16V;Híbrido;DCT-8;hibrido
+2026;Extra Grande;Mercedes-Benz;AMG GLC43;;2.0-16V;Híbrido;A-9;hibrido
+2026;Extra Grande;Mercedes-Benz;AMG GLC43;;2.0-16V;Híbrido;A-9;hibrido
+2026;Extra Grande;Mercedes-Benz;AMG GLC43;CO;2.0-16V;Híbrido;A-9;hibrido
+2026;Extra Grande;Mercedes-Benz;AMG GLC63S EP;;2.0-16V;Plug-in;A-9;hibrido_plug_in
+2026;Extra Grande;Mercedes-Benz;AMG GLE53 4M;;3.0-24V;Híbrido;A-9;hibrido
+2026;Extra Grande;Mercedes-Benz;AMG GLE63 S CO;Coupé;4.0-32V;Híbrido;A-9;hibrido
+2026;Extra Grande;Mercedes-Benz;AMG S63 EP;;4.0-32V;Plug-in;A-9;hibrido_plug_in
+2026;Extra Grande;Mercedes-Benz;C200;AMG LINE;1.5-16V;Híbrido;A-9;hibrido
+2026;Extra Grande;Mercedes-Benz;C300;AMG LINE;2.0-16V;Híbrido;A-9;hibrido
+2026;Extra Grande;Mercedes-Benz;CLA200;AMG LINE;1.3-16V;Híbrido;DCT-7;hibrido
+2026;Extra Grande;Mercedes-Benz;CLA200;PROGRESSIVE;1.3-16V;Híbrido;DCT-7;hibrido
+2026;Extra Grande;Mercedes-Benz;E300;EXCLUSIVE;2.0-16V;Híbrido;A-9;hibrido
+2026;Extra Grande;Mercedes-Benz;E300;EXCLUSIVE;2.0-16V;Híbrido;A-9;hibrido
+2026;Extra Grande;Mercedes-Benz;EQB250+;;Elétrico;Elétrico;A-1;eletrico
+2026;Grande;Mercedes-Benz;GLA200;AMG LINE;1.3-16V;Híbrido;DCT-7;hibrido
+2026;Grande;Mercedes-Benz;GLA200;PROGRESSIVE;1.3-16V;Híbrido;DCT-7;hibrido
+2026;Extra Grande;Mercedes-Benz;GLB220 4M;AMG LINE;2.0-16V;Híbrido;DCT-8;hibrido
+2026;Extra Grande;Mercedes-Benz;GLB220 4M;PROGRESSIVE;2.0-16V;Híbrido;DCT-8;hibrido
+2026;Extra Grande;Mercedes-Benz;GLB250;EV AMGL;Elétrico;Elétrico;A-1;eletrico
+2026;Extra Grande;Mercedes-Benz;GLS450 4M;AMG L;3.0-24V;Híbrido;A-9;hibrido
+2026;Extra Grande;Mitsubishi;Outlander;HPE-S E;2.4-16V;Plug-in;AT;hibrido_plug_in
+2026;Extra Grande;Mitsubishi;Outlander;SIGNATURE E;2.4-16V;Plug-in;AT;hibrido_plug_in
+2026;Utilitário Esportivo Compacto;NISSAN;Kait;ACTIVE CVT;1.6-16V;Combustão;CVT;combustao
+2026;Utilitário Esportivo Compacto;NISSAN;Kait;ADV B CVT;1.6-16V;Combustão;CVT;combustao
+2026;Utilitário Esportivo Compacto;NISSAN;Kait;ADVANCE;1.6-16V;Combustão;CVT;combustao
+2026;Utilitário Esportivo Compacto;NISSAN;Kait;EXCLUSIVE;1.6-16V;Combustão;CVT;combustao
+2026;Utilitário Esportivo Compacto;NISSAN;Kait;SENSE;1.6-16V;Combustão;CVT;combustao
+2026;Utilitário Esportivo Compacto;NISSAN;Kait;SENSE B CVT;1.6-16V;Combustão;CVT;combustao
+2026;Utilitário Esportivo Compacto;NISSAN;Kicks;ADVANCE AT;1.0 12V;Combustão;DCT;combustao
+2026;Utilitário Esportivo Compacto;NISSAN;Kicks;EXCLUSIV AT;1.0 12V;Combustão;DCT;combustao
+2026;Utilitário Esportivo Compacto;NISSAN;Kicks;PLATINUM AT;1.0 12V;Combustão;DCT;combustao
+2026;Utilitário Esportivo Compacto;NISSAN;Kicks;SENSE AT;1.0 12V;Combustão;DCT;combustao
+2026;Médio;NISSAN;Versa;ADVNC CVT;1.6-16V;Combustão;CVT;combustao
+2026;Médio;NISSAN;Versa;EXCL CVT;1.6-16V;Combustão;CVT;combustao
+2026;Médio;NISSAN;Versa;SENSE CVT;1.6-16V;Combustão;CVT;combustao
+2026;Médio;NISSAN;Versa;SR CVT;1.6-16V;Combustão;CVT;combustao
+2026;Grande;Nissan;Sentra;ADV CVT;2.0-16V;Combustão;CVT;combustao
+2026;Grande;Nissan;Sentra;EXC CVT;2.0-16V;Combustão;CVT;combustao
+2026;Grande;Nissan;Sentra;SEN CVT;2.0-16V;Combustão;CVT;combustao
+2026;Grande;OMODA;5;HEV COMFORT;1.5-16V;Híbrido;A-1;hibrido
+2026;Grande;OMODA;5;HEV LUXURY;1.5-16V;Híbrido;A-1;hibrido
+2026;Grande;OMODA;5;HEV PRESTIGE;1.5-16V;Híbrido;A-1;hibrido
+2026;Extra Grande;OMODA;7;PHEV LUXURY;1.5-16V;Plug-in;A-1;hibrido_plug_in
+2026;Extra Grande;OMODA;7;PHEV PRESTIGE;1.5-16V;Plug-in;A-1;hibrido_plug_in
+2026;Grande;OMODA;E5;--;Elétrico;Elétrico;A-1;eletrico
+2026;Utilitário Esportivo Compacto;PEUGEOT;2008;ACT T200;1.0T-12V;Combustão;CVT-7;combustao
+2026;Utilitário Esportivo Compacto;PEUGEOT;2008;ALLU T200;1.0T-12V;Combustão;CVT-7;combustao
+2026;Utilitário Esportivo Compacto;PEUGEOT;2008;GT HYBRID;1.0T-12V;Híbrido;CVT-7;hibrido
+2026;Utilitário Esportivo Compacto;PEUGEOT;2008;GT T200;1.0T-12V;Combustão;CVT-7;combustao
+2026;Compacto;PEUGEOT;208;ACTIV T200;1.0T-12V;Combustão;CVT-7;combustao
+2026;Compacto;PEUGEOT;208;ACTIVE MT;1.0-6V;Combustão;M-5;combustao
+2026;Compacto;PEUGEOT;208;ALLUR T200;1.0T-12V;Combustão;CVT-7;combustao
+2026;Compacto;PEUGEOT;208;GT HYBRID;1.0T-12V;Híbrido;CVT-7;hibrido
+2026;Compacto;PEUGEOT;208;GT T200;1.0T-12V;Combustão;CVT-7;combustao
+2026;Compacto;PEUGEOT;208;STYLE MT;1.0-6V;Combustão;M-5;combustao
+2026;Comercial;PEUGEOT;BOXER;16L LUXO;2.2T-16V;Combustão;M-6;combustao
+2026;Comercial;PEUGEOT;BOXER;CARGO PK;2.2T-16V;Combustão;M-6;combustao
+2026;Comercial;PEUGEOT;BOXER;COMFORT;2.2T-16V;Combustão;M-6;combustao
+2026;Comercial;PEUGEOT;BOXER;FURGAOPK;2.2T-16V;Combustão;M-6;combustao
+2026;Comercial;PEUGEOT;BOXER;VIDRADA;2.2T-16V;Combustão;M-6;combustao
+2026;Compacto;PEUGEOT;E-208;GT;ELÉTRICO;Elétrico;A-1;eletrico
+2026;Comercial;PEUGEOT;E-EXPERT;CARGO;ELÉTRICO;Elétrico;A-1;eletrico
+2026;Médio;PEUGEOT;E2008;GT;ELÉTRICO;Elétrico;A-1;eletrico
+2026;Comercial;PEUGEOT;EXPERT;CARGO;2.2T-16V;Combustão;M-6;combustao
+2026;Comercial;PEUGEOT;EXPERT;VITRE;2.2T-16V;Combustão;M-6;combustao
+2026;Comercial;PEUGEOT;PARTRAPID;BUSIPK;1.3-8V;Combustão;M-5;combustao
+2026;Esportivo;PORSCHE;911;CAR GTS CA;3.6-24V;Híbrido;DCT-8;hibrido
+2026;Esportivo;PORSCHE;911;CAR T MT;3.0-24V;Combustão;M-6;combustao
+2026;Esportivo;PORSCHE;911;CAR T MT 2;3.0-24V;Combustão;M-6;combustao
+2026;Esportivo;PORSCHE;911;CAR T MTCA;3.0-24V;Combustão;M-6;combustao
+2026;Esportivo;PORSCHE;911;CARRERA;3.0-24V;Combustão;DCT-8;combustao
+2026;Esportivo;PORSCHE;911;CARRERA C;3.0-24V;Combustão;DCT-8;combustao
+2026;Esportivo;PORSCHE;911;CARRERA S;3.0-24V;Combustão;DCT-8;combustao
+2026;Esportivo;PORSCHE;911;CARRERA SC;3.0-24V;Combustão;DCT-8;combustao
+2026;Esportivo;PORSCHE;911;CARRERAGTS;3.6-24V;Híbrido;DCT-8;hibrido
+2026;Esportivo;PORSCHE;911;GT3;4.0-32V;Combustão;DCT-7;combustao
+2026;Esportivo;PORSCHE;911;GT3 FA 90Y;4.0-32V;Combustão;M-6;combustao
+2026;Esportivo;PORSCHE;911;GT3 FA 90Y;4.0-32V;Combustão;M-6;combustao
+2026;Esportivo;PORSCHE;911;GT3 MANUAL;4.0-32V;Combustão;M-6;combustao
+2026;Esportivo;PORSCHE;911;GT3 SC;4.0-32V;Combustão;M-6;combustao
+2026;Esportivo;PORSCHE;911;GT3 TOURMT;4.0-32V;Combustão;M-6;combustao
+2026;Esportivo;PORSCHE;911;GT3TOURING;4.0-32V;Combustão;DCT-7;combustao
+2026;Esportivo;PORSCHE;911;SPIRIT 70;3.6-24V;Híbrido;DCT-8;hibrido
+2026;Esportivo;PORSCHE;911;TARGA 4GTS;3.6/24V;Híbrido;DCT-8;hibrido
+2026;Esportivo;PORSCHE;911;TARGA 4GTS;3.6/24V;Híbrido;DCT-8;hibrido
+2026;Esportivo;PORSCHE;911;TURBO S / TURBO S CA;3.6/24V;Híbrido;DCT-8;hibrido
+2026;Esportivo;PORSCHE;BOXSTER;25 ANOS;4.0-24V;Combustão;DCT-7;combustao
+2026;Esportivo;PORSCHE;BOXSTER;GTS4.0;4.0-24V;Combustão;DCT-7;combustao
+2026;Utilitário Esportivo Grande 4x4;PORSCHE;CAYENNE;COUPE;3.0-24V;Combustão;A-8;combustao
+2026;Utilitário Esportivo Grande 4x4;PORSCHE;CAYENNE;CP PHE;3.0-24V;Plug-in;A-8;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;PORSCHE;CAYENNE;CPH BE;3.0-24V;Plug-in;A-8;hibrido_plug_in
+2026;Extra Grande;PORSCHE;CAYENNE;E;Elétrico;Elétrico;--;eletrico
+2026;Utilitário Esportivo Grande 4x4;PORSCHE;CAYENNE;E;Elétrico;Elétrico;--;eletrico
+2026;Extra Grande;PORSCHE;CAYENNE;E C;Elétrico;Elétrico;--;eletrico
+2026;Utilitário Esportivo Grande 4x4;PORSCHE;CAYENNE;E C;Elétrico;Elétrico;--;eletrico
+2026;Extra Grande;PORSCHE;CAYENNE;E CO;Elétrico;Elétrico;--;eletrico
+2026;Utilitário Esportivo Grande 4x4;PORSCHE;CAYENNE;E CO;Elétrico;Elétrico;--;eletrico
+2026;Extra Grande;PORSCHE;CAYENNE;E OF;Elétrico;Elétrico;--;eletrico
+2026;Utilitário Esportivo Grande 4x4;PORSCHE;CAYENNE;E OF;Elétrico;Elétrico;--;eletrico
+2026;Utilitário Esportivo Grande 4x4;PORSCHE;CAYENNE;ET;Elétrico;Elétrico;--;eletrico
+2026;Utilitário Esportivo Grande 4x4;PORSCHE;CAYENNE;ET C;Elétrico;Elétrico;--;eletrico
+2026;Utilitário Esportivo Grande 4x4;PORSCHE;CAYENNE;ET CO;Elétrico;Elétrico;--;eletrico
+2026;Utilitário Esportivo Grande 4x4;PORSCHE;CAYENNE;ET OF;Elétrico;Elétrico;--;eletrico
+2026;Utilitário Esportivo Grande 4x4;PORSCHE;CAYENNE;GT COUPE;4.0-32V;Combustão;A-8;combustao
+2026;Utilitário Esportivo Grande 4x4;PORSCHE;CAYENNE;GTP;4.0-32V;Combustão;A-8;combustao
+2026;Utilitário Esportivo Grande 4x4;PORSCHE;CAYENNE;GTS CP;4.0-32V;Combustão;A-8;combustao
+2026;Utilitário Esportivo Grande 4x4;PORSCHE;CAYENNE;PH BE;3.0-24V;Plug-in;A-8;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;PORSCHE;CAYENNE;PHEV;3.0-24V;Plug-in;A-8;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;PORSCHE;CAYENNE;S;4.0-32V;Combustão;A-8;combustao
+2026;Utilitário Esportivo Grande 4x4;PORSCHE;CAYENNE;S CP;4.0-32V;Combustão;A-8;combustao
+2026;Utilitário Esportivo Grande 4x4;PORSCHE;CAYENNE;S PHEV;3.0-24V;Plug-in;A-8;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;PORSCHE;CAYENNE;SCPHBE;3.0-24V;Plug-in;A-8;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;PORSCHE;CAYENNE;SCPHEV;3.0-24V;Plug-in;A-8;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;PORSCHE;CAYENNE;SPH BE;3.0-24V;Plug-in;A-8;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;PORSCHE;CAYENNE;T PHEV;4.0-32V;Plug-in;A-8;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;PORSCHE;CAYENNE;TCPHEV;4.0-32V;Plug-in;A-8;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;PORSCHE;CAYENNE;V6;3.0-24V;Combustão;A-8;combustao
+2026;Esportivo;PORSCHE;CAYMAN;GTS 4.0;4.0-24V;Combustão;DCT-7;combustao
+2026;Extra Grande;PORSCHE;MACAN;;2.0-16V;Combustão;DCT-7;combustao
+2026;Extra Grande;PORSCHE;MACAN;E4;Elétrico;Elétrico;--;eletrico
+2026;Extra Grande;PORSCHE;MACAN;E4S;Elétrico;Elétrico;--;eletrico
+2026;Extra Grande;PORSCHE;MACAN;EGTS;Elétrico;Elétrico;--;eletrico
+2026;Extra Grande;PORSCHE;MACAN;ETURBO;Elétrico;Elétrico;--;eletrico
+2026;Extra Grande;PORSCHE;MACAN;GTS (MY 2026);2.9-24V;Combustão;DCT-7;combustao
+2026;Extra Grande;PORSCHE;MACAN;S;2.9-24V;Combustão;DCT-7;combustao
+2026;Extra Grande;PORSCHE;MACAN;T;2.0-16V;Combustão;DCT-7;combustao
+2026;Esportivo;PORSCHE;PANAMERA;4EHYB;2.9-24V;Plug-in;DCT-8;hibrido_plug_in
+2026;Esportivo;PORSCHE;PANAMERA;4SEHY;2.9-24V;Plug-in;DCT-8;hibrido_plug_in
+2026;Esportivo;PORSCHE;PANAMERA;TPHEV;4.0-32V;Plug-in;DCT-8;hibrido_plug_in
+2026;Esportivo;PORSCHE;PANAMERA;TSEHY;4.0-32V;Plug-in;DCT-8;hibrido_plug_in
+2026;Esportivo;PORSCHE;TAYCAN;4CT;Elétrico;Elétrico;--;eletrico
+2026;Esportivo;PORSCHE;TAYCAN;4S;Elétrico;Elétrico;--;eletrico
+2026;Esportivo;PORSCHE;TAYCAN;4S BE;Elétrico;Elétrico;--;eletrico
+2026;Esportivo;PORSCHE;TAYCAN;4S CT;Elétrico;Elétrico;--;eletrico
+2026;Esportivo;PORSCHE;TAYCAN;TURBO S;Elétrico;Elétrico;--;eletrico
+2026;Esportivo;PORSCHE;TAYCAN;TURBOCT;Elétrico;Elétrico;--;eletrico
+2026;Esportivo;PORSCHE;TAYCAN;TURBOGT;Elétrico;Elétrico;--;eletrico
+2026;Picape;RAM;1500;BIG HORN (CY26);3.0T-24V;Combustão;A-8;combustao
+2026;Picape;RAM;1500;LARAMIE;3.0T-24V;Combustão;A-8;combustao
+2026;Picape;RAM;1500;LARAMIE (CY26);3.0T-24V;Combustão;A-8;combustao
+2026;Picape;RAM;1500;LARAMIE NE;3.0T-24V;Combustão;A-8;combustao
+2026;Picape;RAM;1500;LARAMIE NE (CY26);3.0T-24V;Combustão;A-8;combustao
+2026;Picape;RAM;1500;REBEL;3.0T-24V;Combustão;A-8;combustao
+2026;Picape;RAM;DAKOTA;BIGHORN;2.2T-16V;Combustão;A-8;combustao
+2026;Picape;RAM;DAKOTA;LARAMIE;2.2T-16V;Combustão;A-8;combustao
+2026;Picape;RAM;DAKOTA;LARAMIE NE;2.2T-16V;Combustão;A-8;combustao
+2026;Picape;RAM;DAKOTA;WARLOCK;2.2T-16V;Combustão;A-8;combustao
+2026;Picape;RAM;RAMPAGE;BIGHORN DS;2.2T-16V;Combustão;A-9;combustao
+2026;Picape;RAM;RAMPAGE;LARAMIE DS;2.2T-16V;Combustão;A-9;combustao
+2026;Picape;RAM;RAMPAGE;LARAMIE FLEX;2.0T-16V;Combustão;A-9;combustao
+2026;Picape;RAM;RAMPAGE;LARAMIE GAS;2.0T-16V;Combustão;A-9;combustao
+2026;Picape;RAM;RAMPAGE;REBEL AT GAS;2.0T-16V;Combustão;A-9;combustao
+2026;Picape;RAM;RAMPAGE;REBEL DS;2.2T-16V;Combustão;A-9;combustao
+2026;Picape;RAM;RAMPAGE;REBEL FLEX;2.0T-16V;Combustão;A-9;combustao
+2026;Picape;RAM;RAMPAGE;RT FLEX;2.0T-16V;Combustão;A-9;combustao
+2026;Picape;RAM;RAMPAGE;RT GAS;2.0T-16V;Combustão;A-9;combustao
+2026;Utilitário Esportivo Grande;RENAULT;BOREAL;EVO;1.3-16V;Combustão;DCT-6;combustao
+2026;Utilitário Esportivo Grande;RENAULT;BOREAL;ICO;1.3-16V;Combustão;DCT-6;combustao
+2026;Utilitário Esportivo Grande;RENAULT;BOREAL;TECH;1.3-16V;Combustão;DCT-6;combustao
+2026;Utilitário Esportivo Grande;RENAULT;DUSTER;DUSTER ICO TCE;1.3-16V;Combustão;CVT;combustao
+2026;Utilitário Esportivo Grande;RENAULT;DUSTER;DUSTER ICO16 CVT;1.6-16V;Combustão;CVT;combustao
+2026;Utilitário Esportivo Grande;RENAULT;DUSTER;DUSTER ICOP CVT;1.6-16V;Combustão;CVT;combustao
+2026;Utilitário Esportivo Grande;RENAULT;DUSTER;DUSTER ICOUT TCE;1.3-16V;Combustão;CVT;combustao
+2026;Utilitário Esportivo Grande;RENAULT;DUSTER;DUSTER INT 16;1.6-16V;Combustão;M-5;combustao
+2026;Utilitário Esportivo Grande;RENAULT;DUSTER;DUSTER INTP CVT;1.6-16V;Combustão;CVT;combustao
+2026;Utilitário Esportivo Grande;RENAULT;DUSTER;DUSTER INTP MT;1.6-16V;Combustão;M-5;combustao
+2026;Utilitário Esportivo Grande;RENAULT;DUSTER;DUSTER LIF16 CVT;1.6-16V;Combustão;CVT;combustao
+2026;Utilitário Esportivo Grande;RENAULT;DUSTER;DUSTER ZEN 16;1.6-16V;Combustão;M-5;combustao
+2026;Utilitário Esportivo Grande;RENAULT;DUSTER;DUSTER ZEN13TCE;1.3-16V;Combustão;CVT;combustao
+2026;Utilitário Esportivo Grande;RENAULT;DUSTER;DUSTER ZEN16 CVT;1.6-16V;Combustão;CVT;combustao
+2026;Utilitário Esportivo Grande;RENAULT;DUSTER;DUSTERINT16 CVT;1.6-16V;Combustão;CVT;combustao
+2026;Comercial;RENAULT;E-KWID;CARGO;Elétrico;Elétrico;A;eletrico
+2026;Sub Compacto;RENAULT;E-KWID;INTENS;Elétrico;Elétrico;A;eletrico
+2026;Comercial;RENAULT;KANGOO;ADV16;1.6-16V;Combustão;M-5;combustao
+2026;Comercial;RENAULT;KANGOO;ETECHL2;Elétrico;Elétrico;A;eletrico
+2026;Comercial;RENAULT;KANGOO;EX PRO;1.6-16V;Combustão;M-5;combustao
+2026;Comercial;RENAULT;KANGOO;SRT16;1.6-16V;Combustão;M-5;combustao
+2026;Utilitário Esportivo Compacto;RENAULT;KARDIAN;10T AT;1.0 12V;Combustão;DCT-6;combustao
+2026;Utilitário Esportivo Compacto;RENAULT;KARDIAN;EVO AT;1.0 12V;Combustão;M-6;combustao
+2026;Utilitário Esportivo Compacto;RENAULT;KARDIAN;EVO MT;1.0 12V;Combustão;M-6;combustao
+2026;Utilitário Esportivo Compacto;RENAULT;KARDIAN;ICO AT;1.0 12V;Combustão;DCT-6;combustao
+2026;Utilitário Esportivo Compacto;RENAULT;KARDIAN;TECH AT;1.0 12V;Combustão;DCT-6;combustao
+2026;Extra Grande;RENAULT;KOLEOS;E-TECH;1.5T 16V;Híbrido;A-4;hibrido
+2026;Utilitário Esportivo Compacto;RENAULT;KWID;ICONIC 2;1.0-12V;Combustão;M-5;combustao
+2026;Utilitário Esportivo Compacto;RENAULT;KWID;INTENSE 2;1.0-12V;Combustão;M-5;combustao
+2026;Utilitário Esportivo Compacto;RENAULT;KWID;INTENSE BITON;1.0-12V;Combustão;M-5;combustao
+2026;Utilitário Esportivo Compacto;RENAULT;KWID;LIFE 2;1.0-12V;Combustão;M-5;combustao
+2026;Utilitário Esportivo Compacto;RENAULT;KWID;OUTSIDER 2;1.0-12V;Combustão;M-5;combustao
+2026;Utilitário Esportivo Compacto;RENAULT;KWID;ZEN 2;1.0-12V;Combustão;M-5;combustao
+2026;Comercial;RENAULT;MASTER BUS;MINIBUSL3;2.3-16V;Combustão;M-6;combustao
+2026;Comercial;RENAULT;MASTER CHASSIS CABINE;CHASSICAB;2.3-16V;Combustão;M-6;combustao
+2026;Comercial;RENAULT;MASTER FUGÃO PRÓ;PRÓ L1;2.3-16V;Combustão;M-6;combustao
+2026;Comercial;RENAULT;MASTER FUGÃO PRÓ;PRÓ L2;2.3-16V;Combustão;M-6;combustao
+2026;Comercial;RENAULT;MASTER FUGÃO PRÓ;PRÓ L3;2.3-16V;Combustão;M-6;combustao
+2026;Comercial;RENAULT;MASTER FUGÃO PRÓ;VITPRO3AC;2.3-16V;Combustão;M-6;combustao
+2026;Comercial;RENAULT;MASTER FUGÃO PRÓ;VITPROL3R;2.3-16V;Combustão;M-6;combustao
+2026;Comercial;RENAULT;MASTER FURGÃO;FURGÃO L1;2.3-16V;Combustão;M-6;combustao
+2026;Comercial;RENAULT;MASTER FURGÃO;FURGÃO L2;2.3-16V;Combustão;M-6;combustao
+2026;Comercial;RENAULT;MASTER FURGÃO;FURGÃO L3;2.3-16V;Combustão;M-6;combustao
+2026;Comercial;RENAULT;MASTER FURGÃO;FURGÃOL1R;2.3-16V;Combustão;M-6;combustao
+2026;Comercial;RENAULT;MASTER FURGÃO;FURGÃOL2R;2.3-16V;Combustão;M-6;combustao
+2026;Comercial;RENAULT;MASTER FURGÃO;FURGÃOL3R;2.3-16V;Combustão;M-6;combustao
+2026;Médio;RENAULT;MÉGANE;E-TECH;Elétrico;Elétrico;A;eletrico
+2026;Picape Compacta;RENAULT;OROCH;Intense16M;1.6-16V;Combustão;M-6;combustao
+2026;Picape Compacta;RENAULT;OROCH;PRO 16;1.6-16V;Combustão;M-6;combustao
+2026;Médio;SUZUKI;e-Vitara;4STY 2WD;Elétrico;Elétrico;A-1;eletrico
+2026;Médio;SUZUKI;e-Vitara;4STY 4WD;Elétrico;Elétrico;A-1;eletrico
+2026;Grande;TOYOTA;COROLLA;ALTIS HV;1.8 16V;Híbrido;CVT;hibrido
+2026;Grande;TOYOTA;COROLLA;APREMIUMH;1.8 16V;Híbrido;CVT;hibrido
+2026;Grande;TOYOTA;COROLLA;COROLLA ALTIS 20;2.0-16V;Combustão;CVT;combustao
+2026;Grande;TOYOTA;COROLLA;COROLLA GLI;2.0-16V;Combustão;CVT;combustao
+2026;Grande;TOYOTA;COROLLA;COROLLA GLI 20;2.0-16V;Combustão;CVT;combustao
+2026;Grande;TOYOTA;COROLLA;COROLLA GRS;2.0-16V;Combustão;CVT;combustao
+2026;Grande;TOYOTA;COROLLA;COROLLA XEI 20;2.0-16V;Combustão;CVT;combustao
+2026;Grande;TOYOTA;COROLLA;GLI HEV;1.8 16V;Híbrido;CVT;hibrido
+2026;Grande;TOYOTA;COROLLA CROSS;GRS;2.0-16V;Combustão;CVT;combustao
+2026;Grande;TOYOTA;COROLLA CROSS;XR 20;2.0-16V;Combustão;CVT;combustao
+2026;Grande;TOYOTA;COROLLA CROSS;XRE 20;2.0-16V;Combustão;CVT;combustao
+2026;Grande;TOYOTA;COROLLA CROSS;XRV HYBRID;1.8-16V;Híbrido;CVT;hibrido
+2026;Grande;TOYOTA;COROLLA CROSS;XRX 20;2.0-16V;Combustão;CVT;combustao
+2026;Grande;TOYOTA;COROLLA CROSS;XRX HYBRID;1.8-16V;Híbrido;CVT;hibrido
+2026;Grande;TOYOTA;COROLLA HB;GR R;1.6-12V;Combustão;M-6;combustao
+2026;Médio;TOYOTA;GR YARIS;6MT;1.6-12V;Combustão;M-6;combustao
+2026;Médio;TOYOTA;GR YARIS;8AT;1.6-12V;Combustão;A-8;combustao
+2026;Comercial;TOYOTA;HIACE;HIACE CARGO AT DX;2.8-16V;Combustão;A-6;combustao
+2026;Comercial;TOYOTA;HIACE;MINIBUS AT DX;2.8-16V;Combustão;A-6;combustao
+2026;Picape;TOYOTA;HILUX DIESEL 4X4 AT;CABINE SIMPLES AT;2.8-16V;Combustão;A-6;combustao
+2026;Picape;TOYOTA;HILUX DIESEL 4X4 AT;CHASSI AT;2.8-16V;Combustão;A-6;combustao
+2026;Picape;TOYOTA;HILUX DIESEL 4X4 AT;POWER PACK AT;2.8-16V;Combustão;A-6;combustao
+2026;Picape;TOYOTA;HILUX DIESEL 4X4 AT;SR AT;2.8-16V;Combustão;A-6;combustao
+2026;Picape;TOYOTA;HILUX DIESEL 4X4 AT;SRV AT;2.8-16V;Combustão;A-6;combustao
+2026;Picape;TOYOTA;HILUX DIESEL 4X4 AT;SRX AT;2.8-16V;Combustão;A-6;combustao
+2026;Picape;TOYOTA;HILUX DIESEL 4X4 AT;SRX PLUS AT;2.8-16V;Combustão;A-6;combustao
+2026;Picape;TOYOTA;HILUX DIESEL 4X4 MT;CABINE SIMPLES MT;2.8-16V;Combustão;M-6;combustao
+2026;Picape;TOYOTA;HILUX DIESEL 4X4 MT;CHASSI MT;2.8-16V;Combustão;M-6;combustao
+2026;Picape;TOYOTA;HILUX DIESEL 4X4 MT;POWER PACK MT;2.8-16V;Combustão;M-6;combustao
+2026;Extra Grande;TOYOTA;RAV4;S CONNECT;2.5-16V;Híbrido;CVT;hibrido
+2026;Extra Grande;TOYOTA;RAV4;S HYBRID;2.5-16V;Combustão;CVT;combustao
+2026;Extra Grande;TOYOTA;RAV4;SX CONNECT;2.5-16V;Híbrido;CVT;hibrido
+2026;Extra Grande;TOYOTA;RAV4;SX HYBRID;2.5-16V;Combustão;CVT;combustao
+2026;Fora de Estrada Grande;TOYOTA;SW4 DIESEL 4X4;DIAMOND AT;2.8-16V;Combustão;A-6;combustao
+2026;Fora de Estrada Grande;TOYOTA;SW4 DIESEL 4X4;SRX PLATINUM AT;2.8-16V;Combustão;A-6;combustao
+2026;Utilitário Esportivo Compacto;TOYOTA;YARIS CROSS;XRE-HYBRID;1.5-16V;Híbrido;CVT;hibrido
+2026;Utilitário Esportivo Compacto;TOYOTA;YARIS CROSS;XRX-HYBRID;1.5-16V;Híbrido;CVT;hibrido
+2026;Utilitário Esportivo Compacto;TOYOTA;YARIS CROSS FLEX;XR FLEX;1.5-16V;Combustão;CVT;combustao
+2026;Utilitário Esportivo Compacto;TOYOTA;YARIS CROSS FLEX;XRE FLEX;1.5-16V;Combustão;CVT;combustao
+2026;Utilitário Esportivo Compacto;TOYOTA;YARIS CROSS FLEX;XRX FLEX;1.5-16V;Combustão;CVT;combustao
+2026;Grande;VOLVO;EC40;6 CORE;Elétrico;Elétrico;A-1;eletrico
+2026;Grande;VOLVO;EC40;6 PLUS;Elétrico;Elétrico;A-1;eletrico
+2026;Grande;VOLVO;EC40;6 ULTRA;Elétrico;Elétrico;A-1;eletrico
+2026;Grande;VOLVO;EC40;8 CORE;Elétrico;Elétrico;A-1;eletrico
+2026;Grande;VOLVO;EC40;8 PLUS;Elétrico;Elétrico;A-1;eletrico
+2026;Grande;VOLVO;EC40;8 ULTRA;Elétrico;Elétrico;A-1;eletrico
+2026;Grande;VOLVO;EC40;PERF BLACK;Elétrico;Elétrico;A-1;eletrico
+2026;Grande;VOLVO;EC40;PERF ULTRA;Elétrico;Elétrico;A-1;eletrico
+2026;Extra Grande;VOLVO;ES90;TWIN PE ULT;Elétrico;Elétrico;A-1;eletrico
+2026;Utilitário Esportivo Compacto 4x4;VOLVO;EX30;C COUNTRY;Elétrico;Elétrico;A-1;eletrico
+2026;Utilitário Esportivo Compacto 4x4;VOLVO;EX30;CROSSC PLUS;Elétrico;Elétrico;A-1;eletrico
+2026;Médio;VOLVO;EX30;E40 CORE;Elétrico;Elétrico;A-1;eletrico
+2026;Médio;VOLVO;EX30;E40 PLUS;Elétrico;Elétrico;A-1;eletrico
+2026;Médio;VOLVO;EX30;E60 CORE;Elétrico;Elétrico;A-1;eletrico
+2026;Médio;VOLVO;EX30;E60 PLUS;Elétrico;Elétrico;A-1;eletrico
+2026;Médio;VOLVO;EX30;E60 ULTRA;Elétrico;Elétrico;A-1;eletrico
+2026;Médio;VOLVO;EX30;TWIN ULTRA;Elétrico;Elétrico;A-1;eletrico
+2026;Utilitário Esportivo Grande;VOLVO;EX40;6 CORE;Elétrico;Elétrico;A-1;eletrico
+2026;Utilitário Esportivo Grande;VOLVO;EX40;6 PLUS;Elétrico;Elétrico;A-1;eletrico
+2026;Utilitário Esportivo Grande;VOLVO;EX40;6 ULTRA;Elétrico;Elétrico;A-1;eletrico
+2026;Utilitário Esportivo Grande 4x4;VOLVO;EX40;8 CORE;Elétrico;Elétrico;A-1;eletrico
+2026;Utilitário Esportivo Grande 4x4;VOLVO;EX40;8 PLUS;Elétrico;Elétrico;A-1;eletrico
+2026;Utilitário Esportivo Grande 4x4;VOLVO;EX40;8 ULTRA;Elétrico;Elétrico;A-1;eletrico
+2026;Utilitário Esportivo Grande 4x4;VOLVO;EX40;PERF BLACK;Elétrico;Elétrico;A-1;eletrico
+2026;Utilitário Esportivo Grande 4x4;VOLVO;EX40;PERF ULTRA;Elétrico;Elétrico;A-1;eletrico
+2026;Utilitário Esportivo Grande 4x4;VOLVO;EX90;PLUS TWIN;Elétrico;Elétrico;A-1;eletrico
+2026;Utilitário Esportivo Grande 4x4;VOLVO;EX90;ULT TWIN PER;Elétrico;Elétrico;A-1;eletrico
+2026;Utilitário Esportivo Grande 4x4;VOLVO;EX90;ULTRA TWIN;Elétrico;Elétrico;A-1;eletrico
+2026;Utilitário Esportivo Grande 4x4;VOLVO;XC60;INSC EXPRESS;2.0-16V;Plug-in;A;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;VOLVO;XC60;T8 CORE;2.0-16V;Plug-in;A;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;VOLVO;XC60;T8 INSCRIPT;2.0-16V;Plug-in;A;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;VOLVO;XC60;T8 MOMENTUM;2.0-16V;Plug-in;A;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;VOLVO;XC60;T8 PLUS;2.0-16V;Plug-in;A;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;VOLVO;XC60;T8 POLESTAR;2.0-16V;Plug-in;A;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;VOLVO;XC60;T8 R-DESIGN;2.0-16V;Plug-in;A;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;VOLVO;XC60;T8 ULT DARK;2.0-16V;Plug-in;A;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;VOLVO;XC60;T8 ULTIMATE;2.0-16V;Plug-in;A;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;VOLVO;XC60;T8 ULTRA;2.0-16V;Plug-in;A;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;VOLVO;XC90;INSC EXPRESS;2.0-16V;Plug-in;A;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;VOLVO;XC90;T8 AWD PLUS;2.0-16V;Plug-in;A;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;VOLVO;XC90;T8 AWD ULT;2.0-16V;Plug-in;A;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;VOLVO;XC90;T8 AWD ULTD;2.0-16V;Plug-in;A;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;VOLVO;XC90;T8 CORE;2.0-16V;Plug-in;A;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;VOLVO;XC90;T8 EXCELLEN;2.0-16V;Plug-in;A;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;VOLVO;XC90;T8 INSCRIPT;2.0-16V;Plug-in;A;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;VOLVO;XC90;T8 MOMENTUM;2.0-16V;Plug-in;A;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;VOLVO;XC90;T8 PLUS;2.0-16V;Plug-in;A;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;VOLVO;XC90;T8 POLESTAR;2.0-16V;Plug-in;A;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;VOLVO;XC90;T8 R-DESIGN;2.0-16V;Plug-in;A;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;VOLVO;XC90;T8 ULT DARK;2.0-16V;Plug-in;A;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;VOLVO;XC90;T8 ULTIMATE;2.0-16V;Plug-in;A;hibrido_plug_in
+2026;Utilitário Esportivo Grande 4x4;VOLVO;XC90;T8 ULTRA;2.0-16V;Plug-in;A;hibrido_plug_in
+2026;Picape;VW;AMAROK;V6 COMFORT (MY26);3.0 - 24V;Combustão;A - 8;combustao
+2026;Picape;VW;AMAROK;V6 EXTREME (MY26);3.0 - 24V;Combustão;A - 8;combustao
+2026;Picape;VW;AMAROK;V6 HIGH (MY26);3.0 - 24V;Combustão;A - 8;combustao
+2026;Médio;VW;GOLF;GOLF GTI;2.0-16V;Combustão;DTC - 7;combustao
+2026;Extra Grande;VW;JETTA;GLI;2.0-16V;Combustão;DCT - 7;combustao
+2026;Utilitário Esportivo Compacto;VW;NIVUS;AUTOMÁTICO;1.0-12V;Combustão;A - 6;combustao
+2026;Utilitário Esportivo Compacto;VW;NIVUS;GTS 1.4TSI AUTOMÁTICO;1.4-16V;Combustão;A - 6;combustao
+2026;Utilitário Esportivo Compacto;VW;NIVUS;HIGHLINE 200TSI AUTOMÁTICO;1.0-12V;Combustão;A - 6;combustao
+2026;Médio;VW;POLO;COMFORTLINE TSI AUT;1.0-12V;Combustão;A - 6;combustao
+2026;Médio;VW;POLO;HIGHLINE TSI AUTOMÁTICO;1.0-12V;Combustão;A - 6;combustao
+2026;Médio;VW;POLO;MPI;1.0-12V;Combustão;M - 5;combustao
+2026;Médio;VW;POLO;SENSE TSI AUTOMÁTICO;1.0-12V;Combustão;A - 6;combustao
+2026;Médio;VW;POLO;TRACK 1.0 MPI;1.0-12V;Combustão;M - 5;combustao
+2026;Médio;VW;POLO;TRACK ROBUST 1.0 MPI;1.0-12V;Combustão;M - 5;combustao
+2026;Picape Compacta;VW;SAVEIRO;;1.6-16V;Combustão;M - 5;combustao
+2026;Picape Compacta;VW;SAVEIRO;CABINE DUPLA EXTREME MF;1.6-16V;Combustão;M - 5;combustao
+2026;Picape Compacta;VW;SAVEIRO;CABINE DUPLA ROBUST MF;1.6-16V;Combustão;M - 5;combustao
+2026;Picape Compacta;VW;SAVEIRO;MF;1.6-16V;Combustão;M - 5;combustao
+2026;Utilitário Esportivo Compacto;VW;T CROSS;;1.0-12V;Combustão;A - 8;combustao
+2026;Utilitário Esportivo Compacto;VW;T CROSS;200TSI AUTOMATICO;1.0-12V;Combustão;A - 6;combustao
+2026;Utilitário Esportivo Compacto;VW;T CROSS;200TSI AUTOMATICO;1.0-12V;Combustão;A - 8;combustao
+2026;Utilitário Esportivo Compacto;VW;T CROSS;AUTOMATICO;1.0-12V;Combustão;A - 6;combustao
+2026;Utilitário Esportivo Compacto;VW;T CROSS;EXTREME 250TSI AUTOMÁTICO;1.4 - 16V;Combustão;A - 6;combustao
+2026;Utilitário Esportivo Compacto;VW;T CROSS;HIGHLINE 250TSI AUTOMÁTICO;1.4 - 16V;Combustão;A - 6;combustao
+2026;Utilitário Esportivo Compacto;VW;T CROSS;SENSE 200TSI AUTOMATICO;1.0-12V;Combustão;A - 6;combustao
+2026;Utilitário Esportivo Compacto;VW;T CROSS;SENSE 200TSI AUTOMATICO;1.0-12V;Combustão;A - 8;combustao
+2026;Utilitário Esportivo Grande;VW;TAOS;;1.4 - 16V;Combustão;A - 8;combustao
+2026;Utilitário Esportivo Grande;VW;TAOS;HIGHLINE 250TSI AUTOMÁTICO;1.4 - 16V;Combustão;A - 8;combustao
+2026;Utilitário Esportivo Compacto;VW;TERA;COMFORT TSI;1.0-12V;Combustão;A - 6;combustao
+2026;Utilitário Esportivo Compacto;VW;TERA;HIGH TSI;1.0-12V;Combustão;A - 6;combustao
+2026;Médio;VW;TERA;MPI;1.0-12V;Combustão;M - 5;combustao
+2026;Utilitário Esportivo Compacto;VW;TERA;TSI;1.0-12V;Combustão;M - 5;combustao
+2026;Fora de Estrada Grande;VW;TIGUAN;R LINE;2.0 - 16V;Combustão;A - 8;combustao
+2026;Médio;VW;VIRTUS;COMFORTLINE 200TSI AUT;1.0-12V;Combustão;A - 6;combustao
+2026;Médio;VW;VIRTUS;EXCLUSIVE 250TSI AUT;1.4 -16V;Combustão;A - 6;combustao
+2026;Médio;VW;VIRTUS;HIGHLINE 200TSI AUT;1.0-12V;Combustão;A - 6;combustao
+2026;Médio;VW;VIRTUS;SENSE TSI MECÂNICO;1.0-12V;Combustão;M - 5;combustao
+2026;Médio;VW;VIRTUS;TSI AUTOMÁTICO;1.0-12V;Combustão;A - 6;combustao
+2026;Médio;VW;VIRTUS;TSI MECÂNICO;1.0-12V;Combustão;M - 5;combustao
+2026;Extra Grande;ZEEKR;001;Flagship;Elétrico;Elétrico;A;eletrico
+2026;Extra Grande;ZEEKR;001;Premium;Elétrico;Elétrico;A;eletrico
+2026;Extra Grande;ZEEKR;7X;Flagship AWD;Elétrico;Elétrico;A;eletrico
+2026;Extra Grande;ZEEKR;7X;Premium RWD;Elétrico;Elétrico;A;eletrico
+2026;Utilitário Esportivo Grande 4x4;ZEEKR;X;Flagship;Elétrico;Elétrico;A;eletrico
+2026;Utilitário Esportivo Grande;ZEEKR;X;Premium;Elétrico;Elétrico;A;eletrico

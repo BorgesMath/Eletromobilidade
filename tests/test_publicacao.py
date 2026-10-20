@@ -26,7 +26,8 @@ def test_publicar(tmp_path, xlsx_jan, zip_marca_modelo_jan):
 
     arquivos = {p.name for p in resultados.iterdir()}
     assert {"combustivel_brasil.csv", "conciliacao_uf.csv", "qualidade_modelo.csv",
-            "combustivel_municipio.parquet", "modelo_eletrificados.parquet", "LEIAME.md"} <= arquivos
+            "combustivel_municipio.parquet", "modelo_eletrificados.parquet",
+            "modelos_dimensao.parquet", "LEIAME.md"} <= arquivos
     assert "frota_combustivel.parquet" not in arquivos and "frota_combustivel.csv" not in arquivos
     assert "combustivel_brasil.parquet" not in arquivos and "combustivel_municipio.csv" not in arquivos
     assert "tabela_antiga.csv" not in arquivos

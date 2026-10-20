@@ -81,6 +81,9 @@ eletromobilidade -v processar
 
 # 4. publicar painéis, conciliação e auditorias em resultados/ (versionado)
 eletromobilidade publicar
+
+# extrair a tabela PBE Veicular do Inmetro de um PDF de ciclo (só quando sai ciclo novo)
+eletromobilidade pbev tabela-pbev-2026.pdf --ciclo 2026
 ```
 
 `data/raw` e `data/processed` não vão para o repositório; a pasta
@@ -132,7 +135,8 @@ Cada tabela é gravada em Parquet e em CSV (`;` como separador, `,` decimal, UTF
 | `combustiveis_classificados` | rótulo de combustível | Auditoria: classe, origem (tabela/regra), total |
 | `modelo_eletrificados` | mês × município × modelo × ano de fabricação | Modelos eletrificados e híbridos leves |
 | `modelo_{municipio,uf,brasil}` | mês × recorte | Painel da base por modelo |
-| `modelos_classificados` | mês × modelo | Auditoria: classe, regra aplicada, total, `revisar` |
+| `modelos_classificados` | mês × modelo | Auditoria: classe, regra aplicada, total, `revisar`, marca |
+| `modelos_dimensao` | modelo | Dimensão do painel: grafia do RENAVAM, marca canônica, origem |
 | `conciliacao_{municipio,uf,brasil}` | mês × recorte | Comparação entre as duas bases |
 | `qualidade_{combustivel,modelo}` | arquivo mensal | Linhas, frota total, ajustes aplicados e se o mês entrou na série |
 
@@ -232,6 +236,86 @@ cobertas por testes: `VW/8.150E DELIVERY` (diesel, "E" de eletrônico),
 A coluna `revisar` marca modelos de marcas com linha (quase) toda eletrificada
 (BYD, GWM, GAC, Omoda/Jaecoo, Zeekr…) que não casaram com nenhuma regra. A CLI
 lista esses casos ao final.
+
+## Marca
+
+Do mesmo texto sai a marca, em duas colunas. `marca_renavam` é a grafia como o
+RENAVAM publica; `marca` é a forma canônica, que une as grafias da mesma empresa
+por [`src/eletromobilidade/dados/marcas.csv`](src/eletromobilidade/dados/marcas.csv).
+
+Extrair a marca não é pegar a primeira palavra: o primeiro elemento do texto pode
+ser marcador de importação (`I/`, `IMP/`), a montadora que montou o veículo no
+Brasil (`JTA/SUZUKI EN125 YES`) ou o tipo do veículo, em reboque e máquina
+(`SR/RANDON SR CA`, `M.A./MASSEY-FERGUSON`). Removido o prefixo, vale tudo o que
+vem antes da barra — `HARLEY DAVIDSON/XL883N` é "HARLEY DAVIDSON", não "HARLEY".
+
+A tabela de equivalência cobre as grafias conferidas à mão, que são as de frota
+relevante: `GM`, `CHEVROLET` e `CHEV` viram `CHEVROLET` (16,5 milhões de
+veículos); `M.BENZ`, `MBENZ`, `MERCEDES` e mais duas viram `MERCEDES-BENZ`.
+Grafia fora da tabela segue como está — não há invenção. O que falta sai como
+fila ordenada no log de `processar`: as grafias que parecem variante de outra
+(`RANDONSP` ao lado de `RANDON`), por frota decrescente.
+
+`marca` é marca comercial, não grupo econômico: Chevrolet e GMC seguem separadas,
+como Volvo e Geely. Somar por fabricante pede outra tabela — ver
+[`docs/ROTEIRO.md`](docs/ROTEIRO.md).
+
+## Auditoria contra o Inmetro (PBE Veicular)
+
+A classificação por nome é conferida contra a tabela do Programa Brasileiro de
+Etiquetagem Veicular, que traz a propulsão **declarada pelo fabricante** e a
+categoria de porte, versão por versão. É a única fonte pública brasileira que
+separa PHEV de HEV por versão — nem o campo combustível do RENAVAM separa.
+
+A fonte é PDF, sem CSV equivalente no dados.gov.br, e com o texto desenhado
+caractere a caractere: as colunas saem pelas bordas da tabela, não pelo fluxo do
+texto. Por isso a extração não roda no `processar`. Ela gera um instantâneo
+versionado, e é esse arquivo que o pacote lê:
+
+```bash
+# baixe o PDF do ciclo em gov.br/inmetro e extraia uma vez
+eletromobilidade pbev tabela-pbev-2026.pdf --ciclo 2026
+```
+
+O ciclo 2026 rendeu 972 versões, 49 marcas e 309 modelos. O PDF declara 976
+modelos/versões no próprio cabeçalho, com 114 híbridos e 112 plug-in; a extração
+fecha em 114 e 111 — a conferência está nesse número.
+
+Três colunas entram em `modelos_classificados`:
+
+| Coluna | O que é |
+|---|---|
+| `pbe_classes` | classes que a linha do modelo tem no PBE, separadas por `\|`. Vazio quando o modelo não casou (moto, ônibus, caminhão, modelo fora de linha) |
+| `pbe_categoria` | porte do PBE (Médio, Picape, Utilitário Esportivo Compacto…) |
+| `pbe_aviso` | a divergência, com a direção |
+
+A junção nunca reduz o modelo a uma propulsão só. Corolla tem versão a combustão
+e versão híbrida na mesma linha do PBE, e o aviso olha o **conjunto**: por isso
+`TOYOTA/COROLLA GLI` e `TOYOTA/COROLLA ALTIS HV` convivem sem acusação falsa.
+
+As duas direções do aviso se leem de formas opostas:
+
+- **`sem_versao_no_pbe`** — a regra atribuiu classe eletrificada que o PBE não
+  registra para o modelo. Falso positivo provável, e a fila mais acionável: 20
+  modelos e 8.177 veículos em set/2026. Foi assim que apareceu
+  `I/BMW 320I EV11`, classificado elétrico pela regra genérica `\bEV\d*\b` —
+  "EV11" é código de motor da BMW, não marcador elétrico.
+- **`pbe_so_eletrificado`** — a regra disse combustão e toda versão do modelo no
+  PBE é eletrificada. 505 modelos e 418 mil veículos, mas **a maioria é geração
+  antiga, não regra faltando**: o PBE do ciclo só traz o que está em linha, e
+  `I/MMC OUTLANDER 2.0` é o Outlander a combustão de antes do PHEV, como
+  `I/HONDA CR-V LX` é a geração anterior ao CR-V só híbrido. Confira o ano de
+  fabricação antes de criar regra.
+
+`hibrido_leve` nunca gera aviso, e isso é informação: o PBE não tem essa
+categoria e registra `FIAT/PULSE AUDACE HYB` e `JEEP/RENEGADE LONGIT HYB` como
+**combustão**. É respaldo externo, com fonte citável, para a decisão deste
+projeto de manter híbrido leve fora da frota eletrificada.
+
+**Cobertura, que é parcial por construção.** O PBE é só de veículo leve novo
+ensaiado no ciclo: 79,1% da frota eletrificada da base por modelo casa com uma
+linha e ganha porte. O que fica fora é, em boa parte, exatamente o que falta para
+fechar a lacuna de tipo de veículo — moto, scooter e ônibus.
 
 ## Conciliação
 

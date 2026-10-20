@@ -1,8 +1,12 @@
 # Roteiro
 
-Estado em 14/10/2026. O pipeline Python está fechado e testado (161 testes); a
+Estado em 19/10/2026. O pipeline Python está fechado e testado (171 testes); a
 camada do Power BI está especificada em [`pbi/`](../pbi/MODELO.md) e o `.pbix`
 ainda precisa ser montado. O que falta está abaixo, em ordem de valor.
+
+As tabelas de `resultados/` ainda são as da execução de 13/10, anterior à
+normalização de marca: as colunas novas entram na próxima rodada de `processar` e
+`publicar`, que precisa dos arquivos da SENATRAN em `data/raw` (não versionados).
 
 ## 1. Código IBGE e nome próprio de município
 
@@ -54,6 +58,26 @@ reboque. Mas nenhuma expressão simples resolve: precisa de tabela de regras
 revisada à mão, como `dados/modelos.csv`, com a mesma marcação `revisar` para a
 fila de trabalho. Não prometa o número por tipo antes de a tabela existir.
 
+**Meio caminho já está andado, pelo Inmetro.** A auditoria contra o PBE Veicular
+(ver o README) traz `pbe_categoria` para **79,1% da frota eletrificada** da base
+por modelo: Extra Grande 230.352, Utilitário Esportivo Grande 163.418, Médio
+159.645, Sub Compacto 126.734, Grande 123.182, Utilitário Esportivo Compacto
+84.529, Picape 12.573.
+
+Falta entender o que isso é e o que não é. `pbe_categoria` é **porte de veículo
+leve**, não tipo: não distingue automóvel de comercial leve, e não tem como
+distinguir, porque o PBE só ensaia veículo leve. O que ele dá de graça é a outra
+ponta — **estar no PBE é prova de que o veículo é leve**. Os 20,9% que ficaram
+fora concentram justamente moto, scooter e ônibus, que é o número que falta para
+a nota técnica.
+
+Então a tabela de regras de tipo continua necessária, mas o escopo encolheu: em
+vez de classificar 613 modelos do zero, basta classificar o resíduo não casado e
+usar o PBE como verificação de quem já se sabe leve. Combinar com `G_`
+(`tipo_especie_eixos`) como total de controle por município, do mesmo jeito que a
+base por combustível concilia a base por modelo, transformaria a inferência em
+erro medido — e é isso que torna o número por tipo defensável num documento.
+
 ## 4. Fechar o furo de jan/2022 e esticar a série para trás
 
 Dois buracos distintos:
@@ -67,13 +91,60 @@ Dois buracos distintos:
   2013. Para a tendência de eletrificação, 2020 em diante provavelmente basta —
   antes disso a frota eletrificada é residual. Item de baixa prioridade.
 
-## 5. Normalizar marca
+## 5. Normalizar marca — feito, com resíduo
 
-`dModelo[marca]` sai do RENAVAM como está: `CHEV` e `CHEVROLET`, `CAOACHERY` e
-`CHERY` são a mesma empresa em linhas diferentes, e `CIVIC` é modelo lido como
-marca. São 118 marcas derivadas de 935 modelos. Uma tabela de equivalência
-`dados/marcas.csv` resolve e é trabalho de uma tarde. Até então a página 3 agrega
-por marca com ressalva.
+Dois problemas, e o menor deles era o das grafias.
+
+**O primeiro era de posição.** O primeiro elemento de "Marca Modelo" não é sempre
+a marca: pode ser marcador de importação (`I/`, `IMP/`), a montadora que montou o
+veículo no Brasil (`JTA/SUZUKI EN125 YES`) ou o tipo do veículo, em reboque e
+máquina (`SR/RANDON SR CA`, `M.A./MASSEY-FERGUSON`, `MR/CAT 416`). Só `I/` e
+`IMP/` eram tratados, então 4,58 milhões de veículos tinham como "marca" um
+`R`, `SR` ou `REB`. Tratados os prefixos, aparecem os fabricantes que estavam
+escondidos: RANDON com 500.746, FACCHINI 246.774, GUERRA 138.320, LIBRELATO
+132.229, NOMA 90.997.
+
+A extração também passou a ler tudo o que vem antes da barra, e não até o
+primeiro espaço, que é o que o Power Query já fazia — `HARLEY DAVIDSON/XL883N`
+dava "HARLEY". Python e painel divergiam.
+
+**O segundo são as grafias**, em `src/eletromobilidade/dados/marcas.csv`
+(33 equivalências conferidas à mão). As maiores:
+
+| Marca canônica | Frota | Grafias unidas |
+|---|---:|---|
+| VOLKSWAGEN | 21.953.416 | VW, VOLKS, VOLKSWAGEN |
+| CHEVROLET | 16.500.963 | GM, CHEVROLET, CHEV |
+| MERCEDES-BENZ | 2.363.055 | M.BENZ, MBENZ, MERCEDES, M.BENZ313CDI, MERCEDES BENZ |
+| MITSUBISHI | 833.802 | MMC, MITSUBISHI |
+| SUZUKI | 837.461 | SUZUKI, JTA-SUZUKI |
+| CHERY | 420.677 | CAOACHERY, CHERY |
+| IVECO | 274.424 | IVECO, IVECOFIAT |
+| ROYAL ENFIELD | 112.061 | RE, ROYAL |
+| HARLEY-DAVIDSON | 91.372 | HARLEY DAVIDSON, H.DAVIDSON, HARLEY-DAVIDSON |
+
+Na dimensão do painel, 118 marcas viraram 110. O ganho grande não está aí: está
+na base completa, onde Chevrolet estava partida em três linhas e Mercedes em
+cinco.
+
+**O resíduo, que é real.** A estimativa de "uma tarde" valia para as 118 marcas
+do recorte eletrificado. A base completa tem cerca de 4,7 mil grafias distintas,
+e normalizar todas à mão não se paga — a cauda é marca de verdade, grafada uma
+única vez. O que existe agora é fila ordenada: `processar` lista as grafias que
+*parecem* variante de outra (modelo colado na marca, pontuação a mais), por frota
+decrescente. São 310, e a maior é `RANDONSP` com 32.547 veículos. Duas ordens de
+grandeza abaixo do que já foi resolvido, e por isso item de baixa prioridade
+daqui para frente.
+
+O que o heurístico não acha, e que só sai a olho, é abreviação sem parentesco no
+texto: `GM` para Chevrolet, `MMC` para Mitsubishi, `LR` para Land Rover. Essas
+entraram pelo conhecimento de mercado, uma a uma, e é assim que as próximas
+entram.
+
+**Agrupamento por fabricante não foi feito.** `marca` é marca comercial:
+CHEVROLET e GMC seguem separadas, como VOLVO e GEELY, como CHERY e OMODA. Somar
+por grupo econômico pede outra coluna e outra tabela, com decisão de fronteira
+em cada caso — e errar isso num documento do MME é pior que não ter.
 
 ## 6. Publicar a tabela longa por classe
 

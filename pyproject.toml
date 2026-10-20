@@ -17,7 +17,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8"]
+dev = ["pytest>=8", "pdfplumber>=0.11"]
+# Só para regerar o instantâneo do PBE Veicular a partir do PDF do Inmetro
+# (comando `pbev`); o uso normal lê dados/pbev.csv, que é versionado.
+pdf = ["pdfplumber>=0.11"]
 
 [project.scripts]
 eletromobilidade = "eletromobilidade.cli:main"

@@ -7,6 +7,7 @@ Exemplos::
     eletromobilidade baixar --tabela combustivel --anos 2025 2026
     eletromobilidade processar --entrada data/raw --saida data/processed
     eletromobilidade publicar
+    eletromobilidade pbev tabela-pbev-2026.pdf --ciclo 2026
 """
 
 from __future__ import annotations
@@ -19,8 +20,9 @@ from . import coleta, pipeline
 from .base_modelo import processar_arquivos_modelo
 from .classificacao import carregar_tabela
 from .conciliacao import conciliar_bases
+from .inmetro import extrair_pbev, gravar_pbev
 from .leitura import identificar_tabela, inferir_periodo
-from .modelos import carregar_regras
+from .modelos import carregar_regras, marcas_suspeitas
 from .publicacao import publicar
 
 RAW = Path("data/raw")
@@ -94,6 +96,20 @@ def _processar(args) -> None:
             logging.warning("Modelos de marcas eletrificadas sem regra (revise dados/modelos.csv):\n%s",
                             revisar[["ano", "mes", "marca_modelo_norm", "qtd_veiculos"]]
                             .head(50).to_string(index=False))
+        avisos = tabelas["modelos_classificados"].query("pbe_aviso == 'sem_versao_no_pbe'")
+        if not avisos.empty:
+            logging.warning("Classe eletrificada que o PBE Veicular não registra para o modelo "
+                            "(falso positivo provável; revise dados/modelos.csv):\n%s",
+                            avisos[["marca_modelo_norm", "classe", "pbe_classes", "qtd_veiculos"]]
+                            .head(30).to_string(index=False))
+        suspeitas = marcas_suspeitas(tabelas["modelos_classificados"])
+        if not suspeitas.empty:
+            logging.info("Grafias de marca que parecem variante de outra (avalie incluir em "
+                         "dados/marcas.csv):\n%s", suspeitas.head(20).to_string(index=False))
+
+
+def _pbev(args) -> None:
+    print(gravar_pbev(extrair_pbev(args.pdf, args.ciclo), args.saida))
 
 
 def _publicar(args) -> None:
@@ -137,6 +153,12 @@ def main(argv: list[str] | None = None) -> None:
                    help="agregados mensais da base por modelo (padrão: data/interim/marca_modelo)")
     p.add_argument("--sem-cache", action="store_true", help="relê todos os arquivos de marca/modelo")
     p.set_defaults(func=_processar)
+
+    p = sub.add_parser("pbev", help="extrai a tabela PBE Veicular do Inmetro de um PDF para dados/pbev.csv")
+    p.add_argument("pdf", type=Path, help="PDF do ciclo, baixado de gov.br/inmetro")
+    p.add_argument("--ciclo", type=int, required=True, help="ano do ciclo (ex.: 2026)")
+    p.add_argument("--saida", type=Path, help="CSV de destino (padrão: o instantâneo do pacote)")
+    p.set_defaults(func=_pbev)
 
     p = sub.add_parser("publicar", help="copia painéis, conciliação e auditorias para resultados/ (versionado)")
     p.add_argument("--entrada", type=Path, default=PROCESSED)

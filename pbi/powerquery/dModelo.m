@@ -1,49 +1,44 @@
 // dModelo — dimensão de marca e modelo
 //
-// Fonte: resultados/modelo_eletrificados.parquet
+// Fonte: resultados/modelos_dimensao.parquet
 // Grão: marca_modelo distinto (935 membros)
 //
-// O campo `Marca Modelo` do RENAVAM é um texto único, não dois campos. A marca
-// é extraída daqui:
-//   - prefixo `I/` indica veículo importado e é removido antes de ler a marca;
-//   - havendo `/` no restante, a marca é o que vem antes (TOYOTA/COROLLA…);
-//   - não havendo, é a primeira palavra (I/BYD DOLPHIN GS 180EV → BYD).
+// A marca NÃO é derivada aqui. O campo `Marca Modelo` do RENAVAM é um texto
+// único, e extrair a marca dele tem exceção suficiente para pedir teste: o
+// primeiro elemento pode ser marcador de importação (`I/`, `IMP/`), a montadora
+// que montou o veículo no Brasil (`JTA/SUZUKI EN125 YES`) ou o tipo do veículo,
+// em reboque e máquina (`SR/RANDON SR CA`, `M.A./MASSEY-FERGUSON`). Isso mora em
+// src/eletromobilidade/modelos.py e chega pronto nesta tabela.
 //
-// LIMITAÇÃO: a marca sai como está no RENAVAM, que não é normalizado. Das 118
-// marcas derivadas, algumas são a mesma empresa grafada de formas diferentes
-// (CHEV e CHEVROLET; CAOACHERY e CHERY) e uma ou outra é modelo lido como marca
-// (CIVIC). Para somar por fabricante, normalize antes — item do docs/ROTEIRO.md.
-// Até lá, agregue por marca com ressalva e prefira o grão de modelo.
+// Duas colunas de marca, de propósito:
+//   - `marca_renavam`: a grafia como o RENAVAM publica, para auditar;
+//   - `marca`: a forma canônica, que une as grafias da mesma empresa por
+//     src/eletromobilidade/dados/marcas.csv (GM, CHEVROLET e CHEV viram
+//     CHEVROLET; CAOACHERY vira CHERY). Use esta para agregar por fabricante.
+//
+// LIMITAÇÃO: a tabela de equivalência cobre as grafias conferidas à mão. Grafia
+// fora dela segue como está em `marca` — não há invenção, mas pode haver empresa
+// ainda dividida em duas linhas. A fila do que falta sai no log de `processar`
+// (grafias que parecem variante de outra) e em docs/ROTEIRO.md.
 
 let
     Fonte = Parquet.Document(
-        File.Contents(PastaResultados & "\modelo_eletrificados.parquet")
+        File.Contents(PastaResultados & "\modelos_dimensao.parquet")
     ),
-    Nomes = Table.Distinct(Table.SelectColumns(Fonte, {"marca_modelo"})),
-    Importado = Table.AddColumn(
-        Nomes, "importado", each Text.StartsWith([marca_modelo], "I/"), type logical
+    Tipos = Table.TransformColumnTypes(
+        Fonte,
+        {
+            {"marca_modelo", type text},
+            {"marca_modelo_norm", type text},
+            {"marca_renavam", type text},
+            {"marca", type text},
+            {"importado", type logical},
+            {"origem", type text}
+        }
     ),
-    SemPrefixo = Table.AddColumn(
-        Importado,
-        "sem_prefixo",
-        each if [importado] then Text.RemoveRange([marca_modelo], 0, 2) else [marca_modelo],
-        type text
-    ),
-    ComMarca = Table.AddColumn(
-        SemPrefixo,
-        "marca",
-        each if Text.Contains([sem_prefixo], "/") then
-            Text.BeforeDelimiter([sem_prefixo], "/")
-        else
-            Text.BeforeDelimiter([sem_prefixo], " "),
-        type text
-    ),
-    ComOrigem = Table.AddColumn(
-        ComMarca,
-        "origem",
-        each if [importado] then "Importado" else "Nacional",
-        type text
-    ),
-    Final = Table.SelectColumns(ComOrigem, {"marca_modelo", "marca", "origem", "importado"})
+    Final = Table.SelectColumns(
+        Tipos,
+        {"marca_modelo", "marca_renavam", "marca", "origem", "importado"}
+    )
 in
     Final

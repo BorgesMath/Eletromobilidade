@@ -1,7 +1,9 @@
 import pandas as pd
 import pytest
 
-from eletromobilidade.modelos import ClassificadorModelos, a_revisar, carregar_regras, classificar_modelos
+from eletromobilidade.modelos import (ClassificadorModelos, a_revisar, carregar_marcas, carregar_regras,
+                                      classificar_modelos, dimensao_modelo, marca, marca_renavam,
+                                      marcas_suspeitas)
 
 # Textos reais do campo "Marca Modelo" (amostra do arquivo de abril/2026).
 CASOS = [
@@ -136,3 +138,89 @@ def test_regras_com_ponto_e_virgula_na_nota(tmp_path):
     arq.write_text("classe;padrao;nota\neletrico;BYD;nota; com ponto e vírgula\n", encoding="utf-8")
     with pytest.raises(ValueError, match="linha 2"):
         carregar_regras(arq)
+
+
+# --- marca -------------------------------------------------------------------------------
+
+def test_marca_renavam_ignora_prefixo_de_montadora_e_de_tipo():
+    s = pd.Series(["I/BYD DOLPHIN GS 180EV", "IMP/ASIA TOWNER COACH", "JTA/SUZUKI EN125 YES",
+                   "SR/RANDON SR CA", "REB/KRONE", "M.A./MASSEY-FERGUSON", "MR/CAT 416"])
+    assert list(marca_renavam(s)) == ["BYD", "ASIA", "SUZUKI", "RANDON", "KRONE",
+                                      "MASSEY-FERGUSON", "CAT"]
+
+
+def test_marca_renavam_le_tudo_antes_da_barra():
+    # Marca com espaço só é recuperável quando a barra a delimita; sem barra, vale a
+    # primeira palavra (limitação conhecida: I/MOTO GUZZI V7 -> MOTO).
+    s = pd.Series(["HARLEY DAVIDSON/XL883N", "MOTO TRAXX/JL50Q-8", "I/MOTO GUZZI V7"])
+    assert list(marca_renavam(s)) == ["HARLEY DAVIDSON", "MOTO TRAXX", "MOTO"]
+
+
+def test_marca_renavam_nula_sem_marca():
+    assert marca_renavam(pd.Series(["SEM INFORMACAO", ""])).isna().all()
+
+
+def test_marca_une_grafias_da_mesma_empresa():
+    s = pd.Series(["GM/CORSA WIND", "CHEVROLET/ONIX 1.0MT LT", "CHEV/ONIX 10MT LT2",
+                   "VW/GOL 1.0", "VOLKS/COMIL SVELTO U", "I/CAOACHERY TIGGO8 PHEV",
+                   "I/LPM C10 REEV E27", "M.BENZ313CDI/SPRINTERM"])
+    assert list(marca(s)) == ["CHEVROLET", "CHEVROLET", "CHEVROLET", "VOLKSWAGEN", "VOLKSWAGEN",
+                              "CHERY", "LEAPMOTOR", "MERCEDES-BENZ"]
+
+
+def test_marca_fora_da_tabela_segue_como_esta():
+    assert list(marca(pd.Series(["I/BYD DOLPHIN GS 180EV", "TOYOTA/COROLLA ALTIS HV"]))) == ["BYD", "TOYOTA"]
+
+
+def test_a_revisar_casa_pela_marca_canonica():
+    # MARCAS_A_REVISAR lista as marcas pela forma canônica (LEAPMOTOR), e o RENAVAM
+    # grafa LPM. Hoje todo LPM casa com uma regra e não chega aqui; o que o teste
+    # protege é a fila continuar enxergando a marca se a regra sair ou a grafia mudar.
+    classificados = pd.DataFrame({"marca_modelo_norm": ["I/LPM T03 COMFORT", "VW/GOL 1.0"],
+                                  "regra": [0, 0]})
+    assert list(a_revisar(classificados)) == [True, False]
+
+
+def test_marcas_suspeitas_aponta_da_variante_para_a_grafia_mais_frequente():
+    classificados = pd.DataFrame({
+        "marca_modelo_norm": ["I/BYD DOLPHIN GS 180EV", "SR/RANDON SR CA", "SR/RANDONSP RT",
+                              "SR/FACCHINI SRF CF", "SR/FACCHINI-IR CF",
+                              "I/TAILG VOLTZ EVS", "I/TAIL-G VOLTZ"],
+        "qtd_veiculos": [900, 500, 30, 240, 10, 500, 20],
+    })
+    s = marcas_suspeitas(classificados).set_index("marca_renavam")
+    # BYD não parece variante de nada e fica fora, por mais frota que tenha.
+    assert "BYD" not in s.index
+    # A suspeita é a grafia com menos frota, e aponta para a mais frequente: modelo
+    # colado na marca (RANDONSP, FACCHINI-IR) e pontuação a mais (TAIL-G).
+    assert s.loc["RANDONSP", "parecida_com"] == "RANDON"
+    assert s.loc["FACCHINI-IR", "parecida_com"] == "FACCHINI"
+    assert s.loc["TAIL-G", "parecida_com"] == "TAILG"
+    assert "RANDON" not in s.index and "FACCHINI" not in s.index
+
+
+def test_dimensao_modelo():
+    d = dimensao_modelo(pd.Series(["I/CAOACHERY TIGGO8 PHEV", "CHEV/ONIX 10MT LT2",
+                                   "I/CAOACHERY TIGGO8 PHEV"]))
+    assert len(d) == 2
+    assert dict(zip(d["marca_renavam"], d["marca"])) == {"CAOACHERY": "CHERY", "CHEV": "CHEVROLET"}
+    assert dict(zip(d["marca_renavam"], d["origem"])) == {"CAOACHERY": "Importado", "CHEV": "Nacional"}
+
+
+def test_marcas_invalidas(tmp_path):
+    arq = tmp_path / "m.csv"
+    arq.write_text("marca_renavam;marca;nota\nCHEV;CHEVROLET;\nCHEV;GM;\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="repetidas"):
+        carregar_marcas(arq)
+    # GM -> CHEVROLET e CHEVROLET -> CHEV deixaria o resultado dependente da ordem.
+    arq.write_text("marca_renavam;marca;nota\nGM;CHEVROLET;\nCHEVROLET;CHEV;\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="também são grafias"):
+        carregar_marcas(arq)
+    arq.write_text("marca_renavam;marca;nota\nCHEV;CHEVROLET;nota; com ponto e vírgula\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="linha 2"):
+        carregar_marcas(arq)
+
+
+def test_marcas_padrao_sao_canonicas():
+    # Nenhuma forma canônica da tabela pode ser, ela mesma, uma grafia a normalizar.
+    carregar_marcas()

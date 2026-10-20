@@ -30,7 +30,8 @@ PUBLICADAS = {
     "modelo_uf": ("csv", "Idem, por UF."),
     "modelo_municipio": ("parquet", "Idem, por município."),
     "modelo_eletrificados": ("parquet", "Base por modelo: eletrificados e híbridos leves por município, modelo e ano de fabricação."),
-    "modelos_classificados": ("parquet", "Auditoria: cada modelo, classe, regra aplicada, total e marcação 'revisar'."),
+    "modelos_classificados": ("parquet", "Auditoria: cada modelo, classe, regra aplicada, total, marca, marcação 'revisar' e confronto com a tabela PBE Veicular do Inmetro."),
+    "modelos_dimensao": ("parquet", "Dimensão de marca e modelo: grafia do RENAVAM, marca canônica e origem, por modelo distinto."),
     "conciliacao_brasil": ("csv", "Comparação combustível x modelo, Brasil, nos meses presentes nas duas bases."),
     "conciliacao_uf": ("csv", "Idem, por UF."),
     "conciliacao_municipio": ("parquet", "Idem, por município."),
@@ -132,6 +133,11 @@ código IBGE da UF e região são acrescentados pelo pacote (tabela fixa em
 (`municipio_norm` + `uf_sigla`); o código IBGE do município ainda não está na base.
 Classificação: `src/eletromobilidade/dados/combustiveis.csv` (base por
 combustível) e `src/eletromobilidade/dados/modelos.csv` (base por modelo).
+Equivalência de grafias de marca: `src/eletromobilidade/dados/marcas.csv`.
+Auditoria da classificação contra a tabela PBE Veicular do Inmetro
+(propulsão e porte declarados por versão de veículo leve):
+`src/eletromobilidade/dados/pbev.csv`, extraída do PDF do ciclo publicado em
+[Veículos Automotivos (PBE veicular)](https://www.gov.br/inmetro/pt-br/assuntos/avaliacao-da-conformidade/programa-brasileiro-de-etiquetagem/tabelas-de-eficiencia-energetica/veiculos-automotivos-pbe-veicular).
 """
 
 CLASSES = {
@@ -164,10 +170,17 @@ _COLUNAS = {
     "arquivo_origem": "Arquivo da SENATRAN de onde o dado veio.",
     "marca_modelo": "Texto 'Marca Modelo' do RENAVAM, como publicado (prefixo I/ = importado).",
     "marca_modelo_norm": "Marca Modelo normalizado (sem acentos, caixa alta).",
+    "marca_renavam": "Marca como o RENAVAM grafa, sem o prefixo de montadora (I/, IMP/, JTA/) nem de tipo de veículo (R/, SR/, REB/, MR/, MO/, M.A./). Nula quando o texto não traz marca.",
+    "marca": "Marca canônica: grafias da mesma empresa unidas por dados/marcas.csv (GM, CHEVROLET e CHEV viram CHEVROLET). Grafia fora da tabela segue como está.",
+    "importado": "Verdadeiro quando o texto traz o prefixo I/ ou IMP/ de veículo importado.",
+    "origem": "'Importado' ou 'Nacional', conforme o prefixo do texto.",
     "ano_fabricacao": "Ano de fabricação (campo do CRV); nulo quando 'Sem Informação'.",
     "regra": "Número da linha de modelos.csv que definiu a classe (0 = nenhuma regra; classe padrão combustao).",
     "padrao": "Expressão regular da regra aplicada.",
     "revisar": "Verdadeiro para modelo de marca com linha eletrificada que não casou com nenhuma regra.",
+    "pbe_classes": "Classes que a linha do modelo tem na tabela PBE Veicular do Inmetro, separadas por '|'. Vazio quando o modelo não casou com o PBE (moto, ônibus, caminhão e modelo fora de linha).",
+    "pbe_categoria": "Categoria de porte do PBE Veicular (Médio, Picape, Utilitário Esportivo Compacto...). Vazio quando o modelo não casou.",
+    "pbe_aviso": "Divergência com o PBE: 'sem_versao_no_pbe' (classe eletrificada que o PBE não registra para o modelo; falso positivo provável) ou 'pbe_so_eletrificado' (classificado combustão, mas toda versão do modelo no PBE é eletrificada; pode ser regra faltando ou geração antiga). Vazio quando não há divergência.",
     "primeiro_mes": "Primeiro mês em que o rótulo aparece na série.",
     "ultimo_mes": "Último mês em que o rótulo aparece na série.",
     "frota_total": "Frota total do recorte (todas as classes).",
