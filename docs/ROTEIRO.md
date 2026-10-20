@@ -42,7 +42,7 @@ oito meses dão série anual sem o custo de 75.
 
 ## 3. Tipo de veículo
 
-**Por que.** É a lacuna que mais pesa numa nota técnica. Hoje "frota
+**Por que.** É a lacuna que mais pesa em qualquer leitura da base. Hoje "frota
 eletrificada" soma automóvel, motocicleta, ônibus e caminhão num número só.
 Para política de eletromobilidade são coisas diferentes: 484 mil elétricos
 viram uma frase muito distinta quando se sabe quanto disso é scooter.
@@ -70,8 +70,8 @@ Falta entender o que isso é e o que não é. `pbe_categoria` é **porte de veí
 leve**, não tipo: não distingue automóvel de comercial leve, e não tem como
 distinguir, porque o PBE só ensaia veículo leve. O que ele dá de graça é a outra
 ponta — **estar no PBE é prova de que o veículo é leve**. Os 20,9% que ficaram
-fora concentram justamente moto, scooter e ônibus, que é o número que falta para
-a nota técnica.
+fora concentram justamente moto, scooter e ônibus, que é exatamente o recorte
+que hoje falta.
 
 Então a tabela de regras de tipo continua necessária, mas o escopo encolheu: em
 vez de classificar 613 modelos do zero, basta classificar o resíduo não casado e

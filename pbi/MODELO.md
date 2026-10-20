@@ -138,8 +138,8 @@ foi emplacado no mês. Dois efeitos:
   último mês com dado do período selecionado. Detalhe em
   [`dax/medidas.dax`](dax/medidas.dax), grupo 1.
 - A variação mensal (`[Saldo do mês]`) é saldo: entradas menos baixas, mais
-  correção de cadastro. **Não é emplacamento e não é venda.** Em nota técnica,
-  escrever "vendas" a partir desse número é erro material.
+  correção de cadastro. **Não é emplacamento e não é venda.** Escrever "vendas"
+  a partir desse número é erro material, em qualquer texto.
 
 A base inclui veículos que já não circulam e nunca foram baixados — é
 característica do RENAVAM, não do tratamento.
