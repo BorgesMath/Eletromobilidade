@@ -16,6 +16,11 @@ código IBGE da UF e região são acrescentados pelo pacote (tabela fixa em
 (`municipio_norm` + `uf_sigla`); o código IBGE do município ainda não está na base.
 Classificação: `src/eletromobilidade/dados/combustiveis.csv` (base por
 combustível) e `src/eletromobilidade/dados/modelos.csv` (base por modelo).
+Equivalência de grafias de marca: `src/eletromobilidade/dados/marcas.csv`.
+Auditoria da classificação contra a tabela PBE Veicular do Inmetro
+(propulsão e porte declarados por versão de veículo leve):
+`src/eletromobilidade/dados/pbev.csv`, extraída do PDF do ciclo publicado em
+[Veículos Automotivos (PBE veicular)](https://www.gov.br/inmetro/pt-br/assuntos/avaliacao-da-conformidade/programa-brasileiro-de-etiquetagem/tabelas-de-eficiencia-energetica/veiculos-automotivos-pbe-veicular).
 
 ## Classes de tecnologia
 
@@ -228,7 +233,7 @@ Base por modelo: eletrificados e híbridos leves por município, modelo e ano de
 
 ### `modelos_classificados.parquet`
 
-Auditoria: cada modelo, classe, regra aplicada, total e marcação 'revisar'.
+Auditoria: cada modelo, classe, regra aplicada, total, marca, marcação 'revisar' e confronto com a tabela PBE Veicular do Inmetro.
 
 | Coluna | Tipo | Descrição |
 |---|---|---|
@@ -236,11 +241,29 @@ Auditoria: cada modelo, classe, regra aplicada, total e marcação 'revisar'.
 | `mes` | inteiro | Mês de referência (1 a 12). |
 | `data_referencia` | data | Primeiro dia do mês de referência (para eixos de tempo). |
 | `marca_modelo_norm` | texto | Marca Modelo normalizado (sem acentos, caixa alta). |
+| `marca_renavam` | texto | Marca como o RENAVAM grafa, sem o prefixo de montadora (I/, IMP/, JTA/) nem de tipo de veículo (R/, SR/, REB/, MR/, MO/, M.A./). Nula quando o texto não traz marca. |
+| `marca` | texto | Marca canônica: grafias da mesma empresa unidas por dados/marcas.csv (GM, CHEVROLET e CHEV viram CHEVROLET). Grafia fora da tabela segue como está. |
 | `classe` | texto | Classe de tecnologia atribuída (ver a tabela de classes). |
 | `regra` | inteiro | Número da linha de modelos.csv que definiu a classe (0 = nenhuma regra; classe padrão combustao). |
 | `qtd_veiculos` | inteiro | Número de veículos registrados. |
 | `revisar` | lógico | Verdadeiro para modelo de marca com linha eletrificada que não casou com nenhuma regra. |
 | `padrao` | texto | Expressão regular da regra aplicada. |
+| `pbe_classes` | texto | Classes que a linha do modelo tem na tabela PBE Veicular do Inmetro, separadas por '|'. Vazio quando o modelo não casou com o PBE (moto, ônibus, caminhão e modelo fora de linha). |
+| `pbe_categoria` | texto | Categoria de porte do PBE Veicular (Médio, Picape, Utilitário Esportivo Compacto...). Vazio quando o modelo não casou. |
+| `pbe_aviso` | texto | Divergência com o PBE: 'sem_versao_no_pbe' (classe eletrificada que o PBE não registra para o modelo; falso positivo provável) ou 'pbe_so_eletrificado' (classificado combustão, mas toda versão do modelo no PBE é eletrificada; pode ser regra faltando ou geração antiga). Vazio quando não há divergência. |
+
+### `modelos_dimensao.parquet`
+
+Dimensão de marca e modelo: grafia do RENAVAM, marca canônica e origem, por modelo distinto.
+
+| Coluna | Tipo | Descrição |
+|---|---|---|
+| `marca_modelo` | texto | Texto 'Marca Modelo' do RENAVAM, como publicado (prefixo I/ = importado). |
+| `marca_modelo_norm` | texto | Marca Modelo normalizado (sem acentos, caixa alta). |
+| `marca_renavam` | texto | Marca como o RENAVAM grafa, sem o prefixo de montadora (I/, IMP/, JTA/) nem de tipo de veículo (R/, SR/, REB/, MR/, MO/, M.A./). Nula quando o texto não traz marca. |
+| `marca` | texto | Marca canônica: grafias da mesma empresa unidas por dados/marcas.csv (GM, CHEVROLET e CHEV viram CHEVROLET). Grafia fora da tabela segue como está. |
+| `importado` | lógico | Verdadeiro quando o texto traz o prefixo I/ ou IMP/ de veículo importado. |
+| `origem` | texto | 'Importado' ou 'Nacional', conforme o prefixo do texto. |
 
 ### `conciliacao_brasil.csv`
 
@@ -363,11 +386,12 @@ Arquivos mensais da base por combustível: linhas, total, ajustes e inclusão na
 | `ano` | inteiro | Ano do mês de referência do arquivo mensal. |
 | `mes` | inteiro | Mês de referência (1 a 12). |
 | `data_referencia` | data | Primeiro dia do mês de referência (para eixos de tempo). |
-| `arquivo` | texto | Arquivo mensal da SENATRAN. |
+| `arquivo` | texto | Arquivo mensal da SENATRAN; vazio quando o mês do calendário não chegou na entrada. |
 | `linhas` | inteiro | Linhas lidas do arquivo. |
 | `frota_total` | inteiro | Frota total do recorte (todas as classes). |
-| `ajuste` | texto | Correção aplicada ao arquivo (vazio se nenhuma). |
-| `incluido` | lógico | Se o mês entrou na série (falso para mês idêntico ao anterior). |
+| `ajuste` | texto | Correção ou ressalva do mês: escala x10, mês idêntico ao anterior, mês ausente, ou classe que só passa a existir no cadastro a partir dali. Vazio se nenhuma. |
+| `incluido` | lógico | Se o mês entrou na série (falso para mês idêntico ao anterior e para mês ausente). |
+| `sem_informacao` | decimal | frota_sem_informacao / frota_total no mês (fração entre 0 e 1): parte da frota sem rótulo de combustível aproveitável, que é o piso de incerteza das participações. |
 
 ### `qualidade_modelo.csv`
 
@@ -378,8 +402,8 @@ Idem para a base por modelo.
 | `ano` | inteiro | Ano do mês de referência do arquivo mensal. |
 | `mes` | inteiro | Mês de referência (1 a 12). |
 | `data_referencia` | data | Primeiro dia do mês de referência (para eixos de tempo). |
-| `arquivo` | texto | Arquivo mensal da SENATRAN. |
+| `arquivo` | texto | Arquivo mensal da SENATRAN; vazio quando o mês do calendário não chegou na entrada. |
 | `linhas` | inteiro | Linhas lidas do arquivo. |
 | `frota_total` | inteiro | Frota total do recorte (todas as classes). |
-| `ajuste` | texto | Correção aplicada ao arquivo (vazio se nenhuma). |
-| `incluido` | lógico | Se o mês entrou na série (falso para mês idêntico ao anterior). |
+| `ajuste` | texto | Correção ou ressalva do mês: escala x10, mês idêntico ao anterior, mês ausente, ou classe que só passa a existir no cadastro a partir dali. Vazio se nenhuma. |
+| `incluido` | lógico | Se o mês entrou na série (falso para mês idêntico ao anterior e para mês ausente). |

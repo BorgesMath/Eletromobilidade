@@ -1,12 +1,14 @@
 # Roteiro
 
-Estado em 20/10/2026. O pipeline Python está fechado e testado (188 testes); a
+Estado em 20/10/2026. O pipeline Python está fechado e testado (196 testes); a
 camada do Power BI está especificada em [`pbi/`](../pbi/MODELO.md) e o `.pbix`
 ainda precisa ser montado. O que falta está abaixo, em ordem de valor.
 
-As tabelas de `resultados/` ainda são as da execução de 13/10, anterior à
-normalização de marca: as colunas novas entram na próxima rodada de `processar` e
-`publicar`, que precisa dos arquivos da SENATRAN em `data/raw` (não versionados).
+As tabelas de `resultados/` estão em dia com o código, geradas em 20/10 com a
+série completa de combustível (76 arquivos) e os dois meses da base por modelo.
+Reproduziram os 75 meses da execução anterior com diferença zero em todas as
+colunas. Regerá-las exige os arquivos da SENATRAN em `data/raw`, que não são
+versionados: `baixar`, depois `processar` e `publicar`.
 
 ## 1. Código IBGE e nome próprio de município
 
@@ -185,7 +187,7 @@ Base por combustível, setembro de 2026, Brasil:
 | Híbridos plug-in (PHEV) | 83.987 |
 | Híbridos convencionais (HEV) | 762.296 |
 | Recarregáveis (BEV + PHEV) | 568.394 |
-| Célula de combustível | 4 |
+| Célula de combustível | 13 |
 
 Série de jun/2020 a set/2026, 75 meses, por município, UF e Brasil. No primeiro
 mês da série a frota eletrificada era de 41.332 veículos, 0,04% da frota — um
@@ -201,7 +203,7 @@ Concentração: São Paulo tem 371.659 eletrificados (28% do total nacional), ma
 Distrito Federal lidera em intensidade, com 376 eletrificados por 10 mil
 veículos contra 103 de São Paulo e 98 da média nacional.
 
-## Duas ressalvas que acompanham estes números em qualquer uso
+## Quatro ressalvas que acompanham estes números em qualquer uso
 
 **Frota é estoque registrado, não emplacamento.** A variação mensal é saldo —
 entradas menos baixas, mais correção de cadastro. Escrever "vendas" ou
@@ -214,3 +216,18 @@ combustível.** A inferência por nome de modelo superestima plug-in em 4,5 veze
 e subestima híbrido convencional em 2,8 — ver a conciliação em
 [`pbi/MODELO.md`](../pbi/MODELO.md). Os dois somados ficam próximos do correto,
 o que mostra que o erro é de classificação entre as duas classes.
+
+**Duas classes não existem no começo da série.** O código de combustível
+plug-in só aparece no RENAVAM em **abr/2022**, e o de célula de combustível em
+**nov/2022**. Antes disso a contagem é zero, e zero aqui é ausência de código,
+não de veículo: `frota_hibrido` não cai quando o plug-in surge, ou seja, os
+plug-in anteriores seguem contados como híbrido. Série de PHEV desde 2020 mostra
+um zero falso seguido de salto artificial, e o HEV antes de abr/2022 está
+inflado pelos plug-in. Para trajetória longa, use a frota eletrificada total ou
+BEV; a separação PHEV/HEV só é comparável de abr/2022 em diante. Ambas as
+classes estão marcadas em `resultados/qualidade_combustivel.csv`.
+
+**3,6% da frota não tem combustível aproveitável no cadastro.** A fração sobe de
+3,17% no início da série para 3,64% em set/2026 (coluna `sem_informacao` na
+tabela de qualidade). É limite do RENAVAM, não erro de leitura, e é o piso de
+incerteza de qualquer participação calculada sobre a frota total.
