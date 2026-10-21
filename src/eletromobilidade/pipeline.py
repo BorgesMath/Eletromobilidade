@@ -24,6 +24,7 @@ import pandas as pd
 from .classificacao import CLASSES, CLASSES_ELETRIFICADAS, carregar_tabela, classificar
 from .leitura import EXTENSOES_DADOS, identificar_tabela, inferir_periodo, ler_frota_combustivel
 from .municipios import codigos_municipio
+from .populacao import populacao_municipal
 from .qualidade import (CLASSE_TARDIA, MES_AUSENTE, assinatura, classes_tardias, corrigir_escala,
                         meses_ausentes, meses_repetidos, participacao_sem_informacao)
 from .texto import normalizar
@@ -115,6 +116,40 @@ def paineis(longo: pd.DataFrame, prefixo: str, classes: tuple[str, ...],
         f"{prefixo}_uf": painel(longo.dropna(subset=["uf_sigla"]), CHAVE_TEMPO + CHAVE_UF, classes, eletrificadas),
         f"{prefixo}_brasil": painel(longo, CHAVE_TEMPO, classes, eletrificadas),
     }
+
+
+def com_populacao(tabelas: dict[str, pd.DataFrame], prefixo: str,
+                  populacao: pd.DataFrame | None = None) -> dict[str, pd.DataFrame]:
+    """Painéis com ``ano_populacao``, ``populacao`` e ``eletrificada_por_mil_habitantes``.
+
+    O município recebe a estimativa do IBGE pelo código (``populacao.py``). UF e Brasil
+    recebem a soma dos municípios do painel, e não o total publicado pelo IBGE, para
+    que o Power BI, que sobe do município, reproduza os dois sem diferença. Os
+    pseudo-municípios entram na frota do Brasil e não no denominador: não têm
+    população.
+    """
+    municipio = populacao_municipal(tabelas[f"{prefixo}_municipio"], populacao)
+
+    def somar(chave: list[str]) -> pd.DataFrame:
+        return (municipio.groupby(chave, dropna=False)
+                .agg(ano_populacao=("ano_populacao", "max"),
+                     populacao=("populacao", lambda s: s.sum(min_count=1)))
+                .reset_index())
+
+    resultado = {
+        f"{prefixo}_municipio": municipio,
+        f"{prefixo}_uf": tabelas[f"{prefixo}_uf"].merge(
+            somar(CHAVE_TEMPO + CHAVE_UF).dropna(subset=["uf_sigla"]), on=CHAVE_TEMPO + CHAVE_UF,
+            how="left", validate="one_to_one"),
+        f"{prefixo}_brasil": tabelas[f"{prefixo}_brasil"].merge(
+            somar(CHAVE_TEMPO), on=CHAVE_TEMPO, how="left", validate="one_to_one"),
+    }
+    for painel in resultado.values():
+        painel["ano_populacao"] = painel["ano_populacao"].astype("Int64")
+        painel["populacao"] = painel["populacao"].astype("Int64")
+        painel["eletrificada_por_mil_habitantes"] = (
+            painel["frota_eletrificada"] / painel["populacao"].astype("float64") * 1000)
+    return resultado
 
 
 LIMITE_LINHAS_EXCEL = 1_048_575  # 1.048.576 linhas da planilha, menos o cabeçalho
@@ -256,6 +291,7 @@ def construir_base_combustivel(longo: pd.DataFrame) -> dict[str, pd.DataFrame]:
         **paineis(longo, "combustivel", CLASSES, CLASSES_ELETRIFICADAS),
         "combustiveis_classificados": auditoria_combustiveis(longo),
     }
+    tabelas |= com_populacao(tabelas, "combustivel")
     if qualidade is not None:
         tabelas["qualidade_combustivel"] = anotar_serie(qualidade, tabelas["combustivel_brasil"])
     return tabelas

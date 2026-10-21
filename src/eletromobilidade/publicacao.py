@@ -51,6 +51,11 @@ def _n_meses(n: int) -> str:
     return f"{n} {'mês' if n == 1 else 'meses'}"
 
 
+def _enumerar(itens) -> str:
+    itens = [str(i) for i in itens]
+    return itens[0] if len(itens) == 1 else f"{', '.join(itens[:-1])} e {itens[-1]}"
+
+
 def cobertura(painel_brasil: pd.DataFrame) -> str:
     """Descrição dos meses presentes num painel nacional.
 
@@ -105,6 +110,14 @@ def leiame(tabelas: dict[str, pd.DataFrame], gerado_em: pd.Timestamp) -> str:
         linhas.append(f"- **Municípios:** {f'{com_codigo.sum():,}'.replace(',', '.')} com código IBGE, "
                       f"{varias} deles publicados pela SENATRAN com mais de uma grafia na série; "
                       f"sem código: {sem or 'nenhum'}.")
+    if "combustivel_brasil" in tabelas and "ano_populacao" in tabelas["combustivel_brasil"]:
+        usada = dict(zip(tabelas["combustivel_brasil"]["ano"], tabelas["combustivel_brasil"]["ano_populacao"]))
+        texto = f"- **População:** estimativas do IBGE de {_enumerar(sorted(set(usada.values())))}"
+        for estimativa in sorted(set(usada.values())):
+            sem = sorted(a for a, e in usada.items() if e == estimativa and a != e)
+            if sem:
+                texto += f"; {_enumerar(sem)}, sem estimativa, {'usam' if len(sem) > 1 else 'usa'} a de {estimativa}"
+        linhas.append(texto + ".")
     for nome in ("qualidade_combustivel", "qualidade_modelo"):
         if nome in tabelas:
             q = tabelas[nome]
@@ -145,6 +158,12 @@ código IBGE (`cod_municipio_ibge`) casando UF e nome com a lista oficial da
 SENATRAN difere da do IBGE, com `src/eletromobilidade/dados/municipios_grafias.csv`,
 conferida à mão. Alguns municípios mudam de grafia no meio da série; o código é a
 identidade estável.
+População (base por combustível): estimativas anuais do IBGE, tabela
+[6579 do SIDRA](https://sidra.ibge.gov.br/tabela/6579) (população residente em 1º de
+julho), instantâneo em `src/eletromobilidade/dados/populacao.csv`. Cada mês usa a
+estimativa do próprio ano; 2022 e 2023 não têm estimativa e usam a de 2024. Até 2021
+as estimativas projetam o Censo 2010 e de 2024 em diante partem do Censo 2022, então a
+taxa por habitante de um município muda de base em 2022: ver `ano_populacao`.
 Classificação: `src/eletromobilidade/dados/combustiveis.csv` (base por
 combustível) e `src/eletromobilidade/dados/modelos.csv` (base por modelo).
 Equivalência de grafias de marca: `src/eletromobilidade/dados/marcas.csv`.
@@ -208,6 +227,14 @@ _COLUNAS = {
     "frota_eletrificada": "Soma de eletrico, hibrido_plug_in, hibrido e celula_combustivel (sem hibrido_leve).",
     "participacao_eletrificada": "frota_eletrificada / frota_total (fração entre 0 e 1).",
     "hibrido_leve_modelo": "Híbridos leves na base por modelo (sem equivalente na base por combustível).",
+    "ano_populacao": "Ano da estimativa de população do IBGE usada no mês: a do próprio ano ou, sem ela, a mais "
+                     "próxima do mesmo lado do Censo 2022 (2022 e 2023 usam 2024). Até 2021 a base é o Censo "
+                     "2010; de 2024 em diante, o Censo 2022.",
+    "populacao": "População residente estimada (IBGE, tabela 6579), em 1º de julho de ano_populacao. Na UF e "
+                 "no Brasil, soma dos municípios. Nula nos pseudo-municípios e na linha do distrito de "
+                 "Ibitiúva, cuja população já está na de Pitangueiras.",
+    "eletrificada_por_mil_habitantes": "frota_eletrificada / populacao x 1000. No Brasil, o numerador inclui a "
+                                       "frota sem UF, que não tem população.",
     "arquivo": "Arquivo mensal da SENATRAN; vazio quando o mês do calendário não chegou na entrada.",
     "linhas": "Linhas lidas do arquivo.",
     "ajuste": "Correção ou ressalva do mês: escala x10, mês idêntico ao anterior, mês ausente, "

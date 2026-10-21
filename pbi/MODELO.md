@@ -11,36 +11,21 @@ Modo de armazenamento: **Importação**. Todo o modelo cabe em memória com folg
 
 ## Diagrama
 
+Fatos nas linhas, dimensões nas colunas; `●` é um relacionamento.
+
 ```
-                         ┌──────────────┐
-                         │ dCalendario  │  ~2.465 linhas (diário)
-                         │   [Data]     │  marcar como tabela de data
-                         └──────┬───────┘
-                                │ 1
-            ┌───────────────────┼───────────────────┬──────────────┐
-            │ *                 │ *                 │ *            │ *
-   ┌────────┴─────────┐ ┌───────┴────────┐ ┌────────┴───────┐ ┌────┴──────┐
-   │ fFrotaCombustivel│ │  fFrotaModelo  │ │  fConciliacao  │ │ fCobertura│
-   │   1.266.245      │ │    195.356     │ │     11.147     │ │     78    │
-   └──┬────────────┬──┘ └──┬──────┬───┬──┘ └────────┬───────┘ └───────────┘
-      │ *          │ *     │ *    │ * │ *           │ *
-      │     ┌──────┴───────┴──┐   │   │     ┌───────┴──────┐
-      │     │  dLocalidade    │───┘   │     │              │
-      │     │     5.574       │───────┼─────┘              │
-      │     │[chave_localidade]       │                    │
-      │     └─────────────────┘       │                    │
-      │                               │                    │
-   ┌──┴───────────────┐        ┌──────┴──────┐             │
-   │     dClasse      │        │   dModelo   │             │
-   │        8         │────┐   │     935     │             │
-   │    [classe]      │    │   │[marca_modelo]             │
-   └──────────────────┘    │   └─────────────┘             │
-            │ 1            │                              │
-            │ *            └──────────────────────────────┘
-   ┌────────┴──────────────┐
-   │ fModelosClassificados │  70.869   (só dCalendario + dClasse)
-   └───────────────────────┘
+                                     dCalendario   dLocalidade   dClasse   dModelo
+                                      [Data]     [chave_local.]  [classe] [marca_modelo]
+                          linhas       ~2.465        5.574           8       935
+fFrotaCombustivel      1.266.245         ●             ●             ●
+fPopulacao               417.765         ●             ●
+fFrotaModelo             195.356         ●             ●             ●         ●
+fConciliacao              11.147         ●             ●
+fModelosClassificados     70.869         ●                           ●
+fCobertura                    78         ●
 ```
+
+`dCalendario` é marcada como tabela de data.
 
 Todos os relacionamentos são **um para muitos, da dimensão para o fato, com
 filtro em direção única**. Nenhum bidirecional: as medidas que precisam
@@ -54,6 +39,7 @@ previsível que filtro cruzado automático.
 | Tabela | Grão | Linhas | Fonte |
 |---|---|---:|---|
 | `fFrotaCombustivel` | mês × município × classe | 1.266.245 | `combustivel_municipio.parquet` |
+| `fPopulacao` | mês × município | 417.765 | `combustivel_municipio.parquet` (colunas de população) |
 | `fFrotaModelo` | mês × município × modelo × ano de fabricação × classe | 195.356 | `modelo_eletrificados.parquet` |
 | `fConciliacao` | mês × município | 11.147 | `conciliacao_municipio.parquet` |
 | `fModelosClassificados` | mês × modelo normalizado | 70.869 | `modelos_classificados.parquet` |
@@ -73,11 +59,13 @@ previsível que filtro cruzado automático.
 | De | Para | Cardinalidade |
 |---|---|---|
 | `dCalendario[Data]` | `fFrotaCombustivel[data_referencia]` | 1 → * |
+| `dCalendario[Data]` | `fPopulacao[data_referencia]` | 1 → * |
 | `dCalendario[Data]` | `fFrotaModelo[data_referencia]` | 1 → * |
 | `dCalendario[Data]` | `fConciliacao[data_referencia]` | 1 → * |
 | `dCalendario[Data]` | `fModelosClassificados[data_referencia]` | 1 → * |
 | `dCalendario[Data]` | `fCobertura[data_referencia]` | 1 → * |
 | `dLocalidade[chave_localidade]` | `fFrotaCombustivel[chave_localidade]` | 1 → * |
+| `dLocalidade[chave_localidade]` | `fPopulacao[chave_localidade]` | 1 → * |
 | `dLocalidade[chave_localidade]` | `fFrotaModelo[chave_localidade]` | 1 → * |
 | `dLocalidade[chave_localidade]` | `fConciliacao[chave_localidade]` | 1 → * |
 | `dClasse[classe]` | `fFrotaCombustivel[classe]` | 1 → * |
@@ -114,9 +102,15 @@ vira `GOUVEIA` em mar/2024. Com a chave por nome, cada grafia era um membro de
 `dLocalidade`, e a série desses municípios aparecia cortada em dois. Com a chave
 por código são um membro só, com os 75 meses. O código vem do Python, em toda
 tabela municipal (`cod_municipio_ibge`), e a chave é montada por uma função só,
-[`ChaveLocalidade`](powerquery/ChaveLocalidade.m), igual na dimensão e nos três
-fatos. Para achar um município pelo nome antigo, a busca vai em
+[`ChaveLocalidade`](powerquery/ChaveLocalidade.m), igual na dimensão e nos quatro
+fatos que a usam. Para achar um município pelo nome antigo, a busca vai em
 `dLocalidade[grafias_senatran]`.
+
+**A população é um fato, não uma coluna da dimensão.** Ela muda de ano para ano,
+e qual estimativa vale em cada mês é regra do Python (`ano_populacao`). Como
+coluna de `fFrotaCombustivel`, que é longo, repetiria em cada classe e somaria seis
+vezes. `fPopulacao` tem uma linha por mês e município, e `[População]` é
+semi-aditiva como a frota.
 
 **UF inválida vira `"ND"`, não é descartada.** A SENATRAN publica três
 pseudo-municípios — `SEM INFORMACAO`, `NAO IDENTIFICADO`, `NAO SE APLICA` — com
@@ -193,10 +187,12 @@ Portanto, no painel:
 
 ### Outras limitações conhecidas
 
-- **Sem população por município, ainda.** O código IBGE já está no modelo, então a
-  população entra por junção direta; falta escolher a fonte (Censo 2022 ou
-  estimativa anual). Até lá a taxa disponível é por frota, não por habitante.
-  Item do [roteiro](../docs/ROTEIRO.md).
+- **A população muda de base em 2022.** As estimativas do IBGE até 2021 projetam o
+  Censo 2010; de 2022 em diante, o Censo 2022 (2022 e 2023 não têm estimativa e
+  usam a de 2024). No Brasil a diferença é de -0,3%, mas 1.709 municípios mudam
+  mais de 10% entre a estimativa de 2021 e a de 2024. `[Eletrificados por mil
+  habitantes]` de um município comparado através de 2022 mede revisão de
+  população junto com frota.
 - **Marca normalizada só até onde a tabela alcança.** `dModelo[marca]` já une as
   grafias conferidas à mão (`GM`, `CHEVROLET` e `CHEV` viram `CHEVROLET`;
   `CAOACHERY` vira `CHERY`; `CIVIC`, que é modelo lido como marca, vira `HONDA`),
@@ -228,13 +224,14 @@ se monta a partir destes scripts em cerca de vinte minutos.
    `Data`. Marque como tabela de data. Aplique as configurações de coluna
    listadas no fim do arquivo (classificar `Mês` por `Mês (número)` etc.) —
    sem isso os meses saem em ordem alfabética.
-5. **Relacionamentos.** Crie os doze da tabela acima. Confira que todos estão
+5. **Relacionamentos.** Crie os catorze da tabela acima. Confira que todos estão
    em direção única; o Power BI às vezes propõe bidirecional.
 6. **Medidas.** Cole as de [`dax/medidas.dax`](dax/medidas.dax) na ordem do
-   arquivo. Formate: inteiro com separador de milhar para frota, porcentagem com
-   2 decimais para participação, 3 decimais para as razões da conciliação.
+   arquivo. Formate: inteiro com separador de milhar para frota e população,
+   porcentagem com 2 decimais para participação, 2 decimais para as taxas por
+   mil habitantes, 3 decimais para as razões da conciliação.
 7. **Ocultar dos relatórios** todas as colunas de chave: `chave_localidade` nos
-   quatro lugares, `classe` nos fatos (use `dClasse[rotulo]`),
+   cinco lugares, `classe` nos fatos (use `dClasse[rotulo]`),
    `data_referencia` nos fatos (use `dCalendario`).
 8. **Valide** contra a tabela abaixo antes de desenhar qualquer visual.
 
@@ -253,6 +250,8 @@ sair exatos. Saem de `resultados/combustivel_brasil.csv`, set/2026.
 | `[Frota híbrida]` | 762.296 |
 | `[Frota recarregável]` | 568.394 |
 | `[Participação eletrificada]` | 0,98% |
+| `[População]` | 214.211.951 |
+| `[Eletrificados por mil habitantes]` | 6,21 |
 | `[Meses na série]` | 75 |
 
 E com o mês de set/2026 e a UF de São Paulo:
@@ -262,6 +261,12 @@ E com o mês de set/2026 e a UF de São Paulo:
 | `[Frota total]` | 36.174.177 |
 | `[Frota eletrificada]` | 371.659 |
 | `[Participação eletrificada]` | 1,03% |
+| `[População]` | 46.179.008 |
+| `[Eletrificados por mil habitantes]` | 8,05 |
+
+`[População]` do Brasil é a soma dos municípios, a estimativa de 2026 do IBGE.
+Se vier o dobro de algum município, ou a de Pitangueiras somada duas vezes, a
+população está sendo lida de `fFrotaCombustivel`, e não de `fPopulacao`.
 
 E o teste da chave por código, com o município de Embu das Artes
 (`dLocalidade[cod_municipio_ibge] = 3515004`):
@@ -270,6 +275,7 @@ E o teste da chave por código, com o município de Embu das Artes
 |---|---|
 | `[Frota total]` em set/2026 | 153.787 |
 | `[Frota eletrificada]` em set/2026 | 627 |
+| `[População]` em set/2026 | 260.113 |
 | Linha de `[Frota total]` por mês | contínua de jun/2020 a set/2026, só sem jan/2022; em mar/2022 são 126.441 e em abr/2022, 126.775 |
 | `dLocalidade[grafias_senatran]` | `EMBU \| EMBU DAS ARTES` |
 

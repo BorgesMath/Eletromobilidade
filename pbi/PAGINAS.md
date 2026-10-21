@@ -63,9 +63,9 @@ Não é emplacamento nem venda."
 |---|---|---|---|
 | Eletrificados por 10 mil veículos, por UF | **Mapa coroplético** | Magnitude sobre geografia | **sequencial** azul, do claro ao escuro |
 | Frota eletrificada — 15 maiores UF | **Barra horizontal** ordenada | Comparar magnitude; nome de UF cabe melhor na horizontal | sequencial azul, ponta arredondada de 4px ancorada na linha de base |
-| Todas as 27 UF | **Tabela** (frota, total, participação, variação a.a.) | Mais de sete linhas que todas importam | tinta; formatação condicional na participação com a rampa sequencial |
+| Todas as 27 UF | **Tabela** (frota, total, participação, por mil habitantes, variação a.a.) | Mais de sete linhas que todas importam | tinta; formatação condicional na participação com a rampa sequencial |
 | Eletrificados por 10 mil veículos, por município | **Mapa de forma** com a malha municipal do IBGE, localizado por `dLocalidade[cod_municipio_ibge]` | Magnitude sobre geografia, no grão em que se decide onde pôr recarga | sequencial azul, a mesma rampa do mapa por UF |
-| 50 maiores municípios | **Tabela** com busca (nome oficial, UF, frota eletrificada, frota total, taxa) | Lista para ler o número, que o mapa só mostra em cor | tinta |
+| 50 maiores municípios | **Tabela** com busca (nome oficial, UF, frota eletrificada, frota total, por 10 mil veículos, por mil habitantes) | Lista para ler o número, que o mapa só mostra em cor | tinta |
 
 Os mapas usam **taxa, não contagem**. Mapa de frota absoluta por UF é mapa de
 população: São Paulo ganha sempre e o visual não informa nada. Com
@@ -85,6 +85,14 @@ página:
 - Em município de frota pequena, a taxa oscila com um ou dois veículos e o mapa
   acende onde não há tendência nenhuma. Por isso a tabela, com a frota absoluta,
   fica ao lado do mapa e não é opcional.
+
+**Por veículo e por habitante respondem coisas diferentes**, e as tabelas trazem
+as duas. Por 10 mil veículos mede quanto da frota já é eletrificada; por mil
+habitantes mede a densidade da frota eletrificada na população, que é o que
+dimensiona recarga. Um município de frota grande para a população aparece bem na
+segunda e mal na primeira. A taxa por habitante só se compara no tempo dentro da
+mesma base de população: a de antes de 2022 é projeção do Censo 2010 (ver
+[`MODELO.md`](MODELO.md#outras-limitações-conhecidas)).
 
 As tabelas são também o **alívio de contraste** exigido pela paleta.
 

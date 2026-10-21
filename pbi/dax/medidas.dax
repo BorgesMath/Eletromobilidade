@@ -168,6 +168,34 @@ Eletrificados por 10 mil veículos =
 DIVIDE( [Frota eletrificada], [Frota total] ) * 10000
 
 
+// Por habitante. A população é a estimativa anual do IBGE que vale no mês de
+// referência (fPopulacao). Semi-aditiva como a frota: é estoque de pessoas, e
+// somar meses daria doze vezes o ano.
+//
+// A ESTIMATIVA MUDA DE BASE EM 2022. Até 2021 ela projeta o Censo 2010; de 2022
+// em diante parte do Censo 2022 (2022 e 2023 não têm estimativa e usam a de
+// 2024). No Brasil a troca mexe -0,3% no denominador; em 1.709 municípios, mais
+// de 10%. A taxa de um município comparada entre 2021 e 2022 mistura frota com
+// revisão de população. Compare dentro de cada base.
+População =
+VAR _ref = [Mês de referência]
+RETURN
+    CALCULATE(
+        SUM( fPopulacao[populacao] ),
+        REMOVEFILTERS( dCalendario ),
+        dCalendario[Data] = _ref
+    )
+
+// No Brasil o numerador inclui a frota sem UF (cerca de 2%), que não tem
+// população — igual a resultados/combustivel_brasil.csv.
+Eletrificados por mil habitantes =
+DIVIDE( [Frota eletrificada], [População] ) * 1000
+
+// Elétrico + plug-in: o recorte que pede recarga.
+Recarregáveis por mil habitantes =
+DIVIDE( [Frota recarregável], [População] ) * 1000
+
+
 // -----------------------------------------------------------------------------
 // 4. Variação no tempo
 // -----------------------------------------------------------------------------

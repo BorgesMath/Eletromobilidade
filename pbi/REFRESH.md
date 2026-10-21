@@ -45,6 +45,12 @@ invalida o cache sozinho.
    inclua a linha na tabela de grafias, com o código e a razão, e rode `processar`
    e `publicar` de novo. Quando o IBGE criar ou renomear município, atualize a
    lista com `eletromobilidade municipios` antes.
+
+   Uma vez por ano, depois que o IBGE publica as estimativas de população (fim de
+   agosto), rode `eletromobilidade populacao` antes de `processar`. Sem isso, os
+   meses do ano novo usam a estimativa do ano anterior. Município novo precisa
+   entrar em `municipios` e `populacao` juntos: a carga falha se a lista tiver
+   município sem estimativa no ano mais recente.
 2. **Confira o LEIAME.** `resultados/LEIAME.md` é regerado a cada `publicar` e
    diz a cobertura e os ajustes aplicados. Se um mês novo recebeu ajuste
    automático, é aí que aparece.

@@ -88,6 +88,9 @@ eletromobilidade pbev tabela-pbev-2026.pdf --ciclo 2026
 
 # atualizar a lista de municípios do IBGE (só quando o IBGE cria ou renomeia município)
 eletromobilidade municipios
+
+# atualizar as estimativas de população (uma vez por ano, quando o IBGE publica, em agosto)
+eletromobilidade populacao
 ```
 
 `data/raw` e `data/processed` não vão para o repositório; a pasta
@@ -151,7 +154,9 @@ Cada tabela é gravada em Parquet e em CSV (`;` como separador, `,` decimal, UTF
 Os painéis trazem `frota_<classe>` para cada classe, `frota_total`,
 `frota_eletrificada` e `participacao_eletrificada = frota_eletrificada / frota_total`.
 O painel do Brasil inclui registros sem UF válida; o de UF, não. Toda tabela no
-grão de município traz `cod_municipio_ibge`.
+grão de município traz `cod_municipio_ibge`. Os painéis da base por combustível
+trazem também `populacao`, `ano_populacao` e `eletrificada_por_mil_habitantes`
+(ver [População](#população)).
 
 ## Série histórica e qualidade dos arquivos
 
@@ -231,6 +236,60 @@ oficial são erro.
 O nome oficial, com acento, está em `municipios_dimensao` (`municipio_ibge`), não
 nos fatos: o código basta para ligar os dois. Ali, cada município é uma linha, e
 `grafias_senatran` guarda todas as grafias com que ele apareceu.
+
+## População
+
+A base por combustível traz a população residente estimada de cada município e,
+com ela, `eletrificada_por_mil_habitantes`. A fonte são as Estimativas de
+População do IBGE, [tabela 6579 do SIDRA](https://sidra.ibge.gov.br/tabela/6579),
+com a população em 1º de julho de cada ano. A junção é pelo código IBGE, sem
+casamento de nome. O instantâneo está em
+[`dados/populacao.csv`](src/eletromobilidade/dados/populacao.csv); regerar com
+`eletromobilidade populacao` quando o IBGE publicar a estimativa do ano, no fim
+de agosto.
+
+**Nem todo ano tem estimativa.** De 2020 em diante há 2020, 2021, 2024, 2025 e
+2026: 2022 é o ano do Censo, e 2023 ficou sem estimativa. Cada mês usa a
+estimativa do próprio ano; sem ela, a mais próxima **do mesmo lado do Censo
+2022**, e por isso 2022 e 2023 usam a de 2024. A coluna `ano_populacao` registra
+qual entrou.
+
+**Por que não repetir a de 2021 em 2022 e 2023.** Até 2021 as estimativas
+projetam o Censo 2010; a de 2024 já parte do Censo 2022. No Brasil a diferença
+entre as duas é de -0,3%, mas no município é outra história:
+
+| Entre as estimativas de | Mediana da variação | Municípios acima de 10% | Acima de 20% |
+|---|---:|---:|---:|
+| 2020 e 2021 | +0,38% | 6 | 1 |
+| 2021 e 2024 | -0,85% | 1.709 | 525 |
+| 2024 e 2025 | +0,09% | 3 | 0 |
+| 2025 e 2026 | +0,06% | 1 | 0 |
+
+De 2021 para 2024 não é crescimento, é revisão. Para 2022 e 2023, a estimativa de
+2024 está sobre o Censo que mediu aqueles anos; a de 2021 estenderia uma
+projeção que o Censo corrigiu.
+
+**A consequência é uma quebra em 2022**, e ela é do dado, não do tratamento: a
+taxa por habitante de um município comparada entre 2021 e 2022 mede a revisão da
+população junto com a frota. Dentro de cada base — jun/2020 a dez/2021, e de
+2022 em diante — a comparação vale. A quebra cai ao lado do furo de jan/2022, que
+a série já tem.
+
+Três detalhes de construção:
+
+- UF e Brasil recebem a **soma dos municípios do painel**, não o total publicado
+  pelo IBGE, para que o Power BI, que sobe do município, reproduza os dois sem
+  diferença. No Brasil o numerador inclui a frota sem UF (cerca de 2%), que não
+  tem população.
+- Nos sete meses em que o distrito de Ibitiúva aparece ao lado da sede, a
+  população de Pitangueiras vai só para a linha de Pitangueiras, para não ser
+  somada duas vezes.
+- Boa Esperança do Norte (MT), instalado em 2025, tem estimativa de 5.877
+  habitantes naquele ano, mas na SENATRAN aparece em jul/2025 com 6 veículos e
+  chega a 686 em set/2026, sem que Sorriso ou Nova Ubiratã percam frota: o
+  registro dele começa do zero, não é transferido. A taxa por habitante do
+  município é baixa por construção, e boa parte dos veículos de quem mora lá
+  provavelmente segue registrada no município anterior.
 
 ## Classificação dos combustíveis
 
@@ -479,7 +538,7 @@ pelo passo a passo de [`pbi/MODELO.md`](pbi/MODELO.md#como-montar-o-pbix).
 | [`pbi/MODELO.md`](pbi/MODELO.md) | Modelo estrela: tabelas, grão, relacionamentos, decisões, ressalvas e tabela de validação |
 | [`pbi/PAGINAS.md`](pbi/PAGINAS.md) | As cinco páginas do relatório, com a forma de cada visual e o porquê |
 | [`pbi/REFRESH.md`](pbi/REFRESH.md) | Ciclo de atualização mensal e publicação no Service |
-| [`pbi/powerquery/`](pbi/powerquery) | Dez consultas M: o parâmetro da pasta, uma por tabela do modelo e a função que monta a chave de município |
+| [`pbi/powerquery/`](pbi/powerquery) | Onze consultas M: o parâmetro da pasta, uma por tabela do modelo e a função que monta a chave de município |
 | [`pbi/dax/`](pbi/dax) | `dCalendario` e as medidas |
 | [`pbi/tema.json`](pbi/tema.json) | Tema do Power BI, com paleta categórica verificada para daltonismo |
 
@@ -491,6 +550,6 @@ híbrido convencional só vale pela base por combustível**.
 ## Próximos passos
 
 Em [`docs/ROTEIRO.md`](docs/ROTEIRO.md), em ordem de valor. O código IBGE de
-município está feito, e o passo seguinte dele é a população por município. Depois:
-ampliar a série da base por modelo, tipo de veículo (automóvel × motocicleta ×
-ônibus) e o furo de jan/2022.
+município e a população por município estão feitos. Os próximos: ampliar a série
+da base por modelo, tipo de veículo (automóvel × motocicleta × ônibus) e o furo
+de jan/2022.

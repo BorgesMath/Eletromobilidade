@@ -1,17 +1,17 @@
 # Roteiro
 
-Estado em 21/10/2026. O pipeline Python está fechado e testado (220 testes); a
+Estado em 21/10/2026. O pipeline Python está fechado e testado (239 testes); a
 camada do Power BI está especificada em [`pbi/`](../pbi/MODELO.md) e o `.pbix`
 ainda precisa ser montado. O que falta está abaixo, em ordem de valor.
 
 As tabelas de `resultados/` estão em dia com o código, regeradas em 21/10 com a
 série completa de combustível (76 arquivos) e os dois meses da base por modelo.
 Reproduziram a execução de 20/10 com diferença zero em todas as colunas que já
-existiam; o que mudou foi a coluna `cod_municipio_ibge` e a dimensão de
-município. Regerá-las exige os arquivos da SENATRAN em `data/raw`, que não são
+existiam; o que mudou foi a coluna `cod_municipio_ibge`, a dimensão de município
+e as três colunas de população nos painéis da base por combustível. Regerá-las exige os arquivos da SENATRAN em `data/raw`, que não são
 versionados: `baixar`, depois `processar` e `publicar`.
 
-## 1. Código IBGE de município — feito; falta a população
+## 1. Código IBGE e população por município — feito
 
 **Feito em 21/10/2026.** Toda tabela no grão de município traz
 `cod_municipio_ibge`, e `resultados/municipios_dimensao.parquet` tem uma linha
@@ -28,12 +28,18 @@ município com UF e sem código. Detalhe no README, seção Município.
 troca. A dimensão do painel era por nome e tinha 5.581 membros; passou a ser por
 código, com 5.574, e os seis têm os 75 meses contínuos.
 
-**O que falta: população.** É o que dá "eletrificados por mil habitantes", a
-medida que uma política de recarga usa e o motivo de este item vir primeiro.
-Agora é junção pelo código, sem casar nome nenhum. Antes, uma decisão: Censo
-2022, que é contagem mas é um ponto só e tem 5.570 municípios (Boa Esperança do
-Norte, MT, foi instalado depois), ou as estimativas anuais do IBGE, que dão série
-mas são modeladas.
+**População, também feita em 21/10/2026.** Os painéis da base por combustível
+trazem `populacao` e `eletrificada_por_mil_habitantes`, a medida que uma política
+de recarga usa e o motivo de este item vir primeiro. A fonte escolhida foram as
+estimativas anuais do IBGE (SIDRA 6579), não o Censo 2022, por darem série. A
+junção é pelo código, sem casar nome nenhum.
+
+**A ressalva que acompanha a taxa por habitante.** Não há estimativa para 2022 nem
+2023, e a base das estimativas muda no meio: até 2021 projetam o Censo 2010, de
+2024 em diante partem do Censo 2022. Entre as duas, 1.709 municípios mudam mais de
+10%. 2022 e 2023 usam a estimativa de 2024, que está do mesmo lado do Censo, e a
+quebra fica em 2022. A taxa de um município comparada através dela mede revisão de
+população junto com frota. Detalhe no README, seção População.
 
 **O mapa municipal também está destravado.** A malha do IBGE identifica o
 município pelo mesmo código (ver [`pbi/PAGINAS.md`](../pbi/PAGINAS.md)). Ela tem
@@ -201,6 +207,7 @@ Base por combustível, setembro de 2026, Brasil:
 | Híbridos convencionais (HEV) | 762.296 |
 | Recarregáveis (BEV + PHEV) | 568.394 |
 | Célula de combustível | 13 |
+| Eletrificados por mil habitantes | 6,21 |
 
 Série de jun/2020 a set/2026, 75 meses, por município, UF e Brasil. No primeiro
 mês da série a frota eletrificada era de 41.332 veículos, 0,04% da frota — um
@@ -214,7 +221,9 @@ eletrificação de formas diferentes e a razão entre as duas é de 0,82.
 
 Concentração: São Paulo tem 371.659 eletrificados (28% do total nacional), mas o
 Distrito Federal lidera em intensidade, com 376 eletrificados por 10 mil
-veículos contra 103 de São Paulo e 98 da média nacional.
+veículos contra 103 de São Paulo e 98 da média nacional. Por habitante a
+distância é maior: 28,9 por mil no Distrito Federal, 8,7 em Santa Catarina, 8,0
+em São Paulo e 6,2 no Brasil. A população é a estimativa de 2026 do IBGE.
 
 ## Quatro ressalvas que acompanham estes números em qualquer uso
 

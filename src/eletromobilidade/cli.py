@@ -9,6 +9,7 @@ Exemplos::
     eletromobilidade publicar
     eletromobilidade pbev tabela-pbev-2026.pdf --ciclo 2026
     eletromobilidade municipios
+    eletromobilidade populacao
 """
 
 from __future__ import annotations
@@ -27,6 +28,7 @@ from .inmetro import extrair_pbev, gravar_pbev
 from .leitura import identificar_tabela, inferir_periodo
 from .modelos import carregar_regras, marcas_suspeitas
 from .municipios import baixar_municipios_ibge, dimensao_municipio, gravar_municipios, sem_codigo
+from .populacao import baixar_estimativas, gravar_populacao
 from .publicacao import publicar
 
 RAW = Path("data/raw")
@@ -128,6 +130,10 @@ def _municipios(args) -> None:
     print(gravar_municipios(baixar_municipios_ibge(), args.saida))
 
 
+def _populacao(args) -> None:
+    print(gravar_populacao(baixar_estimativas(), args.saida))
+
+
 def _publicar(args) -> None:
     for caminho in publicar(args.entrada, args.saida):
         print(caminho)
@@ -181,6 +187,10 @@ def main(argv: list[str] | None = None) -> None:
     p = sub.add_parser("municipios", help="baixa a lista de municípios do IBGE para dados/municipios.csv")
     p.add_argument("--saida", type=Path, help="CSV de destino (padrão: o instantâneo do pacote)")
     p.set_defaults(func=_municipios)
+
+    p = sub.add_parser("populacao", help="baixa as estimativas de população do IBGE para dados/populacao.csv")
+    p.add_argument("--saida", type=Path, help="CSV de destino (padrão: o instantâneo do pacote)")
+    p.set_defaults(func=_populacao)
 
     p = sub.add_parser("publicar", help="copia painéis, conciliação e auditorias para resultados/ (versionado)")
     p.add_argument("--entrada", type=Path, default=PROCESSED)
