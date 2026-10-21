@@ -246,6 +246,7 @@ Base por modelo: eletrificados e híbridos leves por município, modelo e ano de
 | `marca_modelo` | texto | Texto 'Marca Modelo' do RENAVAM, como publicado (prefixo I/ = importado). |
 | `ano_fabricacao` | inteiro | Ano de fabricação (campo do CRV); nulo quando 'Sem Informação'. |
 | `classe` | texto | Classe de tecnologia atribuída (ver a tabela de classes). |
+| `tipo` | texto | Tipo de veículo do modelo: leve (automóvel, SUV, picape, van), moto (inclui motoneta, ciclomotor e triciclo), onibus, caminhao ou outros. Só para eletrificados e híbridos leves; nulo quando o modelo não tem regra em dados/tipos.csv nem está no PBE Veicular. |
 | `regra` | inteiro | Número da linha de modelos.csv que definiu a classe (0 = nenhuma regra; classe padrão combustao). |
 | `qtd_veiculos` | inteiro | Número de veículos registrados. |
 | `uf_sigla` | texto | Sigla da UF; nula quando a UF publicada não é válida ('Sem Informação' etc.). |
@@ -254,6 +255,45 @@ Base por modelo: eletrificados e híbridos leves por município, modelo e ano de
 | `municipio_norm` | texto | Município como a SENATRAN o grafa, sem acentos, em caixa alta. A grafia muda no meio da série em alguns municípios (EMBU virou EMBU DAS ARTES): para identificar o município, use cod_municipio_ibge. |
 | `cod_municipio_ibge` | inteiro | Código IBGE do município (7 dígitos). Nulo só nos pseudo-municípios da SENATRAN sem UF ('Sem Informação', 'Não Identificado', 'Não se Aplica'). |
 | `arquivo_origem` | texto | Arquivo da SENATRAN de onde o dado veio. |
+
+### `modelo_tipo_brasil.csv`
+
+Base por modelo: eletrificados e híbridos leves por tipo de veículo (leve, moto, ônibus, caminhão, outros), Brasil, por mês. Use participacao_tipo; a contagem absoluta herda a diferença para a base por combustível.
+
+| Coluna | Tipo | Descrição |
+|---|---|---|
+| `ano` | inteiro | Ano do mês de referência do arquivo mensal. |
+| `mes` | inteiro | Mês de referência (1 a 12). |
+| `data_referencia` | data | Primeiro dia do mês de referência (para eixos de tempo). |
+| `tipo` | texto | Tipo de veículo do modelo: leve (automóvel, SUV, picape, van), moto (inclui motoneta, ciclomotor e triciclo), onibus, caminhao ou outros. Só para eletrificados e híbridos leves; nulo quando o modelo não tem regra em dados/tipos.csv nem está no PBE Veicular. |
+| `frota_eletrico` | inteiro | Veículos da classe eletrico. |
+| `frota_hibrido_plug_in` | inteiro | Veículos da classe hibrido_plug_in. |
+| `frota_hibrido` | inteiro | Veículos da classe hibrido. |
+| `frota_celula_combustivel` | inteiro | Veículos da classe celula_combustivel. |
+| `frota_hibrido_leve` | inteiro | Veículos da classe hibrido_leve. |
+| `frota_eletrificada` | inteiro | Soma de eletrico, hibrido_plug_in, hibrido e celula_combustivel (sem hibrido_leve). |
+| `participacao_tipo` | decimal | Parte do tipo na frota eletrificada do recorte no mês (fração entre 0 e 1). |
+
+### `modelo_tipo_uf.csv`
+
+Idem, por UF.
+
+| Coluna | Tipo | Descrição |
+|---|---|---|
+| `ano` | inteiro | Ano do mês de referência do arquivo mensal. |
+| `mes` | inteiro | Mês de referência (1 a 12). |
+| `data_referencia` | data | Primeiro dia do mês de referência (para eixos de tempo). |
+| `uf_sigla` | texto | Sigla da UF; nula quando a UF publicada não é válida ('Sem Informação' etc.). |
+| `cod_uf_ibge` | inteiro | Código IBGE da UF (2 dígitos). |
+| `regiao` | texto | Grande região (Norte, Nordeste, Sudeste, Sul, Centro-Oeste). |
+| `tipo` | texto | Tipo de veículo do modelo: leve (automóvel, SUV, picape, van), moto (inclui motoneta, ciclomotor e triciclo), onibus, caminhao ou outros. Só para eletrificados e híbridos leves; nulo quando o modelo não tem regra em dados/tipos.csv nem está no PBE Veicular. |
+| `frota_eletrico` | inteiro | Veículos da classe eletrico. |
+| `frota_hibrido_plug_in` | inteiro | Veículos da classe hibrido_plug_in. |
+| `frota_hibrido` | inteiro | Veículos da classe hibrido. |
+| `frota_celula_combustivel` | inteiro | Veículos da classe celula_combustivel. |
+| `frota_hibrido_leve` | inteiro | Veículos da classe hibrido_leve. |
+| `frota_eletrificada` | inteiro | Soma de eletrico, hibrido_plug_in, hibrido e celula_combustivel (sem hibrido_leve). |
+| `participacao_tipo` | decimal | Parte do tipo na frota eletrificada do recorte no mês (fração entre 0 e 1). |
 
 ### `modelos_classificados.parquet`
 
@@ -275,6 +315,10 @@ Auditoria: cada modelo, classe, regra aplicada, total, marca, marcação 'revisa
 | `pbe_classes` | texto | Classes que a linha do modelo tem na tabela PBE Veicular do Inmetro, separadas por barra vertical. Vazio quando o modelo não casou com o PBE (moto, ônibus, caminhão e modelo fora de linha). |
 | `pbe_categoria` | texto | Categoria de porte do PBE Veicular (Médio, Picape, Utilitário Esportivo Compacto...). Vazio quando o modelo não casou. |
 | `pbe_aviso` | texto | Divergência com o PBE: 'sem_versao_no_pbe' (classe eletrificada que o PBE não registra para o modelo; falso positivo provável) ou 'pbe_so_eletrificado' (classificado combustão, mas toda versão do modelo no PBE é eletrificada; pode ser regra faltando ou geração antiga). Vazio quando não há divergência. |
+| `tipo` | texto | Tipo de veículo do modelo: leve (automóvel, SUV, picape, van), moto (inclui motoneta, ciclomotor e triciclo), onibus, caminhao ou outros. Só para eletrificados e híbridos leves; nulo quando o modelo não tem regra em dados/tipos.csv nem está no PBE Veicular. |
+| `origem_tipo` | texto | 'pbe' (o modelo está no PBE Veicular do Inmetro, que só tem veículo leve) ou 'regra' (regra de dados/tipos.csv). |
+| `regra_tipo` | inteiro | Número da linha de dados/tipos.csv que casou (0 = nenhuma). |
+| `tipo_aviso` | texto | 'pbe_diverge' quando a regra dá tipo não leve a um modelo que está no PBE Veicular. Vazio quando não há divergência. |
 
 ### `modelos_dimensao.parquet`
 
@@ -288,6 +332,8 @@ Dimensão de marca e modelo: grafia do RENAVAM, marca canônica e origem, por mo
 | `marca` | texto | Marca canônica: grafias da mesma empresa unidas por dados/marcas.csv (GM, CHEVROLET e CHEV viram CHEVROLET). Grafia fora da tabela segue como está. |
 | `importado` | lógico | Verdadeiro quando o texto traz o prefixo I/ ou IMP/ de veículo importado. |
 | `origem` | texto | 'Importado' ou 'Nacional', conforme o prefixo do texto. |
+| `tipo` | texto | Tipo de veículo do modelo: leve (automóvel, SUV, picape, van), moto (inclui motoneta, ciclomotor e triciclo), onibus, caminhao ou outros. Só para eletrificados e híbridos leves; nulo quando o modelo não tem regra em dados/tipos.csv nem está no PBE Veicular. |
+| `origem_tipo` | texto | 'pbe' (o modelo está no PBE Veicular do Inmetro, que só tem veículo leve) ou 'regra' (regra de dados/tipos.csv). |
 
 ### `municipios_dimensao.parquet`
 
