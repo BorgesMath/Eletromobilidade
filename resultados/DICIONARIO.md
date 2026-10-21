@@ -12,8 +12,13 @@ Gerado por `eletromobilidade publicar` a partir das tabelas publicadas.
 Ambos são extrações do RENAVAM: frota **registrada** no mês de referência (inclui
 veículos que já não circulam e não foram baixados). UF vem por extenso; sigla,
 código IBGE da UF e região são acrescentados pelo pacote (tabela fixa em
-`src/eletromobilidade/ufs.py`). O município é identificado pelo nome
-(`municipio_norm` + `uf_sigla`); o código IBGE do município ainda não está na base.
+`src/eletromobilidade/ufs.py`). O município vem só pelo nome, e o pacote acrescenta o
+código IBGE (`cod_municipio_ibge`) casando UF e nome com a lista oficial da
+[API de localidades do IBGE](https://servicodados.ibge.gov.br/api/docs/localidades)
+(instantâneo em `src/eletromobilidade/dados/municipios.csv`) e, onde a grafia da
+SENATRAN difere da do IBGE, com `src/eletromobilidade/dados/municipios_grafias.csv`,
+conferida à mão. Alguns municípios mudam de grafia no meio da série; o código é a
+identidade estável.
 Classificação: `src/eletromobilidade/dados/combustiveis.csv` (base por
 combustível) e `src/eletromobilidade/dados/modelos.csv` (base por modelo).
 Equivalência de grafias de marca: `src/eletromobilidade/dados/marcas.csv`.
@@ -90,7 +95,8 @@ Idem, por município.
 | `uf_sigla` | texto | Sigla da UF; nula quando a UF publicada não é válida ('Sem Informação' etc.). |
 | `cod_uf_ibge` | inteiro | Código IBGE da UF (2 dígitos). |
 | `regiao` | texto | Grande região (Norte, Nordeste, Sudeste, Sul, Centro-Oeste). |
-| `municipio_norm` | texto | Município sem acentos, em caixa alta. Chave do município junto com uf_sigla. |
+| `municipio_norm` | texto | Município como a SENATRAN o grafa, sem acentos, em caixa alta. A grafia muda no meio da série em alguns municípios (EMBU virou EMBU DAS ARTES): para identificar o município, use cod_municipio_ibge. |
+| `cod_municipio_ibge` | inteiro | Código IBGE do município (7 dígitos). Nulo só nos pseudo-municípios da SENATRAN sem UF ('Sem Informação', 'Não Identificado', 'Não se Aplica'). |
 | `frota_eletrico` | inteiro | Veículos da classe eletrico. |
 | `frota_hibrido_plug_in` | inteiro | Veículos da classe hibrido_plug_in. |
 | `frota_hibrido` | inteiro | Veículos da classe hibrido. |
@@ -117,7 +123,8 @@ Base por combustível: rótulos eletrificados por município e mês.
 | `uf_sigla` | texto | Sigla da UF; nula quando a UF publicada não é válida ('Sem Informação' etc.). |
 | `cod_uf_ibge` | inteiro | Código IBGE da UF (2 dígitos). |
 | `regiao` | texto | Grande região (Norte, Nordeste, Sudeste, Sul, Centro-Oeste). |
-| `municipio_norm` | texto | Município sem acentos, em caixa alta. Chave do município junto com uf_sigla. |
+| `municipio_norm` | texto | Município como a SENATRAN o grafa, sem acentos, em caixa alta. A grafia muda no meio da série em alguns municípios (EMBU virou EMBU DAS ARTES): para identificar o município, use cod_municipio_ibge. |
+| `cod_municipio_ibge` | inteiro | Código IBGE do município (7 dígitos). Nulo só nos pseudo-municípios da SENATRAN sem UF ('Sem Informação', 'Não Identificado', 'Não se Aplica'). |
 | `arquivo_origem` | texto | Arquivo da SENATRAN de onde o dado veio. |
 | `combustivel_norm` | texto | Rótulo de combustível normalizado (sem acentos, caixa alta, grafias unificadas). |
 | `classe` | texto | Classe de tecnologia atribuída (ver a tabela de classes). |
@@ -196,7 +203,8 @@ Idem, por município.
 | `uf_sigla` | texto | Sigla da UF; nula quando a UF publicada não é válida ('Sem Informação' etc.). |
 | `cod_uf_ibge` | inteiro | Código IBGE da UF (2 dígitos). |
 | `regiao` | texto | Grande região (Norte, Nordeste, Sudeste, Sul, Centro-Oeste). |
-| `municipio_norm` | texto | Município sem acentos, em caixa alta. Chave do município junto com uf_sigla. |
+| `municipio_norm` | texto | Município como a SENATRAN o grafa, sem acentos, em caixa alta. A grafia muda no meio da série em alguns municípios (EMBU virou EMBU DAS ARTES): para identificar o município, use cod_municipio_ibge. |
+| `cod_municipio_ibge` | inteiro | Código IBGE do município (7 dígitos). Nulo só nos pseudo-municípios da SENATRAN sem UF ('Sem Informação', 'Não Identificado', 'Não se Aplica'). |
 | `frota_eletrico` | inteiro | Veículos da classe eletrico. |
 | `frota_hibrido_plug_in` | inteiro | Veículos da classe hibrido_plug_in. |
 | `frota_hibrido` | inteiro | Veículos da classe hibrido. |
@@ -228,7 +236,8 @@ Base por modelo: eletrificados e híbridos leves por município, modelo e ano de
 | `uf_sigla` | texto | Sigla da UF; nula quando a UF publicada não é válida ('Sem Informação' etc.). |
 | `cod_uf_ibge` | inteiro | Código IBGE da UF (2 dígitos). |
 | `regiao` | texto | Grande região (Norte, Nordeste, Sudeste, Sul, Centro-Oeste). |
-| `municipio_norm` | texto | Município sem acentos, em caixa alta. Chave do município junto com uf_sigla. |
+| `municipio_norm` | texto | Município como a SENATRAN o grafa, sem acentos, em caixa alta. A grafia muda no meio da série em alguns municípios (EMBU virou EMBU DAS ARTES): para identificar o município, use cod_municipio_ibge. |
+| `cod_municipio_ibge` | inteiro | Código IBGE do município (7 dígitos). Nulo só nos pseudo-municípios da SENATRAN sem UF ('Sem Informação', 'Não Identificado', 'Não se Aplica'). |
 | `arquivo_origem` | texto | Arquivo da SENATRAN de onde o dado veio. |
 
 ### `modelos_classificados.parquet`
@@ -248,7 +257,7 @@ Auditoria: cada modelo, classe, regra aplicada, total, marca, marcação 'revisa
 | `qtd_veiculos` | inteiro | Número de veículos registrados. |
 | `revisar` | lógico | Verdadeiro para modelo de marca com linha eletrificada que não casou com nenhuma regra. |
 | `padrao` | texto | Expressão regular da regra aplicada. |
-| `pbe_classes` | texto | Classes que a linha do modelo tem na tabela PBE Veicular do Inmetro, separadas por '|'. Vazio quando o modelo não casou com o PBE (moto, ônibus, caminhão e modelo fora de linha). |
+| `pbe_classes` | texto | Classes que a linha do modelo tem na tabela PBE Veicular do Inmetro, separadas por barra vertical. Vazio quando o modelo não casou com o PBE (moto, ônibus, caminhão e modelo fora de linha). |
 | `pbe_categoria` | texto | Categoria de porte do PBE Veicular (Médio, Picape, Utilitário Esportivo Compacto...). Vazio quando o modelo não casou. |
 | `pbe_aviso` | texto | Divergência com o PBE: 'sem_versao_no_pbe' (classe eletrificada que o PBE não registra para o modelo; falso positivo provável) ou 'pbe_so_eletrificado' (classificado combustão, mas toda versão do modelo no PBE é eletrificada; pode ser regra faltando ou geração antiga). Vazio quando não há divergência. |
 
@@ -264,6 +273,20 @@ Dimensão de marca e modelo: grafia do RENAVAM, marca canônica e origem, por mo
 | `marca` | texto | Marca canônica: grafias da mesma empresa unidas por dados/marcas.csv (GM, CHEVROLET e CHEV viram CHEVROLET). Grafia fora da tabela segue como está. |
 | `importado` | lógico | Verdadeiro quando o texto traz o prefixo I/ ou IMP/ de veículo importado. |
 | `origem` | texto | 'Importado' ou 'Nacional', conforme o prefixo do texto. |
+
+### `municipios_dimensao.parquet`
+
+Dimensão de município: código IBGE, nome oficial, UF e as grafias com que a SENATRAN publicou o município na série.
+
+| Coluna | Tipo | Descrição |
+|---|---|---|
+| `cod_municipio_ibge` | inteiro | Código IBGE do município (7 dígitos). Nulo só nos pseudo-municípios da SENATRAN sem UF ('Sem Informação', 'Não Identificado', 'Não se Aplica'). |
+| `municipio_ibge` | texto | Nome oficial do município no IBGE, com acentos. Nulo nos pseudo-municípios. |
+| `uf_sigla` | texto | Sigla da UF; nula quando a UF publicada não é válida ('Sem Informação' etc.). |
+| `cod_uf_ibge` | inteiro | Código IBGE da UF (2 dígitos). |
+| `regiao` | texto | Grande região (Norte, Nordeste, Sudeste, Sul, Centro-Oeste). |
+| `municipio_norm` | texto | Grafia mais recente do município na SENATRAN, sem acentos, em caixa alta. As anteriores estão em grafias_senatran. |
+| `grafias_senatran` | texto | Grafias com que a SENATRAN publicou o município na série, na ordem em que aparecem, separadas por barra vertical (EMBU, depois EMBU DAS ARTES). |
 
 ### `conciliacao_brasil.csv`
 
@@ -350,7 +373,8 @@ Idem, por município.
 | `uf_sigla` | texto | Sigla da UF; nula quando a UF publicada não é válida ('Sem Informação' etc.). |
 | `cod_uf_ibge` | inteiro | Código IBGE da UF (2 dígitos). |
 | `regiao` | texto | Grande região (Norte, Nordeste, Sudeste, Sul, Centro-Oeste). |
-| `municipio_norm` | texto | Município sem acentos, em caixa alta. Chave do município junto com uf_sigla. |
+| `municipio_norm` | texto | Município como a SENATRAN o grafa, sem acentos, em caixa alta. A grafia muda no meio da série em alguns municípios (EMBU virou EMBU DAS ARTES): para identificar o município, use cod_municipio_ibge. |
+| `cod_municipio_ibge` | inteiro | Código IBGE do município (7 dígitos). Nulo só nos pseudo-municípios da SENATRAN sem UF ('Sem Informação', 'Não Identificado', 'Não se Aplica'). |
 | `total_combustivel` | inteiro | Frota total: pela base por combustível. |
 | `total_modelo` | inteiro | Frota total: pela base por modelo. |
 | `total_diferenca` | inteiro | Frota total: diferença modelo − combustível. |
