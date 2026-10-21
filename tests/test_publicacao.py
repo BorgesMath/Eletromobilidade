@@ -27,7 +27,7 @@ def test_publicar(tmp_path, xlsx_jan, zip_marca_modelo_jan):
     arquivos = {p.name for p in resultados.iterdir()}
     assert {"combustivel_brasil.csv", "conciliacao_uf.csv", "qualidade_modelo.csv",
             "combustivel_municipio.parquet", "modelo_eletrificados.parquet",
-            "modelos_dimensao.parquet", "LEIAME.md"} <= arquivos
+            "modelos_dimensao.parquet", "municipios_dimensao.parquet", "LEIAME.md"} <= arquivos
     assert "frota_combustivel.parquet" not in arquivos and "frota_combustivel.csv" not in arquivos
     assert "combustivel_brasil.parquet" not in arquivos and "combustivel_municipio.csv" not in arquivos
     assert "tabela_antiga.csv" not in arquivos
@@ -37,6 +37,8 @@ def test_publicar(tmp_path, xlsx_jan, zip_marca_modelo_jan):
     assert "**Base por modelo:** 1 mês (jan/2026)" in leiame
     assert "frota por classe, total" in leiame
     assert "`modelo_eletrificados.parquet`" in leiame
+    assert ("**Municípios:** 3 com código IBGE, 0 deles publicados pela SENATRAN com mais de uma grafia "
+            "na série; sem código: SEM INFORMACAO.") in leiame
 
 
 def test_dicionario_descreve_todas_as_colunas(tmp_path, xlsx_jan, zip_marca_modelo_jan):
@@ -47,3 +49,13 @@ def test_dicionario_descreve_todas_as_colunas(tmp_path, xlsx_jan, zip_marca_mode
     assert "### `conciliacao_uf.csv`" in texto and "| `eletrico_razao` | decimal |" in texto
     sem_descricao = [l for l in texto.splitlines() if l.startswith("| `") and l.endswith("|  |")]
     assert sem_descricao == []
+    # barra vertical solta numa descrição parte a linha da tabela em Markdown
+    celulas_a_mais, cabecalho = [], None
+    for linha in texto.splitlines():
+        if not linha.startswith("|"):
+            cabecalho = None
+        elif cabecalho is None:
+            cabecalho = linha.count("|")
+        elif linha.count("|") != cabecalho:
+            celulas_a_mais.append(linha)
+    assert celulas_a_mais == []

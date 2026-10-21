@@ -32,6 +32,7 @@ PUBLICADAS = {
     "modelo_eletrificados": ("parquet", "Base por modelo: eletrificados e híbridos leves por município, modelo e ano de fabricação."),
     "modelos_classificados": ("parquet", "Auditoria: cada modelo, classe, regra aplicada, total, marca, marcação 'revisar' e confronto com a tabela PBE Veicular do Inmetro."),
     "modelos_dimensao": ("parquet", "Dimensão de marca e modelo: grafia do RENAVAM, marca canônica e origem, por modelo distinto."),
+    "municipios_dimensao": ("parquet", "Dimensão de município: código IBGE, nome oficial, UF e as grafias com que a SENATRAN publicou o município na série."),
     "conciliacao_brasil": ("csv", "Comparação combustível x modelo, Brasil, nos meses presentes nas duas bases."),
     "conciliacao_uf": ("csv", "Idem, por UF."),
     "conciliacao_municipio": ("parquet", "Idem, por município."),
@@ -96,6 +97,14 @@ def leiame(tabelas: dict[str, pd.DataFrame], gerado_em: pd.Timestamp) -> str:
                          ("Conciliação", "conciliacao_brasil")):
         if painel in tabelas:
             linhas.append(f"- **{base}:** {cobertura(tabelas[painel])}.")
+    if "municipios_dimensao" in tabelas:
+        d = tabelas["municipios_dimensao"]
+        com_codigo = d["cod_municipio_ibge"].notna()
+        varias = int(d["grafias_senatran"].str.contains(" | ", regex=False).sum())
+        sem = ", ".join(sorted(d.loc[~com_codigo, "municipio_norm"]))
+        linhas.append(f"- **Municípios:** {f'{com_codigo.sum():,}'.replace(',', '.')} com código IBGE, "
+                      f"{varias} deles publicados pela SENATRAN com mais de uma grafia na série; "
+                      f"sem código: {sem or 'nenhum'}.")
     for nome in ("qualidade_combustivel", "qualidade_modelo"):
         if nome in tabelas:
             q = tabelas[nome]
@@ -129,8 +138,13 @@ FONTES = """\
 Ambos são extrações do RENAVAM: frota **registrada** no mês de referência (inclui
 veículos que já não circulam e não foram baixados). UF vem por extenso; sigla,
 código IBGE da UF e região são acrescentados pelo pacote (tabela fixa em
-`src/eletromobilidade/ufs.py`). O município é identificado pelo nome
-(`municipio_norm` + `uf_sigla`); o código IBGE do município ainda não está na base.
+`src/eletromobilidade/ufs.py`). O município vem só pelo nome, e o pacote acrescenta o
+código IBGE (`cod_municipio_ibge`) casando UF e nome com a lista oficial da
+[API de localidades do IBGE](https://servicodados.ibge.gov.br/api/docs/localidades)
+(instantâneo em `src/eletromobilidade/dados/municipios.csv`) e, onde a grafia da
+SENATRAN difere da do IBGE, com `src/eletromobilidade/dados/municipios_grafias.csv`,
+conferida à mão. Alguns municípios mudam de grafia no meio da série; o código é a
+identidade estável.
 Classificação: `src/eletromobilidade/dados/combustiveis.csv` (base por
 combustível) e `src/eletromobilidade/dados/modelos.csv` (base por modelo).
 Equivalência de grafias de marca: `src/eletromobilidade/dados/marcas.csv`.
@@ -160,7 +174,14 @@ _COLUNAS = {
     "cod_uf_ibge": "Código IBGE da UF (2 dígitos).",
     "regiao": "Grande região (Norte, Nordeste, Sudeste, Sul, Centro-Oeste).",
     "municipio": "Município como publicado pela SENATRAN.",
-    "municipio_norm": "Município sem acentos, em caixa alta. Chave do município junto com uf_sigla.",
+    "municipio_norm": "Município como a SENATRAN o grafa, sem acentos, em caixa alta. A grafia muda no meio da "
+                      "série em alguns municípios (EMBU virou EMBU DAS ARTES): para identificar o município, "
+                      "use cod_municipio_ibge.",
+    "cod_municipio_ibge": "Código IBGE do município (7 dígitos). Nulo só nos pseudo-municípios da SENATRAN "
+                          "sem UF ('Sem Informação', 'Não Identificado', 'Não se Aplica').",
+    "municipio_ibge": "Nome oficial do município no IBGE, com acentos. Nulo nos pseudo-municípios.",
+    "grafias_senatran": "Grafias com que a SENATRAN publicou o município na série, na ordem em que "
+                        "aparecem, separadas por barra vertical (EMBU, depois EMBU DAS ARTES).",
     "combustivel": "Rótulo do campo combustível do RENAVAM, como publicado.",
     "combustivel_norm": "Rótulo de combustível normalizado (sem acentos, caixa alta, grafias unificadas).",
     "classe": "Classe de tecnologia atribuída (ver a tabela de classes).",
@@ -178,7 +199,7 @@ _COLUNAS = {
     "regra": "Número da linha de modelos.csv que definiu a classe (0 = nenhuma regra; classe padrão combustao).",
     "padrao": "Expressão regular da regra aplicada.",
     "revisar": "Verdadeiro para modelo de marca com linha eletrificada que não casou com nenhuma regra.",
-    "pbe_classes": "Classes que a linha do modelo tem na tabela PBE Veicular do Inmetro, separadas por '|'. Vazio quando o modelo não casou com o PBE (moto, ônibus, caminhão e modelo fora de linha).",
+    "pbe_classes": "Classes que a linha do modelo tem na tabela PBE Veicular do Inmetro, separadas por barra vertical. Vazio quando o modelo não casou com o PBE (moto, ônibus, caminhão e modelo fora de linha).",
     "pbe_categoria": "Categoria de porte do PBE Veicular (Médio, Picape, Utilitário Esportivo Compacto...). Vazio quando o modelo não casou.",
     "pbe_aviso": "Divergência com o PBE: 'sem_versao_no_pbe' (classe eletrificada que o PBE não registra para o modelo; falso positivo provável) ou 'pbe_so_eletrificado' (classificado combustão, mas toda versão do modelo no PBE é eletrificada; pode ser regra faltando ou geração antiga). Vazio quando não há divergência.",
     "primeiro_mes": "Primeiro mês em que o rótulo aparece na série.",
@@ -203,7 +224,16 @@ _SUFIXOS = {"combustivel": "pela base por combustível", "modelo": "pela base po
             "diferenca": "diferença modelo − combustível", "razao": "razão modelo / combustível (nula se combustível = 0)"}
 
 
-def descrever_coluna(nome: str) -> str:
+# Colunas que numa tabela específica significam outra coisa que no resto.
+_COLUNAS_POR_TABELA = {
+    ("municipios_dimensao", "municipio_norm"): "Grafia mais recente do município na SENATRAN, sem acentos, "
+                                               "em caixa alta. As anteriores estão em grafias_senatran.",
+}
+
+
+def descrever_coluna(nome: str, tabela: str | None = None) -> str:
+    if (tabela, nome) in _COLUNAS_POR_TABELA:
+        return _COLUNAS_POR_TABELA[(tabela, nome)]
     if nome in _COLUNAS:
         return _COLUNAS[nome]
     if nome.startswith("frota_") and nome[len("frota_"):] in CLASSES:
@@ -236,7 +266,7 @@ def dicionario(tabelas: dict[str, pd.DataFrame]) -> str:
     for nome, df in tabelas.items():
         formato, descricao = PUBLICADAS[nome]
         linhas += [f"### `{nome}.{formato}`", "", descricao, "", "| Coluna | Tipo | Descrição |", "|---|---|---|"]
-        linhas += [f"| `{c}` | {_tipo(t)} | {descrever_coluna(c)} |" for c, t in df.dtypes.items()]
+        linhas += [f"| `{c}` | {_tipo(t)} | {descrever_coluna(c, nome)} |" for c, t in df.dtypes.items()]
         linhas.append("")
     return "\n".join(linhas)
 

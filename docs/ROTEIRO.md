@@ -1,30 +1,43 @@
 # Roteiro
 
-Estado em 20/10/2026. O pipeline Python está fechado e testado (196 testes); a
+Estado em 21/10/2026. O pipeline Python está fechado e testado (220 testes); a
 camada do Power BI está especificada em [`pbi/`](../pbi/MODELO.md) e o `.pbix`
 ainda precisa ser montado. O que falta está abaixo, em ordem de valor.
 
-As tabelas de `resultados/` estão em dia com o código, geradas em 20/10 com a
+As tabelas de `resultados/` estão em dia com o código, regeradas em 21/10 com a
 série completa de combustível (76 arquivos) e os dois meses da base por modelo.
-Reproduziram os 75 meses da execução anterior com diferença zero em todas as
-colunas. Regerá-las exige os arquivos da SENATRAN em `data/raw`, que não são
+Reproduziram a execução de 20/10 com diferença zero em todas as colunas que já
+existiam; o que mudou foi a coluna `cod_municipio_ibge` e a dimensão de
+município. Regerá-las exige os arquivos da SENATRAN em `data/raw`, que não são
 versionados: `baixar`, depois `processar` e `publicar`.
 
-## 1. Código IBGE e nome próprio de município
+## 1. Código IBGE de município — feito; falta a população
 
-**Por que primeiro.** Destrava o mapa municipal e o cruzamento com população do
-IBGE — isto é, "eletrificados por mil habitantes", que é a medida que uma
-política de recarga precisa. Hoje o município é identificado só por
-`municipio_norm` (caixa alta, sem acento), e a página 2 do relatório não tem
-mapa municipal por causa disso.
+**Feito em 21/10/2026.** Toda tabela no grão de município traz
+`cod_municipio_ibge`, e `resultados/municipios_dimensao.parquet` tem uma linha
+por município, com o nome oficial do IBGE. O casamento é determinístico: 5.537
+das 5.581 grafias da base casam pelo nome sem acento e sem pontuação, e as 41
+que sobram estão em `src/eletromobilidade/dados/municipios_grafias.csv`,
+conferidas uma a uma. Ficam sem código só os três pseudo-municípios sem UF. O
+teste que este item pedia existe e roda sobre `resultados/`: falha se sobrar
+município com UF e sem código. Detalhe no README, seção Município.
 
-**O que fazer.** Uma tabela de referência município → código IBGE em
-`src/eletromobilidade/dados/municipios.csv`, casada por `municipio_norm` +
-`uf_sigla`, publicada como dimensão em `resultados/`. São 5.581 chaves na base
-contra 5.570 municípios do IBGE — a diferença são os três pseudo-municípios
-(`SEM INFORMACAO`, `NAO IDENTIFICADO`, `NAO SE APLICA`) mais casos de grafia.
-O casamento por nome normalizado vai deixar resíduo; ele precisa de teste que
-falhe quando sobrar município sem código.
+**O resíduo não era só grafia.** Seis municípios trocam de nome no meio da série
+— `EMBU` vira `EMBU DAS ARTES` em abr/2022, `GOUVEA` vira `GOUVEIA` em mar/2024
+—, e pelo nome cada um deles era dois municípios, com a série cortada no mês da
+troca. A dimensão do painel era por nome e tinha 5.581 membros; passou a ser por
+código, com 5.574, e os seis têm os 75 meses contínuos.
+
+**O que falta: população.** É o que dá "eletrificados por mil habitantes", a
+medida que uma política de recarga usa e o motivo de este item vir primeiro.
+Agora é junção pelo código, sem casar nome nenhum. Antes, uma decisão: Censo
+2022, que é contagem mas é um ponto só e tem 5.570 municípios (Boa Esperança do
+Norte, MT, foi instalado depois), ou as estimativas anuais do IBGE, que dão série
+mas são modeladas.
+
+**O mapa municipal também está destravado.** A malha do IBGE identifica o
+município pelo mesmo código (ver [`pbi/PAGINAS.md`](../pbi/PAGINAS.md)). Ela tem
+5.570 polígonos: falta Boa Esperança do Norte, mais novo que a malha.
 
 ## 2. Ampliar a série da base por modelo
 

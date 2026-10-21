@@ -10,10 +10,11 @@
 // medidas DAX. A soma das seis classes é igual a frota_total linha a linha
 // (verificado na série inteira).
 //
-// Linhas com uf_sigla nula recebem "ND". São três pseudo-municípios da
-// publicação da SENATRAN — SEM INFORMACAO, NAO IDENTIFICADO, NAO SE APLICA —
-// que somam cerca de 2% da frota nacional. Descartá-los faria o painel do
-// Brasil não fechar com `combustivel_brasil.csv`.
+// A chave do município é o código IBGE (ver ChaveLocalidade). Os três
+// pseudo-municípios da SENATRAN — SEM INFORMACAO, NAO IDENTIFICADO, NAO SE
+// APLICA — não têm UF nem código e ficam com chave própria, "ND|" e o nome.
+// Somam cerca de 2% da frota nacional; descartá-los faria o painel do Brasil
+// não fechar com `combustivel_brasil.csv`.
 //
 // 2.507.982 linhas após o despivotamento; 1.266.245 depois de remover zeros.
 
@@ -27,6 +28,7 @@ let
             {"data_referencia", type date},
             {"uf_sigla", type text},
             {"municipio_norm", type text},
+            {"cod_municipio_ibge", Int64.Type},
             {"frota_eletrico", Int64.Type},
             {"frota_hibrido_plug_in", Int64.Type},
             {"frota_hibrido", Int64.Type},
@@ -35,11 +37,10 @@ let
             {"frota_sem_informacao", Int64.Type}
         }
     ),
-    UfND = Table.ReplaceValue(Tipos, null, "ND", Replacer.ReplaceValue, {"uf_sigla"}),
     ComChave = Table.AddColumn(
-        UfND,
+        Tipos,
         "chave_localidade",
-        each [uf_sigla] & "|" & [municipio_norm],
+        each ChaveLocalidade([cod_municipio_ibge], [uf_sigla], [municipio_norm]),
         type text
     ),
     Enxuta = Table.SelectColumns(

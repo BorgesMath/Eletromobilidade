@@ -26,7 +26,7 @@ Modo de armazenamento: **Importação**. Todo o modelo cabe em memória com folg
       │ *          │ *     │ *    │ * │ *           │ *
       │     ┌──────┴───────┴──┐   │   │     ┌───────┴──────┐
       │     │  dLocalidade    │───┘   │     │              │
-      │     │     5.581       │───────┼─────┘              │
+      │     │     5.574       │───────┼─────┘              │
       │     │[chave_localidade]       │                    │
       │     └─────────────────┘       │                    │
       │                               │                    │
@@ -64,7 +64,7 @@ previsível que filtro cruzado automático.
 | Tabela | Grão | Linhas | Fonte |
 |---|---|---:|---|
 | `dCalendario` | dia | ~2.465 | tabela calculada em DAX |
-| `dLocalidade` | município | 5.581 | `combustivel_municipio.parquet` (distinto) |
+| `dLocalidade` | município (código IBGE) | 5.574 | `municipios_dimensao.parquet` |
 | `dClasse` | classe de tecnologia | 8 | digitada no Power Query |
 | `dModelo` | marca_modelo | 935 | `modelos_dimensao.parquet` |
 
@@ -108,11 +108,22 @@ irrelevante em Importação.
 carregadas.** São derivadas; vêm de medidas DAX. Carregar as duas versões é
 convite a divergência quando uma mudar.
 
+**O município é o código IBGE, não o nome.** A SENATRAN troca a grafia de seis
+municípios no meio da série — `EMBU` vira `EMBU DAS ARTES` em abr/2022, `GOUVEA`
+vira `GOUVEIA` em mar/2024. Com a chave por nome, cada grafia era um membro de
+`dLocalidade`, e a série desses municípios aparecia cortada em dois. Com a chave
+por código são um membro só, com os 75 meses. O código vem do Python, em toda
+tabela municipal (`cod_municipio_ibge`), e a chave é montada por uma função só,
+[`ChaveLocalidade`](powerquery/ChaveLocalidade.m), igual na dimensão e nos três
+fatos. Para achar um município pelo nome antigo, a busca vai em
+`dLocalidade[grafias_senatran]`.
+
 **UF inválida vira `"ND"`, não é descartada.** A SENATRAN publica três
 pseudo-municípios — `SEM INFORMACAO`, `NAO IDENTIFICADO`, `NAO SE APLICA` — com
-UF nula. São cerca de 2% da frota nacional. Jogá-los fora faria o total do
-Brasil não fechar com `combustivel_brasil.csv`; mantê-los como membro explícito
-deixa o buraco visível no painel, que é o comportamento honesto.
+UF nula e, portanto, sem código IBGE. São cerca de 2% da frota nacional. Jogá-los
+fora faria o total do Brasil não fechar com `combustivel_brasil.csv`; mantê-los
+como membro explícito, com chave `ND|<nome>`, deixa o buraco visível no painel,
+que é o comportamento honesto.
 
 **`fConciliacao` fica larga.** Cada métrica existe em quatro versões
 (`_combustivel`, `_modelo`, `_diferenca`, `_razao`) e o uso é comparar colunas
@@ -182,9 +193,10 @@ Portanto, no painel:
 
 ### Outras limitações conhecidas
 
-- **Sem código IBGE de município.** As tabelas publicadas identificam município
-  por nome normalizado. Impede mapa coroplético confiável por município e
-  cruzamento com população. Item do [roteiro](../docs/ROTEIRO.md).
+- **Sem população por município, ainda.** O código IBGE já está no modelo, então a
+  população entra por junção direta; falta escolher a fonte (Censo 2022 ou
+  estimativa anual). Até lá a taxa disponível é por frota, não por habitante.
+  Item do [roteiro](../docs/ROTEIRO.md).
 - **Marca normalizada só até onde a tabela alcança.** `dModelo[marca]` já une as
   grafias conferidas à mão (`GM`, `CHEVROLET` e `CHEV` viram `CHEVROLET`;
   `CAOACHERY` vira `CHERY`; `CIVIC`, que é modelo lido como marca, vira `HONDA`),
@@ -208,7 +220,8 @@ se monta a partir destes scripts em cerca de vinte minutos.
    a consulta `PastaResultados` e ajuste o caminho.
 2. **Consultas.** Uma consulta nula por arquivo de `powerquery/`, cole o
    conteúdo no Editor Avançado, nomeie **igual ao nome do arquivo** (as medidas
-   referenciam esses nomes). Ordem indiferente.
+   e as outras consultas referenciam esses nomes). Ordem indiferente.
+   `ChaveLocalidade` é função, não tabela: desmarque "Habilitar carga" nela.
 3. **Fechar e aplicar.**
 4. **`dCalendario`.** Modelagem > Nova tabela, cole
    [`dax/dCalendario.dax`](dax/dCalendario.dax). Renomeie a coluna `Date` para
@@ -250,5 +263,19 @@ E com o mês de set/2026 e a UF de São Paulo:
 | `[Frota eletrificada]` | 371.659 |
 | `[Participação eletrificada]` | 1,03% |
 
+E o teste da chave por código, com o município de Embu das Artes
+(`dLocalidade[cod_municipio_ibge] = 3515004`):
+
+| Verificação | Valor esperado |
+|---|---|
+| `[Frota total]` em set/2026 | 153.787 |
+| `[Frota eletrificada]` em set/2026 | 627 |
+| Linha de `[Frota total]` por mês | contínua de jun/2020 a set/2026, só sem jan/2022; em mar/2022 são 126.441 e em abr/2022, 126.775 |
+| `dLocalidade[grafias_senatran]` | `EMBU \| EMBU DAS ARTES` |
+
+Se a linha de Embu das Artes começar em abr/2022, algum fato está montando a
+chave pelo nome em vez de chamar `ChaveLocalidade`.
+
 Se `[Frota total]` do Brasil vier menor que 136.424.856, a causa mais provável é
-a `uf_sigla` nula ter sido descartada em vez de virar `"ND"`.
+linha descartada no Power Query: os pseudo-municípios não têm UF nem código, e
+uma etapa que filtre nulos os leva junto.

@@ -54,7 +54,8 @@ repetidas com espera exponencial e downloads interrompidos são retomados do
 ponto em que pararam (HTTP `Range`). Os nomes dos arquivos não são estáveis
 (`copy_of_…`, `Maro` para "Março"), por isso a tabela e o período são inferidos
 do nome e do título de cada recurso. A UF vem por extenso; o pacote acrescenta
-sigla, código IBGE da UF e região.
+sigla, código IBGE da UF e região. O município vem só pelo nome; o pacote
+acrescenta o código IBGE (ver [Município](#município)).
 
 **Atenção:** o arquivo `marca_modelo` não informa o combustível; por isso a
 tecnologia é inferida do nome do modelo (ver abaixo).
@@ -84,6 +85,9 @@ eletromobilidade publicar
 
 # extrair a tabela PBE Veicular do Inmetro de um PDF de ciclo (só quando sai ciclo novo)
 eletromobilidade pbev tabela-pbev-2026.pdf --ciclo 2026
+
+# atualizar a lista de municípios do IBGE (só quando o IBGE cria ou renomeia município)
+eletromobilidade municipios
 ```
 
 `data/raw` e `data/processed` não vão para o repositório; a pasta
@@ -115,11 +119,14 @@ Uso como biblioteca:
 from eletromobilidade import pipeline
 from eletromobilidade.base_modelo import processar_arquivos_modelo
 from eletromobilidade.conciliacao import conciliar_bases
+from eletromobilidade.municipios import dimensao_municipio
 
 longo = pipeline.processar_arquivos(pipeline.localizar_arquivos("data/raw", "combustivel"))
 tabelas = pipeline.construir_base_combustivel(longo)
 tabelas |= processar_arquivos_modelo(pipeline.localizar_arquivos("data/raw", "marca_modelo"))
 tabelas |= conciliar_bases(tabelas)
+tabelas["municipios_dimensao"] = dimensao_municipio([tabelas["combustivel_municipio"],
+                                                     tabelas["modelo_municipio"]])
 tabelas["conciliacao_uf"].query("uf_sigla == 'SP'")
 ```
 
@@ -139,10 +146,12 @@ Cada tabela é gravada em Parquet e em CSV (`;` como separador, `,` decimal, UTF
 | `modelos_dimensao` | modelo | Dimensão do painel: grafia do RENAVAM, marca canônica, origem |
 | `conciliacao_{municipio,uf,brasil}` | mês × recorte | Comparação entre as duas bases |
 | `qualidade_{combustivel,modelo}` | arquivo mensal | Linhas, frota total, ajustes aplicados e se o mês entrou na série |
+| `municipios_dimensao` | município (código IBGE) | Nome oficial, UF, região e as grafias com que a SENATRAN publicou o município |
 
 Os painéis trazem `frota_<classe>` para cada classe, `frota_total`,
 `frota_eletrificada` e `participacao_eletrificada = frota_eletrificada / frota_total`.
-O painel do Brasil inclui registros sem UF válida; o de UF, não.
+O painel do Brasil inclui registros sem UF válida; o de UF, não. Toda tabela no
+grão de município traz `cod_municipio_ibge`.
 
 ## Série histórica e qualidade dos arquivos
 
@@ -174,6 +183,54 @@ API do CKAN e os downloads respondem 503 com frequência: a listagem de recursos
 fica guardada em `data/raw/ckan_renavam.json` e é usada quando a API cai; uma
 fonte com 3 falhas seguidas é deixada para a execução seguinte, sem interromper
 as demais.
+
+## Município
+
+A SENATRAN identifica o município só pelo nome, em caixa alta e sem acento. O
+pacote acrescenta o código IBGE de 7 dígitos (`cod_municipio_ibge`), que é o que
+liga a base à população, à malha municipal e a qualquer outra tabela do IBGE.
+
+**O nome não serve de identidade, porque muda no meio da série.** Seis municípios
+trocam de grafia num mês e seguem com a nova: `EMBU` vira `EMBU DAS ARTES` em
+abr/2022, `GOUVEA` vira `GOUVEIA` em mar/2024, `POXOREO` vira `POXOREU` em
+mar/2022, e há mais três. Pelo nome, cada grafia seria um município, com a série
+cortada ao meio — os 153.787 veículos de Embu das Artes apareciam como um
+município que some em mar/2022 e outro que nasce em abr/2022. Pelo código, os seis
+têm os 75 meses contínuos.
+
+O casamento é determinístico, sem semelhança aproximada:
+
+1. a lista oficial de municípios da [API de localidades do IBGE](https://servicodados.ibge.gov.br/api/docs/localidades),
+   guardada como instantâneo em
+   [`dados/municipios.csv`](src/eletromobilidade/dados/municipios.csv) (5.571
+   municípios; regerar com `eletromobilidade municipios`);
+2. casamento por UF e nome sem acento e sem pontuação — hífen e apóstrofo viram
+   espaço, então `SAO JOAO D'ALIANCA` casa com "São João d'Aliança". Resolve
+   5.537 das 5.581 grafias da base;
+3. as 41 que sobram estão em
+   [`dados/municipios_grafias.csv`](src/eletromobilidade/dados/municipios_grafias.csv),
+   conferidas uma a uma, com o código e a razão.
+
+| Por que a grafia não casa | Grafias | Exemplo (SENATRAN → IBGE) |
+|---|---:|---|
+| Preposição | 13 | `SAO MIGUEL D'OESTE` → São Miguel do Oeste |
+| Ortografia | 13 | `PARATI` → Paraty, `ARES` → Arez |
+| Nome anterior que a SENATRAN não atualizou | 5 | `BOA SAUDE` → Januário Cicco; `SANTAREM` (PB) → Joca Claudino |
+| Forma curta do nome | 2 | `BOM JESUS` (GO) → Bom Jesus de Goiás |
+| Grafia antiga de município renomeado na série | 6 | `EMBU` → Embu das Artes |
+| Erro de digitação | 1 | `BARAO D0 MONTE ALTO` (com zero) → Barão do Monte Alto |
+| Distrito publicado como município | 1 | `IBITIUVA` → Pitangueiras, com um veículo por sete meses |
+
+Ficam sem código só os três pseudo-municípios sem UF (`SEM INFORMACAO`,
+`NAO IDENTIFICADO`, `NAO SE APLICA`). Qualquer outro município sem código é falha:
+`processar` lista a grafia e a frota, e o teste sobre `resultados/` não passa até
+ela entrar na tabela de grafias. A tabela também é conferida contra o IBGE na
+carga — código inexistente, de outra UF, ou grafia que já casa sozinha com o nome
+oficial são erro.
+
+O nome oficial, com acento, está em `municipios_dimensao` (`municipio_ibge`), não
+nos fatos: o código basta para ligar os dois. Ali, cada município é uma linha, e
+`grafias_senatran` guarda todas as grafias com que ele apareceu.
 
 ## Classificação dos combustíveis
 
@@ -422,7 +479,7 @@ pelo passo a passo de [`pbi/MODELO.md`](pbi/MODELO.md#como-montar-o-pbix).
 | [`pbi/MODELO.md`](pbi/MODELO.md) | Modelo estrela: tabelas, grão, relacionamentos, decisões, ressalvas e tabela de validação |
 | [`pbi/PAGINAS.md`](pbi/PAGINAS.md) | As cinco páginas do relatório, com a forma de cada visual e o porquê |
 | [`pbi/REFRESH.md`](pbi/REFRESH.md) | Ciclo de atualização mensal e publicação no Service |
-| [`pbi/powerquery/`](pbi/powerquery) | Nove consultas M, uma por tabela do modelo |
+| [`pbi/powerquery/`](pbi/powerquery) | Dez consultas M: o parâmetro da pasta, uma por tabela do modelo e a função que monta a chave de município |
 | [`pbi/dax/`](pbi/dax) | `dCalendario` e as medidas |
 | [`pbi/tema.json`](pbi/tema.json) | Tema do Power BI, com paleta categórica verificada para daltonismo |
 
@@ -433,6 +490,7 @@ híbrido convencional só vale pela base por combustível**.
 
 ## Próximos passos
 
-Em [`docs/ROTEIRO.md`](docs/ROTEIRO.md), em ordem de valor. Os quatro primeiros:
-código IBGE de município, ampliar a série da base por modelo, tipo de veículo
-(automóvel × motocicleta × ônibus) e o furo de jan/2022.
+Em [`docs/ROTEIRO.md`](docs/ROTEIRO.md), em ordem de valor. O código IBGE de
+município está feito, e o passo seguinte dele é a população por município. Depois:
+ampliar a série da base por modelo, tipo de veículo (automóvel × motocicleta ×
+ônibus) e o furo de jan/2022.

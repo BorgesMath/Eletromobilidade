@@ -21,7 +21,10 @@ def test_processar_arquivo_enriquece(xlsx_jan):
     assert set(df[["ano", "mes"]].drop_duplicates().itertuples(index=False)) == {(2026, 1)}
     sp = df[df["municipio"] == "SAO PAULO"]
     assert set(sp["uf_sigla"]) == {"SP"} and set(sp["cod_uf_ibge"]) == {35}
+    assert set(sp["cod_municipio_ibge"]) == {3550308}
+    assert set(df.loc[df["municipio"] == "NITEROI", "cod_municipio_ibge"]) == {3303302}
     assert df.loc[df["uf"] == "Sem Informação", "uf_sigla"].isna().all()
+    assert df.loc[df["uf"] == "Sem Informação", "cod_municipio_ibge"].isna().all()
     assert df["origem_classificacao"].eq("tabela").all()
 
 

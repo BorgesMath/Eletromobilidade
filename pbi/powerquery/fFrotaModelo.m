@@ -19,17 +19,17 @@ let
             {"data_referencia", type date},
             {"uf_sigla", type text},
             {"municipio_norm", type text},
+            {"cod_municipio_ibge", Int64.Type},
             {"marca_modelo", type text},
             {"ano_fabricacao", Int64.Type},
             {"classe", type text},
             {"qtd_veiculos", Int64.Type}
         }
     ),
-    UfND = Table.ReplaceValue(Tipos, null, "ND", Replacer.ReplaceValue, {"uf_sigla"}),
     ComChave = Table.AddColumn(
-        UfND,
+        Tipos,
         "chave_localidade",
-        each [uf_sigla] & "|" & [municipio_norm],
+        each ChaveLocalidade([cod_municipio_ibge], [uf_sigla], [municipio_norm]),
         type text
     ),
     // marca_modelo é a chave de dModelo; o texto cru fica fora do fato.

@@ -38,17 +38,24 @@ invalida o cache sozinho.
 
 ## Depois de publicar
 
-1. **Confira o LEIAME.** `resultados/LEIAME.md` é regerado a cada `publicar` e
+1. **Rode os testes** (`pytest`). Os de `tests/test_municipios.py` leem
+   `resultados/` e falham se o mês novo trouxe um município com grafia que nem o
+   IBGE nem `src/eletromobilidade/dados/municipios_grafias.csv` conhecem. O log de
+   `processar` já terá listado a grafia, com a frota: confira o nome no IBGE,
+   inclua a linha na tabela de grafias, com o código e a razão, e rode `processar`
+   e `publicar` de novo. Quando o IBGE criar ou renomear município, atualize a
+   lista com `eletromobilidade municipios` antes.
+2. **Confira o LEIAME.** `resultados/LEIAME.md` é regerado a cada `publicar` e
    diz a cobertura e os ajustes aplicados. Se um mês novo recebeu ajuste
    automático, é aí que aparece.
-2. **Atualize o `.pbix`.** Power BI Desktop > Página Inicial > Atualizar.
+3. **Atualize o `.pbix`.** Power BI Desktop > Página Inicial > Atualizar.
    Nenhuma consulta precisa de mudança: todas leem pelo parâmetro
    `PastaResultados`.
-3. **Valide.** Confira `[Frota total]` e `[Frota eletrificada]` do Brasil no mês
+4. **Valide.** Confira `[Frota total]` e `[Frota eletrificada]` do Brasil no mês
    novo contra `resultados/combustivel_brasil.csv`. Têm de ser idênticos. A
    tabela de validação de [`MODELO.md`](MODELO.md#validação) tem os valores de
    set/2026 como referência fixa — aqueles não mudam.
-4. **Confira a página de cobertura.** Um mês novo tem de aparecer na matriz de
+5. **Confira a página de cobertura.** Um mês novo tem de aparecer na matriz de
    calor; se não aparecer, o arquivo não entrou na série (coluna `incluido` de
    `fCobertura` em FALSO, normalmente porque era idêntico ao mês anterior).
 

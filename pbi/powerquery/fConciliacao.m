@@ -16,11 +16,10 @@ let
     Fonte = Parquet.Document(
         File.Contents(PastaResultados & "\conciliacao_municipio.parquet")
     ),
-    UfND = Table.ReplaceValue(Fonte, null, "ND", Replacer.ReplaceValue, {"uf_sigla"}),
     ComChave = Table.AddColumn(
-        UfND,
+        Fonte,
         "chave_localidade",
-        each [uf_sigla] & "|" & [municipio_norm],
+        each ChaveLocalidade([cod_municipio_ibge], [uf_sigla], [municipio_norm]),
         type text
     ),
     Tipos = Table.TransformColumnTypes(
@@ -54,7 +53,7 @@ let
     Final = Table.RemoveColumns(
         Tipos,
         List.Select(Table.ColumnNames(Tipos), each Text.EndsWith(_, "_razao"))
-            & {"ano", "mes", "uf_sigla", "cod_uf_ibge", "regiao", "municipio_norm"}
+            & {"ano", "mes", "uf_sigla", "cod_uf_ibge", "regiao", "municipio_norm", "cod_municipio_ibge"}
     )
 in
     Final

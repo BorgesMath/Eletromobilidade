@@ -8,7 +8,7 @@ cor depois, pela função que ela cumpre. Tema em [`tema.json`](tema.json).
 
 **Segmentações numa única faixa no topo**, acima dos visuais, nunca na laterais
 de cada gráfico: período (`dCalendario[Mês/Ano]`), região, UF, classe. Nada de
-segmentação de município — são 5.581 membros; use a busca da tabela.
+segmentação de município — são 5.574 membros; use a busca da tabela.
 
 **Nunca dois eixos de valor no mesmo visual.** Frota e participação têm escalas
 incomparáveis (milhões contra 1%). Quando os dois precisam aparecer, são dois
@@ -64,14 +64,29 @@ Não é emplacamento nem venda."
 | Eletrificados por 10 mil veículos, por UF | **Mapa coroplético** | Magnitude sobre geografia | **sequencial** azul, do claro ao escuro |
 | Frota eletrificada — 15 maiores UF | **Barra horizontal** ordenada | Comparar magnitude; nome de UF cabe melhor na horizontal | sequencial azul, ponta arredondada de 4px ancorada na linha de base |
 | Todas as 27 UF | **Tabela** (frota, total, participação, variação a.a.) | Mais de sete linhas que todas importam | tinta; formatação condicional na participação com a rampa sequencial |
-| 50 maiores municípios | **Tabela** com busca | Sem código IBGE de município não há mapa municipal confiável | tinta |
+| Eletrificados por 10 mil veículos, por município | **Mapa de forma** com a malha municipal do IBGE, localizado por `dLocalidade[cod_municipio_ibge]` | Magnitude sobre geografia, no grão em que se decide onde pôr recarga | sequencial azul, a mesma rampa do mapa por UF |
+| 50 maiores municípios | **Tabela** com busca (nome oficial, UF, frota eletrificada, frota total, taxa) | Lista para ler o número, que o mapa só mostra em cor | tinta |
 
-O mapa usa **taxa, não contagem**. Mapa de frota absoluta por UF é mapa de
+Os mapas usam **taxa, não contagem**. Mapa de frota absoluta por UF é mapa de
 população: São Paulo ganha sempre e o visual não informa nada. Com
 `[Eletrificados por 10 mil veículos]` aparece o que interessa — o Distrito
 Federal tem 376 por 10 mil contra 103 de São Paulo.
 
-As duas tabelas são também o **alívio de contraste** exigido pela paleta.
+**O mapa municipal depende do código IBGE**, e só existe por isso: a malha do IBGE
+identifica cada polígono pelo código de 7 dígitos (`codarea`, o mesmo número de
+`cod_municipio_ibge`, em texto), nunca pelo nome. A malha em TopoJSON, 1,4 MB,
+vem da API do IBGE —
+`https://servicodados.ibge.gov.br/api/v3/malhas/paises/BR?formato=application/json&intrarregiao=municipio&qualidade=minima`
+— e entra no visual como mapa personalizado. Duas ressalvas, as duas visíveis na
+página:
+
+- A malha tem 5.570 polígonos. Falta Boa Esperança do Norte (MT), instalado
+  depois dela; os 686 veículos dele aparecem na tabela e não no mapa.
+- Em município de frota pequena, a taxa oscila com um ou dois veículos e o mapa
+  acende onde não há tendência nenhuma. Por isso a tabela, com a frota absoluta,
+  fica ao lado do mapa e não é opcional.
+
+As tabelas são também o **alívio de contraste** exigido pela paleta.
 
 ---
 
@@ -136,7 +151,7 @@ medidas não interpolam, e o painel não deve fingir que o dado existe.
 O texto de fechamento reproduz, resumidas, as ressalvas de
 [`MODELO.md`](MODELO.md): frota é estoque e não emplacamento; a base inclui
 veículos que não circulam mais; a inferência por modelo não separa plug-in de
-HEV; não há código IBGE de município.
+HEV; ainda não há população por município, então as taxas são por frota.
 
 ---
 

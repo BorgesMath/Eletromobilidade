@@ -8,6 +8,7 @@ Exemplos::
     eletromobilidade processar --entrada data/raw --saida data/processed
     eletromobilidade publicar
     eletromobilidade pbev tabela-pbev-2026.pdf --ciclo 2026
+    eletromobilidade municipios
 """
 
 from __future__ import annotations
@@ -16,6 +17,8 @@ import argparse
 import logging
 from pathlib import Path
 
+import pandas as pd
+
 from . import coleta, pipeline
 from .base_modelo import processar_arquivos_modelo
 from .classificacao import carregar_tabela
@@ -23,6 +26,7 @@ from .conciliacao import conciliar_bases
 from .inmetro import extrair_pbev, gravar_pbev
 from .leitura import identificar_tabela, inferir_periodo
 from .modelos import carregar_regras, marcas_suspeitas
+from .municipios import baixar_municipios_ibge, dimensao_municipio, gravar_municipios, sem_codigo
 from .publicacao import publicar
 
 RAW = Path("data/raw")
@@ -82,10 +86,16 @@ def _processar(args) -> None:
                                              cache=None if args.sem_cache else args.cache)
     if combustivel and marca_modelo:
         tabelas |= conciliar_bases(tabelas)
+    municipais = [tabelas[n] for n in ("combustivel_municipio", "modelo_municipio") if n in tabelas]
+    tabelas["municipios_dimensao"] = dimensao_municipio(municipais)
 
     for caminho in pipeline.salvar(tabelas, args.saida, csv=not args.sem_csv):
         print(caminho)
 
+    faltando = sem_codigo(pd.concat(municipais, ignore_index=True))
+    if not faltando.empty:
+        logging.warning("Municípios sem código IBGE (confira a grafia no IBGE e inclua em "
+                        "dados/municipios_grafias.csv):\n%s", faltando.to_string(index=False))
     if "combustiveis_classificados" in tabelas:
         regra = tabelas["combustiveis_classificados"].query("origem_classificacao == 'regra'")
         if not regra.empty:
@@ -112,6 +122,10 @@ def _processar(args) -> None:
 
 def _pbev(args) -> None:
     print(gravar_pbev(extrair_pbev(args.pdf, args.ciclo), args.saida))
+
+
+def _municipios(args) -> None:
+    print(gravar_municipios(baixar_municipios_ibge(), args.saida))
 
 
 def _publicar(args) -> None:
@@ -163,6 +177,10 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--ciclo", type=int, required=True, help="ano do ciclo (ex.: 2026)")
     p.add_argument("--saida", type=Path, help="CSV de destino (padrão: o instantâneo do pacote)")
     p.set_defaults(func=_pbev)
+
+    p = sub.add_parser("municipios", help="baixa a lista de municípios do IBGE para dados/municipios.csv")
+    p.add_argument("--saida", type=Path, help="CSV de destino (padrão: o instantâneo do pacote)")
+    p.set_defaults(func=_municipios)
 
     p = sub.add_parser("publicar", help="copia painéis, conciliação e auditorias para resultados/ (versionado)")
     p.add_argument("--entrada", type=Path, default=PROCESSED)

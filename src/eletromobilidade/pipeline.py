@@ -23,6 +23,7 @@ import pandas as pd
 
 from .classificacao import CLASSES, CLASSES_ELETRIFICADAS, carregar_tabela, classificar
 from .leitura import EXTENSOES_DADOS, identificar_tabela, inferir_periodo, ler_frota_combustivel
+from .municipios import codigos_municipio
 from .qualidade import (CLASSE_TARDIA, MES_AUSENTE, assinatura, classes_tardias, corrigir_escala,
                         meses_ausentes, meses_repetidos, participacao_sem_informacao)
 from .texto import normalizar
@@ -32,7 +33,9 @@ log = logging.getLogger(__name__)
 
 CHAVE_TEMPO = ["ano", "mes", "data_referencia"]
 CHAVE_UF = ["uf_sigla", "cod_uf_ibge", "regiao"]
-CHAVE_MUNICIPIO = CHAVE_TEMPO + CHAVE_UF + ["municipio_norm"]
+# municipio_norm fica na chave porque é a identidade da linha na SENATRAN; o código é
+# função dele e da UF, então não muda o agrupamento — só o torna ligável ao IBGE.
+CHAVE_MUNICIPIO = CHAVE_TEMPO + CHAVE_UF + ["municipio_norm", "cod_municipio_ibge"]
 
 
 # --- utilidades comuns às duas bases ----------------------------------------------------
@@ -67,7 +70,7 @@ def periodos_por_arquivo(caminhos: list[Path]) -> dict[Path, tuple[int, int]]:
 
 
 def enriquecer(df: pd.DataFrame, periodo: tuple[int, int], arquivo: str | None = None) -> pd.DataFrame:
-    """Acrescenta período, sigla/código/região da UF e município normalizado."""
+    """Acrescenta período, sigla/código/região da UF, município normalizado e código IBGE do município."""
     ano, mes = periodo
     ufs = df["uf"].map(resolver_uf)
     df = df.assign(
@@ -76,6 +79,7 @@ def enriquecer(df: pd.DataFrame, periodo: tuple[int, int], arquivo: str | None =
         regiao=ufs.map(lambda u: u[2] if u else None),
         municipio_norm=df["municipio"].map(normalizar),
     )
+    df["cod_municipio_ibge"] = codigos_municipio(df["uf_sigla"], df["municipio_norm"])
     df.insert(0, "data_referencia", pd.Timestamp(year=ano, month=mes, day=1))
     df.insert(0, "mes", mes)
     df.insert(0, "ano", ano)

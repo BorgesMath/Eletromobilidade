@@ -1,52 +1,52 @@
 // dLocalidade — dimensão de município, UF e região (denormalizada)
 //
-// Fonte: resultados/combustivel_municipio.parquet
-// Grão: município (5.581 membros, incluindo 3 pseudo-municípios da SENATRAN)
+// Fonte: resultados/municipios_dimensao.parquet
+// Grão: município do IBGE (5.571) mais os 3 pseudo-municípios da SENATRAN —
+// 5.574 membros
 //
 // Uma dimensão só, achatada, em vez de dMunicipio → dUF → dRegiao. Hierarquia
 // natural, cardinalidade baixa, e evita snowflake sem ganho nenhum.
 //
-// É construída a partir da base por combustível porque ela é a mais ampla: as
-// localidades de modelo_eletrificados (4.975) e de conciliacao_municipio
-// (5.580) são subconjuntos dela — verificado.
+// A chave é o código IBGE (ver ChaveLocalidade), não o nome. A SENATRAN muda a
+// grafia de alguns municípios no meio da série — EMBU vira EMBU DAS ARTES em
+// abr/2022, GOUVEA vira GOUVEIA em mar/2024 —, e pelo nome cada grafia seria um
+// membro, com a série cortada ao meio. Pelo código é um membro só. As grafias
+// ficam em grafias_senatran, que é por onde se acha o município pelo nome antigo.
 //
-// LIMITAÇÃO: `municipio_norm` é o nome em caixa alta e sem acentos, e é a única
-// forma do município disponível neste grão. Não há código IBGE de município nas
-// tabelas publicadas, o que impede mapa por município e cruzamento com
-// população do IBGE. É item do docs/ROTEIRO.md.
+// O nome exibido é o oficial do IBGE, com acentos. Os pseudo-municípios não têm
+// nome no IBGE e ficam com o da SENATRAN em caixa de título.
+//
+// cod_municipio_ibge é o campo de localização do mapa municipal (malha do IBGE,
+// que identifica município pelo mesmo código) e a chave para cruzar com qualquer
+// outra tabela do IBGE.
 
 let
     Fonte = Parquet.Document(
-        File.Contents(PastaResultados & "\combustivel_municipio.parquet")
+        File.Contents(PastaResultados & "\municipios_dimensao.parquet")
     ),
-    Colunas = Table.SelectColumns(
-        Fonte,
-        {"uf_sigla", "cod_uf_ibge", "regiao", "municipio_norm"}
-    ),
-    UfND = Table.ReplaceValue(Colunas, null, "ND", Replacer.ReplaceValue, {"uf_sigla"}),
-    RegiaoND = Table.ReplaceValue(
-        UfND, null, "Não disponível", Replacer.ReplaceValue, {"regiao"}
-    ),
-    Distintas = Table.Distinct(RegiaoND),
     ComChave = Table.AddColumn(
-        Distintas,
+        Fonte,
         "chave_localidade",
-        each [uf_sigla] & "|" & [municipio_norm],
+        each ChaveLocalidade([cod_municipio_ibge], [uf_sigla], [municipio_norm]),
         type text
     ),
-    // Nome em caixa de título para exibição; a chave continua sendo o _norm.
     ComNome = Table.AddColumn(
         ComChave,
         "municipio",
-        each Text.Proper([municipio_norm]),
+        each if [municipio_ibge] <> null then [municipio_ibge] else Text.Proper([municipio_norm]),
         type text
     ),
+    UfND = Table.ReplaceValue(ComNome, null, "ND", Replacer.ReplaceValue, {"uf_sigla"}),
+    RegiaoND = Table.ReplaceValue(
+        UfND, null, "Não disponível", Replacer.ReplaceValue, {"regiao"}
+    ),
     Tipos = Table.TransformColumnTypes(
-        ComNome,
+        RegiaoND,
         {
             {"chave_localidade", type text},
+            {"cod_municipio_ibge", Int64.Type},
             {"municipio", type text},
-            {"municipio_norm", type text},
+            {"grafias_senatran", type text},
             {"uf_sigla", type text},
             {"cod_uf_ibge", Int64.Type},
             {"regiao", type text}
@@ -54,7 +54,7 @@ let
     ),
     Ordem = Table.SelectColumns(
         Tipos,
-        {"chave_localidade", "municipio", "municipio_norm", "uf_sigla", "cod_uf_ibge", "regiao"}
+        {"chave_localidade", "cod_municipio_ibge", "municipio", "grafias_senatran", "uf_sigla", "cod_uf_ibge", "regiao"}
     )
 in
     Ordem
