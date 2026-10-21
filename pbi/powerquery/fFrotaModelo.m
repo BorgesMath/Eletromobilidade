@@ -1,6 +1,6 @@
 // fFrotaModelo — fato de detalhe por marca, modelo e ano de fabricação
 //
-// Fonte: resultados/modelo_eletrificados.parquet (195.356 linhas)
+// Fonte: resultados/modelo_eletrificados.parquet (192.876 linhas)
 // Grão de saída: mês × município × marca_modelo × ano de fabricação × classe
 //
 // Só traz eletrificados e híbridos leves — a tabela publicada já é filtrada.

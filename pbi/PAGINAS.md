@@ -127,8 +127,10 @@ Inmetro não cobre ainda são leves, então o tipo não sai só do PBE: ver
 [`tipos.py`](../src/eletromobilidade/tipos.py).
 
 O que o visual mostra em set/2026: 92,8% da frota eletrificada é leve e 6,9% é
-moto. Entre os elétricos a bateria a moto é 16,9%, e em dez/2020 era metade
-(48,6%) — a frota elétrica brasileira começou em scooter.
+moto. Entre os elétricos a bateria a moto é 16,9%, e em dez/2020 era dois
+terços (66,8%) — a frota elétrica brasileira começou em scooter. O número de
+2020 vem com ressalva: naquele mês a base por modelo só reconhece 61% dos
+elétricos.
 
 Agregue por `marca`, não por `marca_renavam`: a primeira une as grafias da mesma
 empresa (`GM`, `CHEVROLET` e `CHEV` viram `CHEVROLET`), a segunda é a grafia

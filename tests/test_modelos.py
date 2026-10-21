@@ -88,6 +88,20 @@ CASOS = [
     ("MOTTU/SPORT 110I", "combustao"),
     ("I/GEELY EC-7 1.8 GS", "combustao"),
     ("I/PORSCHE MACAN T", "combustao"),
+    # "EV" de código de motor ou de edição, e BYD a combustão de antes da linha elétrica
+    ("I/BMW 320I EV11", "combustao"),
+    ("I/BMW 330I EV51 SECURITY", "combustao"),
+    ("I/BMW 325I PRO EV39", "combustao"),
+    ("I/BMW 325 IX", "combustao"),
+    ("I/MGUZZI BR CALIFORNIA EV", "combustao"),
+    ("I/LMABORGHINI HURACAN EV", "combustao"),
+    ("I/BYD F0 GLX-I", "combustao"),
+    ("I/BYD G3 GLX-I 1.5L", "combustao"),
+    ("I/BYD F6 GS-I 2.0L", "combustao"),
+    # e o que essas regras não podem levar junto
+    ("I/BMW IX XDRIVE50", "eletrico"),
+    ("I/BMW I4 EDRIVE35", "eletrico"),
+    ("I/HYUNDAI KONA EV39", "eletrico"),
 ]
 
 

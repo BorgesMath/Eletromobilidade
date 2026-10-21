@@ -1,7 +1,7 @@
 // dModelo — dimensão de marca e modelo
 //
 // Fonte: resultados/modelos_dimensao.parquet
-// Grão: marca_modelo distinto (935 membros)
+// Grão: marca_modelo distinto (922 membros)
 //
 // A marca NÃO é derivada aqui. O campo `Marca Modelo` do RENAVAM é um texto
 // único, e extrair a marca dele tem exceção suficiente para pedir teste: o

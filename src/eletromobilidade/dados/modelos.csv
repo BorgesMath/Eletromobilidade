@@ -6,7 +6,8 @@ hibrido_plug_in;PHEV|PLUG-?IN|P-?HIBRID|\b4XE\b|\bSHS\b;'PHEV'/'plug-in' no nome
 eletrico;VOLVO.*(\b(EX30|EX40|EC40|EX90|ES90|C40)\b|\b(XC40|C40) ?[68]\b|\bP[68]\b|\bPURE\b|RECHARGE PE\b|\bBEV\b);Volvo a bateria (C40, EX30, EX40, XC40 '6'/'8' = P6/P8, 'RECHARGE PE' = Pure Electric).
 hibrido_plug_in;VOLVO.*\b(T5H|T6H|T8|RECHARGE|TWIN ENGINE)\b;Volvo T8 e T5/T6 'H'/'Recharge' são híbridos plug-in. T5 sem sufixo é combustão.
 hibrido_plug_in;(BYD|DENZA|JETOUR).*\b(I-?)?DM(-?[IPO])?\b;BYD/Denza DM, DM-i, DM-p, DM-o e Jetour i-DM: híbrido plug-in.
-eletrico;\b(BYD|DENZA)\b;Demais BYD e Denza (Dolphin, Yuan, Seal, Tan, Han, Denza Z9/D9 EV, ônibus): elétricos a bateria. As marcas não vendem combustão no Brasil.
+combustao;\bBYD\b.*\b(F0|F3|F6|G3|G6|S6)\b;BYD F0, F3, F6, G3, G6 e S6: carros a combustão que a BYD vendeu por volta de 2010, antes da linha elétrica. Vêm depois da regra DM, para o F3DM, que é plug-in, seguir plug-in.
+eletrico;\b(BYD|DENZA)\b;Demais BYD e Denza (Dolphin, Yuan, Seal, Tan, Han, Denza Z9/D9 EV, ônibus): elétricos a bateria. As marcas não vendem combustão no Brasil hoje, e os F0/F3/F6/G3 de antes ficam na regra acima.
 eletrico;\b(TESLA|VOLTZ|ZEEKR|NETA|AION|XPENG|AIMA|NIU|TAILG|TAILING|YADEA|SUNRA|LUYUAN|HORWIN|VMOTO|VAMMO|WATTS|ORIGEM|GCX|LVNENG)\b|^(I/|IMP/)?POLESTAR\b|\bMOTTU-?E\b|\bGAC HYPTEC\b|^(I/)?SHINERAY/(PT|SE)\d;Marcas/linhas só com elétricos no Brasil (carros e motos/scooters), mais Shineray PT2/PT3/PT4/PT7 e SE1/SE2/SE3 e GAC Hyptec. POLESTAR só como marca (Volvo 'Polestar' é tratado antes).
 hibrido_plug_in;\b(REEV|EREV)\b;Elétrico com extensor de autonomia (Leapmotor C10/B10 REEV): recarrega na tomada e tem motor a combustão, tratado como plug-in.
 eletrico;\b(LPM|LEAPMOTOR)\b;Leapmotor sem REEV: elétrico a bateria.
@@ -21,6 +22,7 @@ hibrido_plug_in;JAECOO 7;Jaecoo 7 é vendido no Brasil como híbrido plug-in (SH
 hibrido_plug_in;LEXUS.*(\d{3}H\+|\b(NX|RX) ?450H);Lexus 450h+.
 eletrico;LEXUS.*\b(UX ?300E|RZ)\b;
 hibrido;LEXUS.*\d{3}H\b;Lexus ES300h, NX350h, UX250h, RX500h, CT200h etc.
+combustao;BMW.*\b\d{3}I\b.*\bEV\d{2}\b|BMW.*\b\d{3} ?IX\b;BMW a combustão com código de motor ou carroceria EV no nome ('320I EV11', '330I EV51', '325I EV31') e o 325ix dos anos 1980 ('325 IX'), que não é o iX elétrico. O PBE já apontava o EV11 (sem_versao_no_pbe).
 eletrico;BMW.*\b(I3|I4|I5|I7|IX\d?|CE ?0?[24])\b;BMW i3/i4/i5/i7/iX e scooter CE 04.
 hibrido_plug_in;BMW.*\d{2}E\b;BMW 330e, 530e, X3 xDrive30e, X5 xDrive45e/50e.
 eletrico;(M\.? ?BENZ|MERCEDES).*(\bEQ[ABCESV]\d*\b|\bEO ?500|\bE-?SPRINTER\b);Mercedes EQA/EQB/EQC/EQE/EQS (também grudado no número, ex.: 'EQC400') e chassi elétrico eO500U.
@@ -51,6 +53,7 @@ hibrido_leve;YAMAHA.*\bHYB(RID)?\b;Yamaha Fluo Hybrid: motor-gerador de partida,
 hibrido;\bELETRA\b.*(HIBRI|HYB);Eletra híbrido diesel-elétrico.
 eletrico;\bELETRA\b;Eletra: ônibus elétricos e trólebus.
 eletrico;^(?!.*BENZ)(.*(?<![A-Z0-9.])\d{3,5} ?W\b|.*\d\.\d{3} ?W\b|.*\d ?KWH?\b|.*\d{3,4}DQ?T\b);Potência do motor em W/kW ('3KW', '2000W', '3.000W'), capacidade da bateria ('64 KWH') ou código chinês de elétrico ('800DQT'). Exige dígito sem letra antes, para não pegar códigos como 'SC1026W'.
+combustao;GUZZI.*\bCALIF\w*\b.*\bEV\b|\bHURACAN\b;Moto Guzzi California EV (moto a combustão dos anos 1990, EV é a edição) e Lamborghini Huracán, que não tem versão elétrica ('HURACAN EV' é EVO truncado).
 eletrico;\bBEV\d*\b|\bEV\d*\b|\d+EV\b|ELETRIC|ELECTRIC|\bE[- ]?TRON\b;Regra genérica de elétrico. \bEV não captura EVOLUTION nem CHEV. 'E TRON' aparece também com espaço.
 hibrido_leve;MHEV|\bMILD\b;Regra genérica de híbrido leve (inclui 'TMHEV', Kia Sportage).
 hibrido;\bHEV\d*\b|HYBRID|HIBRID|\bHYB\b|\bHV\b|\bPRIUS\b;Regra genérica de híbrido. \bHEV não captura PHEV, MHEV nem CHEV.

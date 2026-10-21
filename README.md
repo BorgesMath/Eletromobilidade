@@ -348,7 +348,9 @@ regra aplicada fica registrado em `modelos_classificados`.
 As regras por marca vêm antes das genéricas porque os nomes têm armadilhas,
 cobertas por testes: `VW/8.150E DELIVERY` (diesel, "E" de eletrônico),
 `VW/POLO 1.6 E-FLEX` (flex), `HYUNDAI/HB20 EVOLUTION` e `CHEV/…` (contêm "EV"/"HEV"),
-`TOYOTA/YCROSS XRE-HYBRID` (híbrido convencional, não plug-in).
+`TOYOTA/YCROSS XRE-HYBRID` (híbrido convencional, não plug-in), `I/BMW 320I EV11`
+e `330I EV51` (código de motor, não elétrico), `I/BMW 325 IX` (o 325ix, não o iX)
+e os BYD F0, G3 e F6, carros a combustão anteriores à linha elétrica da marca.
 
 A coluna `revisar` marca modelos de marcas com linha (quase) toda eletrificada
 (BYD, GWM, GAC, Omoda/Jaecoo, Zeekr…) que não casaram com nenhuma regra. A CLI
@@ -414,9 +416,10 @@ As duas direções do aviso se leem de formas opostas:
 
 - **`sem_versao_no_pbe`** — a regra atribuiu classe eletrificada que o PBE não
   registra para o modelo. Falso positivo provável, e a fila mais acionável: 20
-  modelos e 8.177 veículos em set/2026. Foi assim que apareceu
+  modelos e 6.935 veículos em set/2026. Foi assim que apareceu
   `I/BMW 320I EV11`, classificado elétrico pela regra genérica `\bEV\d*\b` —
-  "EV11" é código de motor da BMW, não marcador elétrico.
+  "EV11" é código de motor da BMW, não marcador elétrico. Corrigido em
+  21/10/2026, com os outros BMW de código EV (ver Classificação por modelo).
 - **`pbe_so_eletrificado`** — a regra disse combustão e toda versão do modelo no
   PBE é eletrificada. 505 modelos e 418 mil veículos, mas **a maioria é geração
   antiga, não regra faltando**: o PBE do ciclo só traz o que está em linha, e
@@ -472,8 +475,8 @@ Duas fontes, nesta ordem:
    (Honda, BMW, Volvo, Mercedes-Benz, VW, BYD, JAC) entra só pelas famílias de
    carro, para que um ônibus novo da BYD não vire carro em silêncio.
 
-As 27 regras foram conferidas contra os 934 modelos eletrificados das duas
-datas. Dois ficaram sem tipo, com 3 veículos, porque nenhuma fonte identifica o
+As 27 regras foram conferidas contra os modelos eletrificados das duas datas,
+hoje 921. Dois ficaram sem tipo, com 3 veículos, porque nenhuma fonte identifica o
 nome (`I/BYD TB3` e `I/GUANGZHOU Z1 ELETRIC`). Um caso foi decidido **por exclusão, não por fonte**, e a nota da regra diz
 isso: `FLASH/MV ING ELETRIC`, 392 elétricos de fabricação 2012, poucos por
 município no Norte e no Centro-Oeste. Em 2012 o país tinha poucas dezenas de
@@ -501,15 +504,17 @@ modelos, e não a da frota eletrificada.
 
 | | dez/2020 | set/2026 |
 |---|---:|---:|
-| Leve | 91,1% | 92,8% |
-| Moto | 8,5% | 6,9% |
+| Leve | 90,7% | 92,8% |
+| Moto | 8,9% | 6,9% |
 | Caminhão | 0,2% | 0,2% |
 | Ônibus | 0,2% | 0,1% |
-| **Moto entre os elétricos a bateria** | **48,6%** | **16,9%** |
+| **Moto entre os elétricos a bateria** | **66,8%** | **16,9%** |
 
 Plug-in e híbrido convencional são 100% leves. O número que muda a leitura é o
-último: em 2020, metade dos elétricos a bateria era scooter ou moto; hoje é um
-sexto. Os híbridos da Yamaha (Ray ZR e Fluo, 17 mil) são híbridos leves e ficam
+último: em 2020, dois terços dos elétricos a bateria eram scooter ou moto;
+hoje é um sexto. O de 2020 vale com ressalva: naquele mês a base por modelo
+só reconhece pelo nome 61% dos elétricos que o campo combustível registra nas
+UFs válidas, e o que ela não reconhece pode ter outra composição. Os híbridos da Yamaha (Ray ZR e Fluo, 17 mil) são híbridos leves e ficam
 fora da frota eletrificada, como os carros híbridos leves.
 
 **Leia como composição.** A base por modelo acha 18% menos eletrificados que a
@@ -540,7 +545,7 @@ processado em 1,5 min):
 | Indicador (UFs válidas) | Combustível | Modelo | Modelo / combustível |
 |---|---:|---:|---:|
 | Frota total (Brasil) | 136.424.856 | 136.424.856 | 1,000 |
-| Elétrico | 395.132 | 379.826 | 0,961 |
+| Elétrico | 395.132 | 377.482 | 0,955 |
 | Híbrido plug-in | 79.245 | 352.706 | 4,45 |
 | Híbrido convencional | 709.697 | 260.628 | 0,37 |
 | Híbridos, soma | 788.942 | 613.334 | 0,78 |
@@ -550,8 +555,8 @@ Leitura:
 
 - A frota total coincide em todas as UFs: os dois arquivos cobrem o mesmo
   universo.
-- Elétricos: a base por modelo recupera 96,1% nas UFs válidas (de 93% a
-  99,6% por UF) e 91,9% no Brasil. O resíduo maior está no grupo de
+- Elétricos: a base por modelo recupera 95,5% nas UFs válidas (de 92,5% a
+  99,5% por UF) e 91,4% no Brasil. O resíduo maior está no grupo de
   UF/município "Sem Informação" (3,1 milhões de veículos, quase todos sem ano
   de fabricação).
 - **O campo combustível não separa plug-in de híbrido convencional.** A base
@@ -565,7 +570,10 @@ Leitura:
 
 Teste das regras num mês antigo (dezembro/2019, mesmas regras calibradas em
 2026): frota total idêntica; elétricos 4.462 pelo modelo contra 4.367 pelo
-combustível (102%); híbridos (plug-in + convencional) em 96,6%. Em 2019 o rótulo
+combustível (102%); híbridos (plug-in + convencional) em 96,6%. Esse teste é
+anterior à correção dos BMW com código de motor EV (21/10/2026), e os 102%
+provavelmente incluem esses falsos elétricos: em dez/2020, a mesma correção
+derrubou o reconhecimento de elétricos nas UFs válidas de 99% para 61%. Em 2019 o rótulo
 HIBRIDO PLUG-IN ainda não existia: os 2.442 plug-ins identificados pelo nome
 (Volvo T8, BMW 330e etc.) estão, no campo combustível, entre os híbridos.
 
@@ -635,6 +643,4 @@ híbrido convencional só vale pela base por combustível**.
 
 Em [`docs/ROTEIRO.md`](docs/ROTEIRO.md), em ordem de valor. O código IBGE de
 município, a população por município e o tipo de veículo estão feitos. Os
-próximos: ampliar a série da base por modelo e o furo de jan/2022. A revisão de
-tipo achou cerca de 2.350 veículos a combustão contados como elétricos na base
-por modelo (BMW com código de motor EV, BYD antigos), também no roteiro.
+próximos: ampliar a série da base por modelo e o furo de jan/2022.

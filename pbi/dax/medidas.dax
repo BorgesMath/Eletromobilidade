@@ -339,8 +339,8 @@ DIVIDE(
 // O que a conciliação mostra hoje (set/2026, Brasil):
 //
 //   total          razão 1,000  as duas bases cobrem o mesmo universo
-//   eletrificada   razão 0,823  a base por modelo acha 18% menos eletrificados
-//   elétrico       razão 0,919
+//   eletrificada   razão 0,821  a base por modelo acha 18% menos eletrificados
+//   elétrico       razão 0,914
 //   plug-in        razão 4,510  ← superestima em 4,5x
 //   híbrido        razão 0,356  ← subestima em 2,8x
 //

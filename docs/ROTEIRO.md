@@ -70,9 +70,9 @@ item, base por modelo:
 
 | | dez/2020 | set/2026 |
 |---|---:|---:|
-| Leve, na frota eletrificada | 91,1% | 92,8% |
-| Moto, na frota eletrificada | 8,5% | 6,9% |
-| **Moto, entre os elétricos a bateria** | **48,6%** | **16,9%** |
+| Leve, na frota eletrificada | 90,7% | 92,8% |
+| Moto, na frota eletrificada | 8,9% | 6,9% |
+| **Moto, entre os elétricos a bateria** | **66,8%** | **16,9%** |
 
 Ônibus e caminhão somam menos de 0,5%. Plug-in e híbrido convencional são todos
 leves. Leia como composição: a base por modelo acha 18% menos eletrificados que a
@@ -92,27 +92,32 @@ por combustível, e a contagem por tipo herda isso.
 
 **O que faz o número ser defensável** é outra coisa: o tipo de um modelo com nome
 não é ambíguo, como a tecnologia é. O PBE dá o tipo de 78,7% da frota com fonte
-externa; as 27 regras de `dados/tipos.csv` foram conferidas contra os 934 modelos;
+externa; as 27 regras de `dados/tipos.csv` foram conferidas contra os modelos;
 regra que contradiz o PBE é divergência e derruba o teste — foi o que pegou a BYD
 eT3, van, que uma regra de caminhão levava. Sem tipo ficaram 3 veículos. Um caso
 foi decidido por exclusão, e a regra diz isso (`FLASH/MV ING ELETRIC`, ver o
 README).
 
-**De passagem, erros da classificação de tecnologia**, que não são deste item e
-não foram corrigidos. Em set/2026, na base por modelo:
+**De passagem, a revisão achou falsos elétricos na classificação de tecnologia,
+corrigidos em 21/10/2026** com três regras de combustão em `dados/modelos.csv`,
+antes das que os pegavam. Em set/2026, na base por modelo:
 
-- BMW com código de motor `EV` no nome, contados como elétricos:
-  `I/BMW 320I EV11` (1.242), `330I EV51` (632, com a versão Security),
-  `325I EV31` (391), `325I PRO EV39` (58) e `330I EV53` (2). O EV11 é o caso que o
-  README cita como achado pela auditoria do PBE — achado, mas a regra não mudou;
-- `I/BMW 325 IX` (2), o 325ix dos anos 1980, que casa com a regra do iX elétrico;
-- `MOTO GUZZI CALIFORNIA EV` (12), moto a combustão dos anos 1990;
+- BMW com código de motor `EV` no nome: `I/BMW 320I EV11` (1.242), `330I EV51`
+  (632, com a versão Security), `325I EV31` (391), `325I PRO EV39` (58) e
+  `330I EV53` (2). O EV11 era o caso que o README citava como achado pela
+  auditoria do PBE — achado em 2026, mas a regra não tinha mudado;
+- `I/BMW 325 IX` (2), o 325ix dos anos 1980, que casava com a regra do iX;
+- `MOTO GUZZI CALIFORNIA EV` (12), moto a combustão dos anos 1990, e um
+  `LMABORGHINI HURACAN EV` (1), em que EV é EVO truncado;
 - `BYD F0`, `G3` e `F6` (8), carros a combustão que a BYD vendeu por volta de
   2010, pegos pela regra "toda BYD é elétrica".
 
-São cerca de 2.350 veículos a mais entre os 445 mil elétricos da base por modelo,
-0,5% deles. Corrigir é mexer em `dados/modelos.csv`, que muda a conciliação, e
-por isso fica como item próprio.
+São 2.348 elétricos a menos em set/2026, 0,5% dos elétricos da base por modelo,
+e nada mais mudou de classe. **Em dez/2020 o efeito é outro**: 2.345 dos 8.529
+elétricos daquele mês eram esses falsos. O reconhecimento de elétricos nas UFs
+válidas, que parecia de 99%, é de 61%. A base por modelo de 2020 reconhecia
+mal os elétricos, e um erro compensava o outro. O que ela não reconhece em 2020
+não foi investigado.
 
 ## 4. Fechar o furo de jan/2022 e esticar a série para trás
 
@@ -242,8 +247,9 @@ em São Paulo e 6,2 no Brasil. A população é a estimativa de 2026 do IBGE.
 
 Composição por tipo de veículo, pela base por modelo: 92,8% da frota
 eletrificada é leve e 6,9% é moto. Entre os elétricos a bateria a moto é 16,9%
-— e era metade, 48,6%, em dez/2020. Cite a parte, não a contagem: a base por
-modelo acha 18% menos eletrificados que a por combustível.
+— e era dois terços, 66,8%, em dez/2020, com a ressalva de que naquele mês a
+base por modelo só reconhece 61% dos elétricos. Cite a parte, não a contagem:
+a base por modelo acha 18% menos eletrificados que a por combustível.
 
 ## Quatro ressalvas que acompanham estes números em qualquer uso
 

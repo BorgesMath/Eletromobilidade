@@ -16,10 +16,10 @@ Fatos nas linhas, dimensões nas colunas; `●` é um relacionamento.
 ```
                                      dCalendario   dLocalidade   dClasse   dModelo
                                       [Data]     [chave_local.]  [classe] [marca_modelo]
-                          linhas       ~2.465        5.574           8       935
+                          linhas       ~2.465        5.574           8       922
 fFrotaCombustivel      1.266.245         ●             ●             ●
 fPopulacao               417.765         ●             ●
-fFrotaModelo             195.356         ●             ●             ●         ●
+fFrotaModelo             192.876         ●             ●             ●         ●
 fConciliacao              11.147         ●             ●
 fModelosClassificados     70.869         ●                           ●
 fCobertura                    78         ●
@@ -40,7 +40,7 @@ previsível que filtro cruzado automático.
 |---|---|---:|---|
 | `fFrotaCombustivel` | mês × município × classe | 1.266.245 | `combustivel_municipio.parquet` |
 | `fPopulacao` | mês × município | 417.765 | `combustivel_municipio.parquet` (colunas de população) |
-| `fFrotaModelo` | mês × município × modelo × ano de fabricação × classe | 195.356 | `modelo_eletrificados.parquet` |
+| `fFrotaModelo` | mês × município × modelo × ano de fabricação × classe | 192.876 | `modelo_eletrificados.parquet` |
 | `fConciliacao` | mês × município | 11.147 | `conciliacao_municipio.parquet` |
 | `fModelosClassificados` | mês × modelo normalizado | 70.869 | `modelos_classificados.parquet` |
 | `fCobertura` | base × mês | 78 | `qualidade_combustivel.csv` + `qualidade_modelo.csv` |
@@ -52,7 +52,7 @@ previsível que filtro cruzado automático.
 | `dCalendario` | dia | ~2.465 | tabela calculada em DAX |
 | `dLocalidade` | município (código IBGE) | 5.574 | `municipios_dimensao.parquet` |
 | `dClasse` | classe de tecnologia | 8 | digitada no Power Query |
-| `dModelo` | marca_modelo (com marca e tipo de veículo) | 935 | `modelos_dimensao.parquet` |
+| `dModelo` | marca_modelo (com marca e tipo de veículo) | 922 | `modelos_dimensao.parquet` |
 
 ### Relacionamentos
 
@@ -156,8 +156,8 @@ A conciliação de set/2026 no Brasil, que é exatamente para isso que serve:
 | Recorte | razão modelo / combustível | leitura |
 |---|---:|---|
 | frota total | 1,000 | as duas bases cobrem o mesmo universo |
-| eletrificada | 0,823 | a inferência por nome acha 18% menos eletrificados |
-| elétrico | 0,919 | aceitável |
+| eletrificada | 0,821 | a inferência por nome acha 18% menos eletrificados |
+| elétrico | 0,914 | aceitável |
 | **plug-in** | **4,510** | superestima em 4,5 vezes |
 | **híbrido (HEV)** | **0,356** | subestima em 2,8 vezes |
 | híbridos (plug-in + HEV) | — | somados, o erro quase desaparece |
@@ -168,7 +168,7 @@ na tomada — "HYBRID" no fim do modelo pode ser qualquer um dos dois.
 
 **De que lado está o erro, a auditoria do Inmetro dá indício.** Confrontada com a
 tabela PBE Veicular, que traz a propulsão declarada pelo fabricante versão por
-versão, a classificação por nome tem só 20 modelos e 8.177 veículos marcados
+versão, a classificação por nome tem só 19 modelos e 6.935 veículos marcados
 como classe eletrificada que o PBE não registra para aquele modelo
 (`pbe_aviso = 'sem_versao_no_pbe'`) — ordem de grandeza nenhuma perto dos 273 mil
 plug-ins de diferença entre as duas bases. Isso aponta para o campo combustível
@@ -277,8 +277,8 @@ E o tipo de veículo, na base por modelo em set/2026, por `dModelo[tipo_rotulo]`
 
 | `[Participação do tipo na frota eletrificada]` | Valor esperado |
 |---|---:|
-| Automóvel e comercial leve | 92,83% |
-| Moto, scooter e ciclomotor | 6,85% |
+| Automóvel e comercial leve | 92,81% |
+| Moto, scooter e ciclomotor | 6,87% |
 | Caminhão | 0,24% |
 | Ônibus | 0,08% |
 
