@@ -30,6 +30,8 @@ PUBLICADAS = {
     "modelo_uf": ("csv", "Idem, por UF."),
     "modelo_municipio": ("parquet", "Idem, por município."),
     "modelo_eletrificados": ("parquet", "Base por modelo: eletrificados e híbridos leves por município, modelo e ano de fabricação."),
+    "modelo_tipo_brasil": ("csv", "Base por modelo: eletrificados e híbridos leves por tipo de veículo (leve, moto, ônibus, caminhão, outros), Brasil, por mês. Use participacao_tipo; a contagem absoluta herda a diferença para a base por combustível."),
+    "modelo_tipo_uf": ("csv", "Idem, por UF."),
     "modelos_classificados": ("parquet", "Auditoria: cada modelo, classe, regra aplicada, total, marca, marcação 'revisar' e confronto com a tabela PBE Veicular do Inmetro."),
     "modelos_dimensao": ("parquet", "Dimensão de marca e modelo: grafia do RENAVAM, marca canônica e origem, por modelo distinto."),
     "municipios_dimensao": ("parquet", "Dimensão de município: código IBGE, nome oficial, UF e as grafias com que a SENATRAN publicou o município na série."),
@@ -118,6 +120,16 @@ def leiame(tabelas: dict[str, pd.DataFrame], gerado_em: pd.Timestamp) -> str:
             if sem:
                 texto += f"; {_enumerar(sem)}, sem estimativa, {'usam' if len(sem) > 1 else 'usa'} a de {estimativa}"
         linhas.append(texto + ".")
+    if "modelo_tipo_brasil" in tabelas:
+        br = tabelas["modelo_tipo_brasil"]
+        for (ano, mes), mes_br in br.groupby(["ano", "mes"]):
+            total = mes_br["frota_eletrificada"].sum()
+            sem = mes_br.loc[mes_br["tipo"].isna(), "frota_eletrificada"].sum()
+            partes = ", ".join(f"{t} {f / total:.1%}".replace(".", ",") for t, f in
+                               mes_br.dropna(subset=["tipo"]).sort_values("frota_eletrificada", ascending=False)
+                               [["tipo", "frota_eletrificada"]].values)
+            linhas.append(f"- **Tipo de veículo, {_mes(ano, mes)}:** {partes} da frota eletrificada da base por "
+                          f"modelo; sem tipo: {sem / total:.2%}".replace(".", ",", 1) + ".")
     for nome in ("qualidade_combustivel", "qualidade_modelo"):
         if nome in tabelas:
             q = tabelas[nome]
@@ -221,6 +233,15 @@ _COLUNAS = {
     "pbe_classes": "Classes que a linha do modelo tem na tabela PBE Veicular do Inmetro, separadas por barra vertical. Vazio quando o modelo não casou com o PBE (moto, ônibus, caminhão e modelo fora de linha).",
     "pbe_categoria": "Categoria de porte do PBE Veicular (Médio, Picape, Utilitário Esportivo Compacto...). Vazio quando o modelo não casou.",
     "pbe_aviso": "Divergência com o PBE: 'sem_versao_no_pbe' (classe eletrificada que o PBE não registra para o modelo; falso positivo provável) ou 'pbe_so_eletrificado' (classificado combustão, mas toda versão do modelo no PBE é eletrificada; pode ser regra faltando ou geração antiga). Vazio quando não há divergência.",
+    "tipo": "Tipo de veículo do modelo: leve (automóvel, SUV, picape, van), moto (inclui motoneta, ciclomotor "
+            "e triciclo), onibus, caminhao ou outros. Só para eletrificados e híbridos leves; nulo quando o "
+            "modelo não tem regra em dados/tipos.csv nem está no PBE Veicular.",
+    "origem_tipo": "'pbe' (o modelo está no PBE Veicular do Inmetro, que só tem veículo leve) ou 'regra' "
+                   "(regra de dados/tipos.csv).",
+    "regra_tipo": "Número da linha de dados/tipos.csv que casou (0 = nenhuma).",
+    "tipo_aviso": "'pbe_diverge' quando a regra dá tipo não leve a um modelo que está no PBE Veicular. Vazio "
+                  "quando não há divergência.",
+    "participacao_tipo": "Parte do tipo na frota eletrificada do recorte no mês (fração entre 0 e 1).",
     "primeiro_mes": "Primeiro mês em que o rótulo aparece na série.",
     "ultimo_mes": "Último mês em que o rótulo aparece na série.",
     "frota_total": "Frota total do recorte (todas as classes).",

@@ -111,10 +111,24 @@ dados por baixo dela têm duas limitações sérias:
 | Visual | Forma | Por quê | Cor |
 |---|---|---|---|
 | Modelos distintos · Marcas · Idade média · % importados | **Faixa de 4 cartões** | Números de manchete da base por modelo | tinta |
+| Frota eletrificada por tipo de veículo | **Barra horizontal** por `dModelo[tipo_rotulo]`, ordenada por `tipo_ordem`, valor `[Participação do tipo na frota eletrificada]` | Responde quanto da frota eletrificada é carro e quanto é scooter, que é a pergunta que o número total esconde | sequencial azul, rótulo de dado em porcentagem |
+| Tipo × classe | **Matriz** (tipo nas linhas, classe nas colunas) | Mostra que plug-in e híbrido convencional são todos leves, e que a moto eletrificada é toda a bateria — os híbridos da Yamaha são híbridos leves, fora da frota eletrificada | tinta, com barras de dados na célula |
 | 20 maiores modelos | **Barra horizontal** ordenada | Magnitude; nome de modelo é longo | sequencial azul |
 | Marca × classe | **Matriz** | Duas dimensões e um valor | tinta, com barras de dados na célula |
 | Frota eletrificada por ano de fabricação | **Coluna** | Magnitude sobre escala ordenada | sequencial azul |
 | Nacional × importado | **Barra empilhada** única, 2 séries | Parte-todo de duas classes. Rosca de duas fatias é pior. | slots 1 e 2, rótulo direto |
+
+**O tipo de veículo lê composição, não contagem.** A tecnologia por nome erra
+entre plug-in e híbrido; o tipo, não, porque um modelo com nome tem tipo
+conhecido. Só que a base por modelo acha 18% menos eletrificados que a base por
+combustível, e a contagem por tipo herda essa diferença. Por isso o visual usa a
+participação, e não a frota absoluta. Dois em cada três veículos que o PBE do
+Inmetro não cobre ainda são leves, então o tipo não sai só do PBE: ver
+[`tipos.py`](../src/eletromobilidade/tipos.py).
+
+O que o visual mostra em set/2026: 92,8% da frota eletrificada é leve e 6,9% é
+moto. Entre os elétricos a bateria a moto é 16,9%, e em dez/2020 era metade
+(48,6%) — a frota elétrica brasileira começou em scooter.
 
 Agregue por `marca`, não por `marca_renavam`: a primeira une as grafias da mesma
 empresa (`GM`, `CHEVROLET` e `CHEV` viram `CHEVROLET`), a segunda é a grafia

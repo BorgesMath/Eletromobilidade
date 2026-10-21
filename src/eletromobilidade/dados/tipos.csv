@@ -1,0 +1,28 @@
+tipo;padrao;nota
+outros;^(I/)?SR[ /];Prefixo SR/ do RENAVAM: semirreboque.
+onibus;\b(INDUSCAR|MPOLO|MARCOPOLO|CAIO|COMIL|MASCA|BUSSCAR|ELETRA)\b;Encarroçadora de ônibus no nome (Caio/Induscar, Marcopolo, Comil, Mascarello, Busscar), ou a Eletra, que só faz ônibus e trólebus.
+onibus;\bBYD[ /](D9[AW]|D11[AB]|BC\d+LE|K\d+[A-Z]?)\b;Chassis de ônibus da BYD: D9W, D9A, D11A/B, BC10/12/22LE e a linha K (K9, K10, K11).
+onibus;\bM\.?BENZ/E?O ?500;Mercedes-Benz eO500U, chassi de ônibus.
+onibus;\bCRRC\b;CRRC TEG6130, ônibus de 13 m.
+caminhao;\bE-?DELIVERY\b;VW e-Delivery.
+caminhao;\bBYD[ /](ET([5-9]|\d\d)|T8A\b|Q3M);BYD eT5, eT7, eT8A, eT18 e eT23, T8A e Q3M (cavalo-mecânico de pátio). O eT3 é van e fica fora: o PBE o registra como comercial leve.
+caminhao;\bJAC (E-?JT|IEV ?(350|1200));JAC e-JT (3,5 a 18 t) e iEV350T/iEV1200T. O sufixo T da JAC é caminhão, e V é van.
+caminhao;\bVOLVO (FM|FH|FMX|FE|FL)\b;Volvo FM/FH Electric.
+caminhao;\b(FOTON IBLUE|QINGLING ELF|SANY SYZ);Foton iBlue, Qingling (Isuzu) Elf e Sany SYZ.
+moto;\bYAMAHA\b;A Yamaha só vende moto no Brasil. Os híbridos dela são os scooters Ray ZR e Fluo 125.
+moto;\bBMW CE ?0?\d\b;BMW CE 04, scooter. Os demais BMW eletrificados são carros (regra de leve abaixo).
+moto;\b(GUZZI|MGUZZI)\b;Moto Guzzi.
+moto;^(I/)?SHINERAY/(PT|SE)\d;Shineray PT2/PT3/PT4/PT7 e SE1/SE2/SE3, scooters elétricos. A Shineray também vende vans, que não casam aqui.
+moto;\b(GCX|AIMA|VMOTO|VAMMO|VOLTZ|TAILG|TAILING|YADEA|NIU|SUNRA|LUYUAN|LVNENG|HORWIN|SMARDA|MOTTU-?E|ORIGEM|WATTS|WANGPAI|MOTOCHEFE|SOUSA|SOUSABIKE|BORAM|DHCLBC|ZONGSHEN|SHANSU|EVADER)\b;Marcas e linhas só de duas e três rodas no Brasil: scooters, ciclomotores, motos e triciclos (AIMA HTANK-TRICAR, TAILG TL). BORAM é fabricante de motos elétricas de Manaus, e EVADER é scooter.
+moto;^FLASH/MV ING\b;Por exclusão, não por fonte: nenhuma fonte identifica a marca. São 392 elétricos parados desde antes de 2020, de fabricação 2012, poucos por município em MT, PA, AM e outras UFs. Em 2012 o país tinha poucas dezenas de carros elétricos, e ônibus ou caminhão espalhado assim não existe: só cabe scooter ou ciclomotor.
+moto;\bLIFAN \d+DT\b;Lifan 3000DT, moto elétrica (a Lifan também fez carros, por isso só esta linha).
+moto;(\d{3,5}|\d\.\d{3}) ?W\b|\d+(\.\d+)? ?KW\b;Potência do motor em W ou kW no nome (2000W, 3.000W, 3KW, 500 W): é como o RENAVAM grafa scooter e ciclomotor elétrico. KWH, de bateria, não casa.
+leve;\bHONDA (CIVIC|ACCORD|CITY|FIT|HR-?V|ZR-?V|CR-?V|WR-?V)\b|^(I/)?CIVIC\b;Honda faz carro e moto: só as famílias de carro.
+leve;\bBMW (I\d|IX\d?|X\d|M?\d{3}|ACTIVEHYBRID);BMW faz carro e moto: carros pela família (i3, i4, iX, X, Série 3/5/7). Motos BMW têm letra antes do número (R 1250, C 400) e não casam.
+leve;\bVOLVO (XC\d+|C40|EX\d+|EC\d+|ES\d+|S\d0|V\d0)\b;Volvo faz carro, ônibus e caminhão: só as famílias de carro.
+leve;\bM\.?BENZ (\d{3} )?(AMG )?(EQ|E?SPRINTER|S ?\d{3}|GLC|GLE|GLS|C ?\d{3}|E ?\d{3});Mercedes-Benz faz carro, van, ônibus e caminhão: carros EQ, Classe S/C/E, GLC e a van eSprinter.
+leve;\bVW[ /](ID\.|GOL\b|TOUAREG|GOLF|E-?GOLF|E-?UP|POLO|T-?CROSS|NIVUS|TAOS|TIGUAN|PASSAT|JETTA|AMAROK);VW faz carro e caminhão: só as famílias de carro.
+leve;\bBYD[ /](D1\b|E[2-6]\b|F[036]\b|G3\b|QIN|LEOPARD|SONG|TANG|U9|XIA|T3\b|DOLPHIN|SEAL|YUAN|HAN\b|KING|SHARK|SEAGULL|ATTO|M6\b);BYD faz carro, ônibus e caminhão: carros pela família, e a van T3. D1 é carro (o ônibus é D9/D11).
+leve;\bJAC (IEV ?(20|40|60|330P|750)|J\d|E-?JS|E-?JV|E-?J7);JAC: carros iEV20/40/60 e e-JS, vans iEV750V e e-JV (o e-JV12 é furgão, que a FIPE lista como carro).
+leve;\b(SAIC (MAXUS|MGS?\d?)|DONGFENG SERES|GEELY E\d)\b;Linhas de carro e van de grupos que também fazem caminhão.
+leve;\b(TOYOTA|LEXUS|AUDI|PORSCHE|LR|JAG|KIA|HYUNDAI|HYD|NISSAN|CHEVROLET|CHEV|GMC|FORD|RENAULT|PEUGEOT|CITROEN|FIAT|JEEP|FCA|DODGE|RAM|MINI|SMART|TESLA|NETA|DENZA|JAECOO|OMODA|GWM|CAOACHERY|CHERY|CAOACHANGAN|CHANGAN|BAIC|JMEV|JETOUR|MMC|SUBARU|MASERATI|BENTLEY|INFINITI|LAMBORGHINI|LMABORGHINI|REVA|ZEEKR|POLESTAR|XPENG|GAC|LEAPMOTOR|LPM|SERES)\b;Marcas que no Brasil só vendem veículo leve (carro, SUV, picape e van até 3,5 t). Marca que também faz moto, ônibus ou caminhão não entra aqui, só pela família.

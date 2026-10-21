@@ -1,14 +1,15 @@
 # Roteiro
 
-Estado em 21/10/2026. O pipeline Python está fechado e testado (239 testes); a
+Estado em 21/10/2026. O pipeline Python está fechado e testado (271 testes); a
 camada do Power BI está especificada em [`pbi/`](../pbi/MODELO.md) e o `.pbix`
 ainda precisa ser montado. O que falta está abaixo, em ordem de valor.
 
 As tabelas de `resultados/` estão em dia com o código, regeradas em 21/10 com a
 série completa de combustível (76 arquivos) e os dois meses da base por modelo.
 Reproduziram a execução de 20/10 com diferença zero em todas as colunas que já
-existiam; o que mudou foi a coluna `cod_municipio_ibge`, a dimensão de município
-e as três colunas de população nos painéis da base por combustível. Regerá-las exige os arquivos da SENATRAN em `data/raw`, que não são
+existiam; o que mudou foi a coluna `cod_municipio_ibge`, a dimensão de município,
+as três colunas de população nos painéis da base por combustível e o tipo de
+veículo na base por modelo. Regerá-las exige os arquivos da SENATRAN em `data/raw`, que não são
 versionados: `baixar`, depois `processar` e `publicar`.
 
 ## 1. Código IBGE e população por município — feito
@@ -59,45 +60,59 @@ gargalo é download, não CPU.
 **Sugestão.** Dezembro de cada ano desde 2020, mais os meses de 2026. Seis a
 oito meses dão série anual sem o custo de 75.
 
-## 3. Tipo de veículo
+## 3. Tipo de veículo — feito
 
-**Por que.** É a lacuna que mais pesa em qualquer leitura da base. Hoje "frota
-eletrificada" soma automóvel, motocicleta, ônibus e caminhão num número só.
-Para política de eletromobilidade são coisas diferentes: 484 mil elétricos
-viram uma frase muito distinta quando se sabe quanto disso é scooter.
+**Feito em 21/10/2026.** Os eletrificados e híbridos leves da base por modelo
+têm tipo de veículo — leve, moto, ônibus, caminhão, outros —, publicado em
+`modelo_eletrificados`, `modelos_dimensao` e nos painéis `modelo_tipo_{uf,brasil}`.
+Detalhe no README, seção Tipo de veículo. A resposta à pergunta que motivou o
+item, base por modelo:
 
-**A dificuldade é real.** A SENATRAN **não publica tabela que cruze tipo com
-combustível** — `D_` tem combustível sem tipo, `G_` tem tipo sem combustível.
-O único caminho é inferir o tipo do nome do modelo, na base por modelo, do mesmo
-jeito que a tecnologia já é inferida.
+| | dez/2020 | set/2026 |
+|---|---:|---:|
+| Leve, na frota eletrificada | 91,1% | 92,8% |
+| Moto, na frota eletrificada | 8,5% | 6,9% |
+| **Moto, entre os elétricos a bateria** | **48,6%** | **16,9%** |
 
-**É viável mas dá trabalho.** Entre os 613 modelos elétricos de set/2026 há
-padrões aproveitáveis — potência em kW no nome (`VAMMO/VMOTO COMFORT 4KW`,
-`I/GCX X11 3KW`) marca scooter e ciclomotor; marcas de carroceria
-(`ELETRA`, `CRRC`, `BUSSCAR`) marcam ônibus; `R/` e `SR/` já identificam
-reboque. Mas nenhuma expressão simples resolve: precisa de tabela de regras
-revisada à mão, como `dados/modelos.csv`, com a mesma marcação `revisar` para a
-fila de trabalho. Não prometa o número por tipo antes de a tabela existir.
+Ônibus e caminhão somam menos de 0,5%. Plug-in e híbrido convencional são todos
+leves. Leia como composição: a base por modelo acha 18% menos eletrificados que a
+por combustível, e a contagem por tipo herda isso.
 
-**Meio caminho já está andado, pelo Inmetro.** A auditoria contra o PBE Veicular
-(ver o README) traz `pbe_categoria` para **79,1% da frota eletrificada** da base
-por modelo: Extra Grande 230.352, Utilitário Esportivo Grande 163.418, Médio
-159.645, Sub Compacto 126.734, Grande 123.182, Utilitário Esportivo Compacto
-84.529, Picape 12.573.
+**Duas premissas deste item estavam erradas, e o trabalho mostrou.**
 
-Falta entender o que isso é e o que não é. `pbe_categoria` é **porte de veículo
-leve**, não tipo: não distingue automóvel de comercial leve, e não tem como
-distinguir, porque o PBE só ensaia veículo leve. O que ele dá de graça é a outra
-ponta — **estar no PBE é prova de que o veículo é leve**. Os 20,9% que ficaram
-fora concentram justamente moto, scooter e ônibus, que é exatamente o recorte
-que hoje falta.
+- *"Os 20,9% fora do PBE concentram moto, scooter e ônibus."* Não: dois terços do
+  que fica fora do PBE ainda é carro, que não casou por geração antiga ou nome
+  abreviado — o maior é o Corolla Cross, `TOYOTA/CCROSS XRX HYBRID`, com 69 mil.
+  O PBE não bastava; a tabela de regras precisou cobrir carro também.
+- *"`G_` como total de controle transformaria a inferência em erro medido."* Não
+  transforma: `G_` não tem combustível, então só controlaria uma classificação de
+  tipo da frota inteira (40 mil modelos), não a da eletrificada. Ficou como
+  conferência pontual — em nenhum município os eletrificados de um grupo passam o
+  total oficial do grupo em set/2026 —, que pega erro grosso e não mede erro fino.
 
-Então a tabela de regras de tipo continua necessária, mas o escopo encolheu: em
-vez de classificar 613 modelos do zero, basta classificar o resíduo não casado e
-usar o PBE como verificação de quem já se sabe leve. Combinar com `G_`
-(`tipo_especie_eixos`) como total de controle por município, do mesmo jeito que a
-base por combustível concilia a base por modelo, transformaria a inferência em
-erro medido — e é isso que torna o número por tipo defensável, não só plausível.
+**O que faz o número ser defensável** é outra coisa: o tipo de um modelo com nome
+não é ambíguo, como a tecnologia é. O PBE dá o tipo de 78,7% da frota com fonte
+externa; as 27 regras de `dados/tipos.csv` foram conferidas contra os 934 modelos;
+regra que contradiz o PBE é divergência e derruba o teste — foi o que pegou a BYD
+eT3, van, que uma regra de caminhão levava. Sem tipo ficaram 3 veículos. Um caso
+foi decidido por exclusão, e a regra diz isso (`FLASH/MV ING ELETRIC`, ver o
+README).
+
+**De passagem, erros da classificação de tecnologia**, que não são deste item e
+não foram corrigidos. Em set/2026, na base por modelo:
+
+- BMW com código de motor `EV` no nome, contados como elétricos:
+  `I/BMW 320I EV11` (1.242), `330I EV51` (632, com a versão Security),
+  `325I EV31` (391), `325I PRO EV39` (58) e `330I EV53` (2). O EV11 é o caso que o
+  README cita como achado pela auditoria do PBE — achado, mas a regra não mudou;
+- `I/BMW 325 IX` (2), o 325ix dos anos 1980, que casa com a regra do iX elétrico;
+- `MOTO GUZZI CALIFORNIA EV` (12), moto a combustão dos anos 1990;
+- `BYD F0`, `G3` e `F6` (8), carros a combustão que a BYD vendeu por volta de
+  2010, pegos pela regra "toda BYD é elétrica".
+
+São cerca de 2.350 veículos a mais entre os 445 mil elétricos da base por modelo,
+0,5% deles. Corrigir é mexer em `dados/modelos.csv`, que muda a conciliação, e
+por isso fica como item próprio.
 
 ## 4. Fechar o furo de jan/2022 e esticar a série para trás
 
@@ -224,6 +239,11 @@ Distrito Federal lidera em intensidade, com 376 eletrificados por 10 mil
 veículos contra 103 de São Paulo e 98 da média nacional. Por habitante a
 distância é maior: 28,9 por mil no Distrito Federal, 8,7 em Santa Catarina, 8,0
 em São Paulo e 6,2 no Brasil. A população é a estimativa de 2026 do IBGE.
+
+Composição por tipo de veículo, pela base por modelo: 92,8% da frota
+eletrificada é leve e 6,9% é moto. Entre os elétricos a bateria a moto é 16,9%
+— e era metade, 48,6%, em dez/2020. Cite a parte, não a contagem: a base por
+modelo acha 18% menos eletrificados que a por combustível.
 
 ## Quatro ressalvas que acompanham estes números em qualquer uso
 

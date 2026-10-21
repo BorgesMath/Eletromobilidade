@@ -21,7 +21,7 @@ from pathlib import Path
 import pandas as pd
 
 from . import coleta, pipeline
-from .base_modelo import processar_arquivos_modelo
+from .base_modelo import CLASSES_DETALHE, processar_arquivos_modelo
 from .classificacao import carregar_tabela
 from .conciliacao import conciliar_bases
 from .inmetro import extrair_pbev, gravar_pbev
@@ -116,6 +116,18 @@ def _processar(args) -> None:
                             "(falso positivo provável; revise dados/modelos.csv):\n%s",
                             avisos[["marca_modelo_norm", "classe", "pbe_classes", "qtd_veiculos"]]
                             .head(30).to_string(index=False))
+        classificados = tabelas["modelos_classificados"]
+        sem_tipo = classificados[classificados["classe"].isin(CLASSES_DETALHE) & classificados["tipo"].isna()]
+        if not sem_tipo.empty:
+            logging.warning("Modelos eletrificados sem tipo de veículo (inclua regra em dados/tipos.csv):\n%s",
+                            sem_tipo[["ano", "mes", "marca_modelo_norm", "classe", "qtd_veiculos"]]
+                            .head(50).to_string(index=False))
+        diverge = classificados.query("tipo_aviso == 'pbe_diverge'")
+        if not diverge.empty:
+            logging.warning("Regra de tipo não leve para modelo que está no PBE Veicular, que só tem leve "
+                            "(revise dados/tipos.csv):\n%s",
+                            diverge[["marca_modelo_norm", "tipo", "pbe_categoria", "qtd_veiculos"]]
+                            .to_string(index=False))
         suspeitas = marcas_suspeitas(tabelas["modelos_classificados"])
         if not suspeitas.empty:
             logging.info("Grafias de marca que parecem variante de outra (avalie incluir em "

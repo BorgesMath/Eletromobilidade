@@ -20,6 +20,13 @@
 // fora dela segue como está em `marca` — não há invenção, mas pode haver empresa
 // ainda dividida em duas linhas. A fila do que falta sai no log de `processar`
 // (grafias que parecem variante de outra) e em docs/ROTEIRO.md.
+//
+// O tipo de veículo (`tipo`: leve, moto, onibus, caminhao, outros) também chega
+// pronto, de src/eletromobilidade/tipos.py: pelo PBE Veicular do Inmetro para
+// quem está nele, por regra revisada para o resto. Aqui só se acrescentam o
+// rótulo e a ordem de exibição, fixa — leve primeiro, por ser a maior parte.
+// Modelo sem tipo (nome que nenhuma fonte identifica) aparece como
+// "Sem tipo", e não some do total.
 
 let
     Fonte = Parquet.Document(
@@ -33,12 +40,34 @@ let
             {"marca_renavam", type text},
             {"marca", type text},
             {"importado", type logical},
-            {"origem", type text}
+            {"origem", type text},
+            {"tipo", type text},
+            {"origem_tipo", type text}
         }
     ),
-    Final = Table.SelectColumns(
+    Rotulos = [
+        leve = {"Automóvel e comercial leve", 1},
+        moto = {"Moto, scooter e ciclomotor", 2},
+        onibus = {"Ônibus", 3},
+        caminhao = {"Caminhão", 4},
+        outros = {"Outros", 5}
+    ],
+    ComRotulo = Table.AddColumn(
         Tipos,
-        {"marca_modelo", "marca_renavam", "marca", "origem", "importado"}
+        "tipo_rotulo",
+        each if [tipo] = null then "Sem tipo" else Record.Field(Rotulos, [tipo]){0},
+        type text
+    ),
+    ComOrdem = Table.AddColumn(
+        ComRotulo,
+        "tipo_ordem",
+        each if [tipo] = null then 9 else Record.Field(Rotulos, [tipo]){1},
+        Int64.Type
+    ),
+    Final = Table.SelectColumns(
+        ComOrdem,
+        {"marca_modelo", "marca_renavam", "marca", "origem", "importado", "tipo", "tipo_rotulo", "tipo_ordem",
+         "origem_tipo"}
     )
 in
     Final

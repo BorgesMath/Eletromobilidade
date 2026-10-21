@@ -52,7 +52,7 @@ previsível que filtro cruzado automático.
 | `dCalendario` | dia | ~2.465 | tabela calculada em DAX |
 | `dLocalidade` | município (código IBGE) | 5.574 | `municipios_dimensao.parquet` |
 | `dClasse` | classe de tecnologia | 8 | digitada no Power Query |
-| `dModelo` | marca_modelo | 935 | `modelos_dimensao.parquet` |
+| `dModelo` | marca_modelo (com marca e tipo de veículo) | 935 | `modelos_dimensao.parquet` |
 
 ### Relacionamentos
 
@@ -180,8 +180,12 @@ toda troca de classe. Até medir isso direito, a regra do painel não muda.
 Portanto, no painel:
 
 - a divisão por tecnologia vem **sempre** da base por combustível;
-- a base por modelo responde *quais modelos*, *de que marca* e *de que ano* —
-  não *quantos de cada tecnologia*;
+- a base por modelo responde *quais modelos*, *de que marca*, *de que ano* e *de
+  que tipo de veículo* — não *quantos de cada tecnologia*;
+- o tipo de veículo (`dModelo[tipo_rotulo]`) se lê como **composição**, por
+  `[Participação do tipo na frota eletrificada]`. O tipo de um modelo com nome não
+  é ambíguo como a tecnologia, mas a base por modelo acha 18% menos
+  eletrificados, e a contagem por tipo herda isso;
 - `[Frota recarregável]` (elétrico + plug-in), que é o recorte que interessa
   para infraestrutura de recarga, só pode sair da base por combustível.
 
@@ -267,6 +271,16 @@ E com o mês de set/2026 e a UF de São Paulo:
 `[População]` do Brasil é a soma dos municípios, a estimativa de 2026 do IBGE.
 Se vier o dobro de algum município, ou a de Pitangueiras somada duas vezes, a
 população está sendo lida de `fFrotaCombustivel`, e não de `fPopulacao`.
+
+E o tipo de veículo, na base por modelo em set/2026, por `dModelo[tipo_rotulo]`
+(sai de `resultados/modelo_tipo_brasil.csv`):
+
+| `[Participação do tipo na frota eletrificada]` | Valor esperado |
+|---|---:|
+| Automóvel e comercial leve | 92,83% |
+| Moto, scooter e ciclomotor | 6,85% |
+| Caminhão | 0,24% |
+| Ônibus | 0,08% |
 
 E o teste da chave por código, com o município de Embu das Artes
 (`dLocalidade[cod_municipio_ibge] = 3515004`):

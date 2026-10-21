@@ -8,8 +8,9 @@ guardam-se apenas agregados:
 * a frota por município e classe, para os painéis e as participações;
 * a frota por modelo distinto, para auditoria da classificação.
 
-Produtos: ``modelo_eletrificados``, ``modelo_{municipio,uf,brasil}`` e
-``modelos_classificados``.
+Produtos: ``modelo_eletrificados``, ``modelo_{municipio,uf,brasil}``,
+``modelo_tipo_{uf,brasil}`` (frota do detalhe por tipo de veículo, ver
+``tipos.py``) e ``modelos_classificados``.
 
 Os agregados de cada arquivo podem ser guardados num diretório de cache: um mês
 já processado com as mesmas regras não é relido (útil para séries longas, em
@@ -29,8 +30,10 @@ from .inmetro import auditar_com_pbev, carregar_pbev, propulsoes_por_modelo
 from .leitura import ler_frota_marca_modelo
 from .modelos import (CLASSES_ELETRIFICADAS_MODELO, CLASSES_MODELO, ClassificadorModelos, a_revisar,
                       carregar_marcas, dimensao_modelo, marca, marca_renavam)
-from .pipeline import enriquecer, paineis, periodos_por_arquivo, registro_qualidade
+from .pipeline import CHAVE_TEMPO, CHAVE_UF, enriquecer, paineis, periodos_por_arquivo, registro_qualidade
 from .qualidade import AJUSTE_ESCALA, assinatura, escala_suspeita, meses_repetidos, todas_multiplas_de_10
+from .texto import normalizar
+from .tipos import classificar_tipo
 
 log = logging.getLogger(__name__)
 
@@ -151,15 +154,52 @@ def processar_arquivos_modelo(caminhos: list[Path], regras: pd.DataFrame | None 
     modelos.insert(depois_do_texto, "marca_renavam", marca_renavam(modelos["marca_modelo_norm"]))
     modelos = auditar_com_pbev(modelos, propulsoes_por_modelo(carregar_pbev(), equivalencias=equivalencias),
                                equivalencias)
+    no_detalhe = modelos["classe"].isin(CLASSES_DETALHE)
+    # tipo só para os modelos do detalhe; as regras não foram feitas para a frota a combustão
+    modelos = modelos.join(classificar_tipo(modelos.loc[no_detalhe, "marca_modelo_norm"],
+                                            modelos.loc[no_detalhe, "pbe_categoria"]))
+    modelos["regra_tipo"] = modelos["regra_tipo"].astype("Int64")
+    tipo_por_modelo = (modelos.loc[no_detalhe, ["marca_modelo_norm", "tipo", "origem_tipo"]]
+                       .drop_duplicates("marca_modelo_norm"))
     eletrificados = pd.concat(detalhe, ignore_index=True).sort_values(
         ["ano", "mes", "uf_sigla", "municipio_norm", "classe", "marca_modelo"], na_position="last"
     ).reset_index(drop=True)
+    normalizado = {texto: normalizar(texto) for texto in eletrificados["marca_modelo"].unique()}
+    tipo = tipo_por_modelo.set_index("marca_modelo_norm")["tipo"]
+    eletrificados.insert(eletrificados.columns.get_loc("classe") + 1, "tipo",
+                         eletrificados["marca_modelo"].map(normalizado).map(tipo).astype("string"))
     return {
         "modelo_eletrificados": eletrificados,
         **paineis(totais, "modelo", CLASSES_MODELO, CLASSES_ELETRIFICADAS_MODELO),
+        **paineis_tipo(eletrificados),
         "modelos_classificados": modelos.sort_values(
             ["ano", "mes", "classe", "qtd_veiculos"], ascending=[True, True, True, False]
         ).reset_index(drop=True),
-        "modelos_dimensao": dimensao_modelo(eletrificados["marca_modelo"], equivalencias),
+        "modelos_dimensao": dimensao_modelo(eletrificados["marca_modelo"], equivalencias).merge(
+            tipo_por_modelo, on="marca_modelo_norm", how="left", validate="many_to_one"),
         "qualidade_modelo": pd.DataFrame(qualidade),
     }
+
+
+def paineis_tipo(eletrificados: pd.DataFrame) -> dict[str, pd.DataFrame]:
+    """Frota do detalhe por tipo de veículo e classe, por UF (só válidas) e Brasil.
+
+    ``participacao_tipo`` é a parte do tipo na frota eletrificada do recorte. É o
+    número a usar: a base por modelo acha 18% menos eletrificados que a base por
+    combustível, e a contagem absoluta por tipo herda essa diferença; a composição,
+    menos.
+    """
+    resultado = {}
+    for nivel, chave, base in (("uf", CHAVE_TEMPO + CHAVE_UF, eletrificados.dropna(subset=["uf_sigla"])),
+                               ("brasil", CHAVE_TEMPO, eletrificados)):
+        tabela = (base.groupby(chave + ["tipo", "classe"], dropna=False, observed=True)["qtd_veiculos"].sum()
+                  .unstack("classe", fill_value=0)
+                  .reindex(columns=list(CLASSES_DETALHE), fill_value=0)
+                  .astype("int64"))
+        tabela.columns = [f"frota_{c}" for c in tabela.columns]
+        tabela["frota_eletrificada"] = tabela[[f"frota_{c}" for c in CLASSES_ELETRIFICADAS_MODELO]].sum(axis=1)
+        tabela = tabela.reset_index()
+        total = tabela.groupby(chave, dropna=False)["frota_eletrificada"].transform("sum")
+        tabela["participacao_tipo"] = tabela["frota_eletrificada"] / total.where(total > 0)
+        resultado[f"modelo_tipo_{nivel}"] = tabela
+    return resultado

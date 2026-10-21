@@ -278,6 +278,19 @@ CALCULATE(
     dClasse[eletrificado] = TRUE()
 )
 
+// Parte do tipo de veículo (dModelo[tipo_rotulo]) na frota eletrificada do
+// recorte. É a medida a usar por tipo, e não a contagem: a base por modelo acha
+// 18% menos eletrificados que a base por combustível, e a contagem por tipo
+// herda isso. Bate com participacao_tipo de resultados/modelo_tipo_*.csv.
+Participação do tipo na frota eletrificada =
+DIVIDE(
+    [Frota modelo eletrificada],
+    CALCULATE(
+        [Frota modelo eletrificada],
+        REMOVEFILTERS( dModelo[tipo], dModelo[tipo_rotulo], dModelo[tipo_ordem] )
+    )
+)
+
 Modelos distintos =
 CALCULATE(
     DISTINCTCOUNT( fFrotaModelo[marca_modelo] ),

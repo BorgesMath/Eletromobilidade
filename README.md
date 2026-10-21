@@ -145,6 +145,7 @@ Cada tabela é gravada em Parquet e em CSV (`;` como separador, `,` decimal, UTF
 | `combustiveis_classificados` | rótulo de combustível | Auditoria: classe, origem (tabela/regra), total |
 | `modelo_eletrificados` | mês × município × modelo × ano de fabricação | Modelos eletrificados e híbridos leves |
 | `modelo_{municipio,uf,brasil}` | mês × recorte | Painel da base por modelo |
+| `modelo_tipo_{uf,brasil}` | mês × recorte × tipo de veículo | Eletrificados e híbridos leves por tipo (leve, moto, ônibus, caminhão), com a parte de cada tipo |
 | `modelos_classificados` | mês × modelo | Auditoria: classe, regra aplicada, total, `revisar`, marca |
 | `modelos_dimensao` | modelo | Dimensão do painel: grafia do RENAVAM, marca canônica, origem |
 | `conciliacao_{municipio,uf,brasil}` | mês × recorte | Comparação entre as duas bases |
@@ -430,8 +431,90 @@ projeto de manter híbrido leve fora da frota eletrificada.
 
 **Cobertura, que é parcial por construção.** O PBE é só de veículo leve novo
 ensaiado no ciclo: 79,1% da frota eletrificada da base por modelo casa com uma
-linha e ganha porte. O que fica fora é, em boa parte, exatamente o que falta para
-fechar a lacuna de tipo de veículo — moto, scooter e ônibus.
+linha e ganha porte. O que fica fora não é, como se supunha, quase tudo moto e
+ônibus: dois terços ainda são carro que não casou, por geração antiga ou nome
+abreviado (`TOYOTA/CCROSS XRX HYBRID`, o Corolla Cross, com 69 mil veículos). Ver
+[Tipo de veículo](#tipo-de-veículo).
+
+## Tipo de veículo
+
+"Frota eletrificada" soma automóvel, scooter, ônibus e caminhão num número só, e
+a SENATRAN não publica tabela que cruze tipo com combustível: o arquivo por
+combustível (`D_`) não tem tipo, e o por tipo (`G_`) não tem combustível. O tipo
+sai, então, do modelo, na base por modelo, para os eletrificados e híbridos leves
+do detalhe (`tipo` em `modelo_eletrificados`, `modelos_classificados` e
+`modelos_dimensao`, e os painéis `modelo_tipo_{uf,brasil}`).
+
+Cinco grupos, que agregam os tipos do RENAVAM:
+
+| Grupo | Tipos do RENAVAM |
+|---|---|
+| `leve` | automóvel, camioneta, caminhonete, utilitário (inclui SUV, picape e van) |
+| `moto` | motocicleta, motoneta, ciclomotor, triciclo, side-car |
+| `onibus` | ônibus, micro-ônibus |
+| `caminhao` | caminhão, caminhão-trator, chassi-plataforma |
+| `outros` | quadriciclo, trator, bonde, reboque, semirreboque, outros |
+
+**Ao contrário da tecnologia, o tipo de um modelo com nome não é ambíguo.**
+"HYBRID" pode ser plug-in ou não; um BYD D9W é ônibus e um Voltz EV1 é scooter.
+Duas fontes, nesta ordem:
+
+1. regra de [`dados/tipos.csv`](src/eletromobilidade/dados/tipos.csv) que dê tipo
+   não leve: carrocerias de ônibus no nome (Caio/Induscar, Marcopolo, Comil),
+   chassis BYD D9/D11/K, caminhões VW e-Delivery, BYD eT, JAC e-JT e iEV1200T,
+   Volvo FM; marcas só de duas e três rodas (GCX, Vmoto, Aima, Voltz, Yadea…) e a
+   potência em W ou kW no nome (`3.000W`, `3KW`), que é como o RENAVAM grafa
+   scooter e ciclomotor elétrico;
+2. o **PBE Veicular**, que só tem veículo leve: modelo que casou com ele é
+   `leve`, com `origem_tipo = 'pbe'`. É a fonte de 78,7% da frota eletrificada;
+3. regra de leve, para o carro que não casou com o PBE. Marca que só vende
+   veículo leve entra inteira; marca que também faz moto, ônibus ou caminhão
+   (Honda, BMW, Volvo, Mercedes-Benz, VW, BYD, JAC) entra só pelas famílias de
+   carro, para que um ônibus novo da BYD não vire carro em silêncio.
+
+As 27 regras foram conferidas contra os 934 modelos eletrificados das duas
+datas. Dois ficaram sem tipo, com 3 veículos, porque nenhuma fonte identifica o
+nome (`I/BYD TB3` e `I/GUANGZHOU Z1 ELETRIC`). Um caso foi decidido **por exclusão, não por fonte**, e a nota da regra diz
+isso: `FLASH/MV ING ELETRIC`, 392 elétricos de fabricação 2012, poucos por
+município no Norte e no Centro-Oeste. Em 2012 o país tinha poucas dezenas de
+carros elétricos, então só cabe scooter ou ciclomotor.
+
+**Os controles.**
+
+- Regra que dá tipo não leve a modelo que está no PBE é divergência
+  (`tipo_aviso = 'pbe_diverge'`), e o teste sobre `resultados/` não passa com
+  nenhuma. Foi assim que a BYD eT3, que uma regra genérica de caminhão pegava,
+  voltou a ser o que o Inmetro registra: van.
+- Modelo sem regra nem PBE fica sem tipo: `processar` lista, e o teste falha se
+  isso passar de 0,1% da frota do detalhe no mês.
+- Conferência pontual contra a tabela oficial Frota por Município e Tipo de
+  set/2026: em nenhum dos municípios os eletrificados de um grupo passam o total
+  daquele grupo. É limite fraco, porque a frota eletrificada é uma fração pequena
+  de cada tipo, mas pega erro grosso. Não é teste automático: a tabela não é
+  versionada.
+
+**O `G_` não serve de total de controle**, como o roteiro previa. Ele não tem
+combustível; só controlaria uma classificação de tipo da frota inteira, os 40 mil
+modelos, e não a da frota eletrificada.
+
+**Resultado.** Base por modelo, parte de cada tipo na frota eletrificada:
+
+| | dez/2020 | set/2026 |
+|---|---:|---:|
+| Leve | 91,1% | 92,8% |
+| Moto | 8,5% | 6,9% |
+| Caminhão | 0,2% | 0,2% |
+| Ônibus | 0,2% | 0,1% |
+| **Moto entre os elétricos a bateria** | **48,6%** | **16,9%** |
+
+Plug-in e híbrido convencional são 100% leves. O número que muda a leitura é o
+último: em 2020, metade dos elétricos a bateria era scooter ou moto; hoje é um
+sexto. Os híbridos da Yamaha (Ray ZR e Fluo, 17 mil) são híbridos leves e ficam
+fora da frota eletrificada, como os carros híbridos leves.
+
+**Leia como composição.** A base por modelo acha 18% menos eletrificados que a
+base por combustível, e a contagem absoluta por tipo herda essa diferença. Por
+isso os painéis trazem `participacao_tipo`, e é ela que se cita.
 
 ## Conciliação
 
@@ -494,7 +577,8 @@ convencional a gasolina.
 
 1. **Tipo de veículo.** O arquivo por combustível não traz o tipo (automóvel,
    motocicleta, ônibus, caminhão). A `participacao_eletrificada` é, portanto,
-   sobre a frota total registrada, não sobre veículos leves.
+   sobre a frota total registrada, não sobre veículos leves. O tipo existe só na
+   base por modelo, e se lê como composição (ver [Tipo de veículo](#tipo-de-veículo)).
 2. **"Fonte interna" vs. "fonte externa".** Os códigos 06 (ELETRICO/FONTE
    INTERNA) e 07 (ELETRICO/FONTE EXTERNA) vêm de uma tabela antiga do RENAVAM e
    seu significado operacional não está documentado de forma inequívoca na
@@ -550,6 +634,7 @@ híbrido convencional só vale pela base por combustível**.
 ## Próximos passos
 
 Em [`docs/ROTEIRO.md`](docs/ROTEIRO.md), em ordem de valor. O código IBGE de
-município e a população por município estão feitos. Os próximos: ampliar a série
-da base por modelo, tipo de veículo (automóvel × motocicleta × ônibus) e o furo
-de jan/2022.
+município, a população por município e o tipo de veículo estão feitos. Os
+próximos: ampliar a série da base por modelo e o furo de jan/2022. A revisão de
+tipo achou cerca de 2.350 veículos a combustão contados como elétricos na base
+por modelo (BMW com código de motor EV, BYD antigos), também no roteiro.
