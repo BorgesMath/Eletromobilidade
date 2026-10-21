@@ -19,6 +19,12 @@ código IBGE (`cod_municipio_ibge`) casando UF e nome com a lista oficial da
 SENATRAN difere da do IBGE, com `src/eletromobilidade/dados/municipios_grafias.csv`,
 conferida à mão. Alguns municípios mudam de grafia no meio da série; o código é a
 identidade estável.
+População (base por combustível): estimativas anuais do IBGE, tabela
+[6579 do SIDRA](https://sidra.ibge.gov.br/tabela/6579) (população residente em 1º de
+julho), instantâneo em `src/eletromobilidade/dados/populacao.csv`. Cada mês usa a
+estimativa do próprio ano; 2022 e 2023 não têm estimativa e usam a de 2024. Até 2021
+as estimativas projetam o Censo 2010 e de 2024 em diante partem do Censo 2022, então a
+taxa por habitante de um município muda de base em 2022: ver `ano_populacao`.
 Classificação: `src/eletromobilidade/dados/combustiveis.csv` (base por
 combustível) e `src/eletromobilidade/dados/modelos.csv` (base por modelo).
 Equivalência de grafias de marca: `src/eletromobilidade/dados/marcas.csv`.
@@ -60,6 +66,9 @@ Base por combustível: frota por classe, total, eletrificada e participação, B
 | `frota_total` | inteiro | Frota total do recorte (todas as classes). |
 | `frota_eletrificada` | inteiro | Soma de eletrico, hibrido_plug_in, hibrido e celula_combustivel (sem hibrido_leve). |
 | `participacao_eletrificada` | decimal | frota_eletrificada / frota_total (fração entre 0 e 1). |
+| `ano_populacao` | inteiro | Ano da estimativa de população do IBGE usada no mês: a do próprio ano ou, sem ela, a mais próxima do mesmo lado do Censo 2022 (2022 e 2023 usam 2024). Até 2021 a base é o Censo 2010; de 2024 em diante, o Censo 2022. |
+| `populacao` | inteiro | População residente estimada (IBGE, tabela 6579), em 1º de julho de ano_populacao. Na UF e no Brasil, soma dos municípios. Nula nos pseudo-municípios e na linha do distrito de Ibitiúva, cuja população já está na de Pitangueiras. |
+| `eletrificada_por_mil_habitantes` | decimal | frota_eletrificada / populacao x 1000. No Brasil, o numerador inclui a frota sem UF, que não tem população. |
 
 ### `combustivel_uf.csv`
 
@@ -82,6 +91,9 @@ Idem, por UF.
 | `frota_total` | inteiro | Frota total do recorte (todas as classes). |
 | `frota_eletrificada` | inteiro | Soma de eletrico, hibrido_plug_in, hibrido e celula_combustivel (sem hibrido_leve). |
 | `participacao_eletrificada` | decimal | frota_eletrificada / frota_total (fração entre 0 e 1). |
+| `ano_populacao` | inteiro | Ano da estimativa de população do IBGE usada no mês: a do próprio ano ou, sem ela, a mais próxima do mesmo lado do Censo 2022 (2022 e 2023 usam 2024). Até 2021 a base é o Censo 2010; de 2024 em diante, o Censo 2022. |
+| `populacao` | inteiro | População residente estimada (IBGE, tabela 6579), em 1º de julho de ano_populacao. Na UF e no Brasil, soma dos municípios. Nula nos pseudo-municípios e na linha do distrito de Ibitiúva, cuja população já está na de Pitangueiras. |
+| `eletrificada_por_mil_habitantes` | decimal | frota_eletrificada / populacao x 1000. No Brasil, o numerador inclui a frota sem UF, que não tem população. |
 
 ### `combustivel_municipio.parquet`
 
@@ -106,6 +118,9 @@ Idem, por município.
 | `frota_total` | inteiro | Frota total do recorte (todas as classes). |
 | `frota_eletrificada` | inteiro | Soma de eletrico, hibrido_plug_in, hibrido e celula_combustivel (sem hibrido_leve). |
 | `participacao_eletrificada` | decimal | frota_eletrificada / frota_total (fração entre 0 e 1). |
+| `ano_populacao` | inteiro | Ano da estimativa de população do IBGE usada no mês: a do próprio ano ou, sem ela, a mais próxima do mesmo lado do Censo 2022 (2022 e 2023 usam 2024). Até 2021 a base é o Censo 2010; de 2024 em diante, o Censo 2022. |
+| `populacao` | inteiro | População residente estimada (IBGE, tabela 6579), em 1º de julho de ano_populacao. Na UF e no Brasil, soma dos municípios. Nula nos pseudo-municípios e na linha do distrito de Ibitiúva, cuja população já está na de Pitangueiras. |
+| `eletrificada_por_mil_habitantes` | decimal | frota_eletrificada / populacao x 1000. No Brasil, o numerador inclui a frota sem UF, que não tem população. |
 
 ### `combustivel_eletrificados.parquet`
 
