@@ -1,6 +1,6 @@
 # Resultados
 
-Gerado por `eletromobilidade publicar` a partir de `data/processed` em 2026-10-21 22:08 UTC (código no commit `42e258e`). Não edite à mão: rode `processar` e `publicar` de novo.
+Gerado por `eletromobilidade publicar` a partir de `data/processed` em 2026-10-21 23:08 UTC (código no commit `822c6eb`). Não edite à mão: rode `processar` e `publicar` de novo.
 
 ## Cobertura
 
@@ -9,7 +9,7 @@ Gerado por `eletromobilidade publicar` a partir de `data/processed` em 2026-10-2
 - **Conciliação:** 2 meses (dez/2020, set/2026).
 - **Municípios:** 5.571 com código IBGE, 7 deles publicados pela SENATRAN com mais de uma grafia na série; sem código: NAO IDENTIFICADO, NAO SE APLICA, SEM INFORMACAO.
 - **População:** estimativas do IBGE de 2020, 2021, 2024, 2025 e 2026; 2022 e 2023, sem estimativa, usam a de 2024.
-- **Tipo de veículo, dez/2020:** leve 91,1%, moto 8,5%, onibus 0,2%, caminhao 0,2% da frota eletrificada da base por modelo; sem tipo: 0,00%.
+- **Tipo de veículo, dez/2020:** leve 90,7%, moto 8,9%, onibus 0,2%, caminhao 0,2% da frota eletrificada da base por modelo; sem tipo: 0,00%.
 - **Tipo de veículo, set/2026:** leve 92,8%, moto 6,9%, caminhao 0,2%, onibus 0,1%, outros 0,0% da frota eletrificada da base por modelo; sem tipo: 0,00%.
 - Ajuste em d_frota_por_uf_municipio_combustivel_novembro_2021.xlsx (nov/2021): contagens divididas por 10 (todas eram múltiplas de 10 no arquivo publicado).
 - Ajuste em d_frota_por_uf_municipio_combustivel_janeiro_2022.xlsx (jan/2022): idêntico a 2021-12; excluído da série.
@@ -28,11 +28,11 @@ Gerado por `eletromobilidade publicar` a partir de `data/processed` em 2026-10-2
 | `modelo_brasil.csv` | 2 | Base por modelo: frota por classe (inclui plug-in x convencional e híbrido leve), Brasil, por mês. |
 | `modelo_uf.csv` | 54 | Idem, por UF. |
 | `modelo_municipio.parquet` | 11.147 | Idem, por município. |
-| `modelo_eletrificados.parquet` | 195.356 | Base por modelo: eletrificados e híbridos leves por município, modelo e ano de fabricação. |
+| `modelo_eletrificados.parquet` | 192.876 | Base por modelo: eletrificados e híbridos leves por município, modelo e ano de fabricação. |
 | `modelo_tipo_brasil.csv` | 11 | Base por modelo: eletrificados e híbridos leves por tipo de veículo (leve, moto, ônibus, caminhão, outros), Brasil, por mês. Use participacao_tipo; a contagem absoluta herda a diferença para a base por combustível. |
 | `modelo_tipo_uf.csv` | 152 | Idem, por UF. |
 | `modelos_classificados.parquet` | 70.869 | Auditoria: cada modelo, classe, regra aplicada, total, marca, marcação 'revisar' e confronto com a tabela PBE Veicular do Inmetro. |
-| `modelos_dimensao.parquet` | 935 | Dimensão de marca e modelo: grafia do RENAVAM, marca canônica e origem, por modelo distinto. |
+| `modelos_dimensao.parquet` | 922 | Dimensão de marca e modelo: grafia do RENAVAM, marca canônica e origem, por modelo distinto. |
 | `municipios_dimensao.parquet` | 5.574 | Dimensão de município: código IBGE, nome oficial, UF e as grafias com que a SENATRAN publicou o município na série. |
 | `conciliacao_brasil.csv` | 2 | Comparação combustível x modelo, Brasil, nos meses presentes nas duas bases. |
 | `conciliacao_uf.csv` | 54 | Idem, por UF. |
