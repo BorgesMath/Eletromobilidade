@@ -22,9 +22,6 @@ venv/
 *.pbit
 .pbi/
 
-# Apresentações: ficam na pasta do projeto (docs/), fora do versionamento
-*.pptx
-
 # Editores / SO
 .vscode/
 .idea/
