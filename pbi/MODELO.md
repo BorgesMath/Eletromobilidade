@@ -149,7 +149,7 @@ foi emplacado no mês. Dois efeitos:
 A base inclui veículos que já não circulam e nunca foram baixados — é
 característica do RENAVAM, não do tratamento.
 
-### 2. A base por modelo não separa plug-in de híbrido convencional
+### 2. Plug-in × híbrido convencional: as duas bases divergem
 
 A conciliação de set/2026 no Brasil, que é exatamente para isso que serve:
 
@@ -176,6 +176,12 @@ subnotificando PHEV, como o README já supunha, e não para a regra inventando
 plug-in. **Indício, não prova:** a cobertura do PBE é de 79% da frota
 eletrificada e a chave de junção é marca + modelo, não versão, então ela não vê
 toda troca de classe. Até medir isso direito, a regra do painel não muda.
+
+**Medido em 23/10/2026, contra as vendas da ABVE** ([`docs/ROTEIRO.md`](../docs/ROTEIRO.md),
+item 8): o erro está no campo combustível. O rótulo HIBRIDO PLUG-IN pega 22% dos
+plug-ins vendidos, e a base por modelo reproduz as vendas por tecnologia com
+diferença de 1% a 3%. A regra abaixo ainda não mudou: trocar a fonte da divisão
+por tecnologia no painel é decisão pendente, e mexe nas medidas e nas páginas.
 
 Portanto, no painel:
 

@@ -154,7 +154,10 @@ Cada tabela é gravada em Parquet e em CSV (`;` como separador, `,` decimal, UTF
 
 Os painéis trazem `frota_<classe>` para cada classe, `frota_total`,
 `frota_eletrificada` e `participacao_eletrificada = frota_eletrificada / frota_total`.
-O painel do Brasil inclui registros sem UF válida; o de UF, não. Toda tabela no
+O painel do Brasil inclui registros sem UF válida; o de UF, não. Nos
+eletrificados, esses registros têm perfil de estoque ainda não emplacado (ver
+[`docs/ROTEIRO.md`](docs/ROTEIRO.md), item 8): para comparar com vendas, use os
+painéis de UF. Toda tabela no
 grão de município traz `cod_municipio_ibge`. Os painéis da base por combustível
 trazem também `populacao`, `ano_populacao` e `eletrificada_por_mil_habitantes`
 (ver [População](#população)).
@@ -558,7 +561,9 @@ Leitura:
 - Elétricos: a base por modelo recupera 95,5% nas UFs válidas (de 92,5% a
   99,5% por UF) e 91,4% no Brasil. O resíduo maior está no grupo de
   UF/município "Sem Informação" (3,1 milhões de veículos, quase todos sem ano
-  de fabricação).
+  de fabricação). Nos eletrificados, o grupo tem perfil de estoque cadastrado e
+  ainda não emplacado: são os lançamentos mais recentes, e ele cai depois que o
+  estoque é vendido.
 - **O campo combustível não separa plug-in de híbrido convencional.** A base
   por modelo tem 4,5 vezes mais plug-ins que o rótulo HIBRIDO PLUG-IN: a maior
   parte dos PHEV está registrada como GASOLINA/ELETRICO ou similar. Para a
@@ -597,7 +602,9 @@ convencional a gasolina.
    GASOLINA/ELETRICO ou ELETRICO/FONTE EXTERNA. Séries longas de
    `frota_hibrido_plug_in` não devem ser lidas como série de vendas de PHEV.
 4. **Frota registrada ≠ frota circulante.** A base do RENAVAM inclui veículos
-   que já não circulam e não foram baixados.
+   que já não circulam e não foram baixados. Na prática a baixa quase não
+   aparece: os eletrificados leves fabricados até 2018 eram 12.298 em dez/2020
+   e 12.317 em set/2026.
 5. **Híbridos leves no campo combustível.** Híbridos leves flex (ex.: Fiat
    "Hybrid" 12 V) podem estar registrados como GASOLINA/ALCOOL/ELETRICO e
    entrar em `hibrido` na base por combustível, enquanto na base por modelo
@@ -637,10 +644,14 @@ pelo passo a passo de [`pbi/MODELO.md`](pbi/MODELO.md#como-montar-o-pbix).
 Duas coisas que o painel precisa deixar claro, e que estão documentadas nos dois
 arquivos: **frota é estoque registrado, não emplacamento** — somar meses não dá
 o ano, e a variação mensal é saldo, não venda; e **a divisão entre plug-in e
-híbrido convencional só vale pela base por combustível**.
+híbrido convencional não vale pelo campo combustível**, que registra com o
+rótulo próprio só um quarto dos plug-ins vendidos. O painel ainda tira a
+tecnologia dessa base; a troca é pendência do roteiro.
 
 ## Próximos passos
 
 Em [`docs/ROTEIRO.md`](docs/ROTEIRO.md), em ordem de valor. O código IBGE de
-município, a população por município e o tipo de veículo estão feitos. Os
-próximos: ampliar a série da base por modelo e o furo de jan/2022.
+município, a população por município e o tipo de veículo estão feitos, e a base
+foi comparada com as vendas da ABVE (item 8). Os próximos são as pendências dessa
+comparação: as regras de plug-in que faltam e a fonte da divisão por tecnologia
+no painel. Depois, ampliar a série da base por modelo e o furo de jan/2022.

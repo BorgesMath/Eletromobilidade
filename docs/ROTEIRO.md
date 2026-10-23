@@ -1,8 +1,10 @@
 # Roteiro
 
-Estado em 21/10/2026. O pipeline Python está fechado e testado (271 testes); a
+Estado em 23/10/2026. O pipeline Python está fechado e testado (271 testes); a
 camada do Power BI está especificada em [`pbi/`](../pbi/MODELO.md) e o `.pbix`
-ainda precisa ser montado. O que falta está abaixo, em ordem de valor.
+ainda precisa ser montado. O que falta está abaixo, em ordem de valor. A
+comparação com as vendas da ABVE, feita em 23/10, está no item 8, e as pendências
+que saíram dela vêm antes do resto da lista.
 
 As tabelas de `resultados/` estão em dia com o código, regeradas em 21/10 com a
 série completa de combustível (76 arquivos) e os dois meses da base por modelo.
@@ -205,6 +207,62 @@ Nenhuma cruza com combustível, então nenhuma responde pergunta de
 eletromobilidade por si. `potencia` (`E_`) é a mais promissora: potência cruzada
 com município dá uma proxy de porte da frota. Só depois do resto.
 
+## 8. Comparação com as vendas da ABVE — feita, com pendências
+
+**Feita em 23/10/2026**, na apresentação `docs/Comparação com ABVE Data v2.pptx`,
+em que o projeto passa a se chamar db-demob. É a primeira validação da base contra
+uma fonte independente.
+
+**O número comparável.** Vendas são fluxo e frota é estoque, então se compara o
+crescimento da frota com as vendas do mesmo período, só nos leves e só nas UFs
+válidas (`modelo_tipo_uf`, tipo `leve`). De dez/2020 a set/2026 os eletrificados
+leves cresceram 909.699; a ABVE vendeu 927.581 de jan/2021 a set/2026, sem os
+micro-híbridos. A frota fica 1,9% abaixo: elétrico −0,8%, plug-in −3,4%, híbrido
+−1,3%.
+
+**Três achados que mudam a leitura da base.**
+
+- *O painel Brasil inclui um grupo que, nos eletrificados, tem perfil de
+  estoque.* É a UF e o município "Sem Informação", que vem dos dois arquivos da
+  fonte: combustível e marca/modelo dão o mesmo total, 3.086.939 em set/2026. Nos
+  eletrificados, 99,8% não têm ano de fabricação, o grupo se concentra nos
+  lançamentos mais recentes (Dolphin Mini, Geely EX2 e EX5, Jaecoo 7) e cai
+  depois de jul/2026. Entre dez/2020 e set/2026 ele ganhou 62.507 leves
+  eletrificados, mais que toda a folga contra a ABVE. A leitura provável é
+  veículo já cadastrado pelo fabricante ou importador e ainda não emplacado; não
+  há documento da SENATRAN que a confirme. Para comparar com vendas, use as UFs
+  válidas.
+- *Baixa quase não aparece.* Os eletrificados leves fabricados até 2018, nas UFs
+  válidas, eram 12.298 em dez/2020 e 12.317 em set/2026. Frota e vendas deveriam
+  empatar; o que sobra é diferença de medição, não perda de veículos.
+- *Por fabricante, a diferença está em poucos modelos.* O BI Frotas da ABVE
+  (abve.org.br/bi-frotas/) tem a base de vendas por fabricante e modelo, com o
+  texto do RENAVAM, de jan/2022 a set/2026. Para alinhar o período, dez/2021 da
+  base por modelo foi processado à parte, fora de `resultados/`. De dez/2021 a
+  set/2026 a frota de leves cresceu 876.674, contra 892.573 vendidos (−1,8%); BYD,
+  GWM, Toyota, Omoda Jaecoo e Geely batem a ±0,2%. Dos 10.737 plug-ins a menos,
+  cerca de 5,4 mil são modelos que a ABVE conta como plug-in e que, pela versão,
+  são híbridos leves de 48 V (BMW X6 40i e M Competition; Mercedes GLE 450d, AMG
+  GLE 53 e 63, GLS 450; Land Rover diesel), e cerca de 3,2 mil são plug-ins que as
+  regras daqui não reconhecem. O "fabricante" da ABVE é na prática a marca: só
+  Omoda e Jaecoo aparecem juntas.
+
+**Pendências, a decidir.**
+
+1. *Regras de plug-in que faltam* em `dados/modelos.csv`: Mitsubishi Outlander
+   com "E" no fim (`MMC OUTLANDER SIGNTR E`, `HPES E`, 1.923), Mercedes "EP"
+   (480), Porsche e Volvo abreviados (`CAYENNE CPH BE`, `PANAMERA 4EHST`,
+   `XC90 INSC EXPRES`; cerca de 830). Pede regerar `resultados/`.
+2. *Fronteira entre híbrido e híbrido leve.* O Tiggo 7 Pro "H"/"HA" é HEV Flex
+   para a ABVE (6.253 vendidos desde 2022) e híbrido leve aqui; os Audi "HIBRIDO"
+   (3.722) estão no sentido contrário, e a ABVE marca vários como MHEV 48 V.
+3. *Tabela de validação.* A base da ABVE por modelo confere a classificação
+   inteira, não só os casos acima; versioná-la daria um teste externo.
+4. *O grupo sem UF*: publicá-lo como recorte próprio no painel Brasil, ou ao
+   menos separá-lo em `resultados/LEIAME.md`.
+5. *A fonte da divisão por tecnologia no painel*, que hoje é a base por
+   combustível (ver a segunda ressalva abaixo).
+
 ---
 
 # O que a base sustenta
@@ -257,13 +315,17 @@ a base por modelo acha 18% menos eletrificados que a por combustível.
 entradas menos baixas, mais correção de cadastro. Escrever "vendas" ou
 "licenciamentos" a partir desses números é erro material. A base também inclui
 veículos que já não circulam e nunca foram baixados; é característica do
-RENAVAM.
+RENAVAM. Medido: os eletrificados leves fabricados até 2018 não diminuíram entre
+dez/2020 e set/2026.
 
-**A divisão entre plug-in e híbrido convencional só vale pela base por
-combustível.** A inferência por nome de modelo superestima plug-in em 4,5 vezes
-e subestima híbrido convencional em 2,8 — ver a conciliação em
-[`pbi/MODELO.md`](../pbi/MODELO.md). Os dois somados ficam próximos do correto,
-o que mostra que o erro é de classificação entre as duas classes.
+**A divisão entre plug-in e híbrido convencional não vale pelo campo
+combustível.** O rótulo HIBRIDO PLUG-IN pega 22% dos plug-ins que a ABVE contou
+como vendidos; o resto entra como híbrido, junto com o híbrido leve. A base por
+modelo reproduz as vendas por tecnologia com diferença de 1% a 3% (item 8). Até
+22/10/2026 este roteiro dizia o contrário: lia a razão de 4,5 entre os plug-ins
+das duas bases como erro do nome do modelo, e a comparação com a ABVE mostrou que
+o erro é do rótulo. O painel ainda tira a tecnologia da base por combustível
+([`pbi/MODELO.md`](../pbi/MODELO.md)); mudar isso é a pendência 5 do item 8.
 
 **Duas classes não existem no começo da série.** O código de combustível
 plug-in só aparece no RENAVAM em **abr/2022**, e o de célula de combustível em
