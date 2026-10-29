@@ -124,7 +124,7 @@ def com_populacao(tabelas: dict[str, pd.DataFrame], prefixo: str,
 
     O município recebe a estimativa do IBGE pelo código (``populacao.py``). UF e Brasil
     recebem a soma dos municípios do painel, e não o total publicado pelo IBGE, para
-    que o Power BI, que sobe do município, reproduza os dois sem diferença. Os
+    que quem agrega a partir do município reproduza os dois sem diferença. Os
     pseudo-municípios entram na frota do Brasil e não no denominador: não têm
     população.
     """

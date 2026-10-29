@@ -282,7 +282,7 @@ comparação vale.
 Três detalhes de construção:
 
 - UF e Brasil recebem a soma dos municípios do painel, não o total publicado pelo
-  IBGE, para que o Power BI, que sobe do município, reproduza os dois sem
+  IBGE, para que quem agrega a partir do município reproduza os dois sem
   diferença. No Brasil o numerador inclui a frota sem UF (cerca de 2%), que não
   tem população.
 - Nos sete meses em que o distrito de Ibitiúva aparece ao lado da sede, a

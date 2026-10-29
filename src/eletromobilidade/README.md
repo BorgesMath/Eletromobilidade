@@ -163,7 +163,7 @@ Parquet. `publicar` copia para `resultados/` as que vão para o repositório.
 | `modelo_{municipio,uf,brasil}` | mês × recorte | Painel da base por modelo |
 | `modelo_tipo_{uf,brasil}` | mês × recorte × tipo de veículo | Eletrificados e híbridos leves por tipo, com a parte de cada tipo |
 | `modelos_classificados` | mês × modelo | Auditoria: classe, regra aplicada, total, `revisar`, marca, PBE, tipo |
-| `modelos_dimensao` | modelo | Dimensão do painel: grafia do RENAVAM, marca canônica, origem |
+| `modelos_dimensao` | modelo | Dimensão de modelo: grafia do RENAVAM, marca canônica, origem |
 | `conciliacao_{municipio,uf,brasil}` | mês × recorte | Comparação entre as duas bases |
 | `qualidade_{combustivel,modelo}` | arquivo mensal | Linhas, frota total, ajustes aplicados e se o mês entrou na série |
 | `municipios_dimensao` | município (código IBGE) | Nome oficial, UF, região e as grafias com que a SENATRAN publicou o município |

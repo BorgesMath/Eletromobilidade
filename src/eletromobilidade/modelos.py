@@ -243,8 +243,8 @@ def dimensao_modelo(marca_modelo: pd.Series, equivalencias: pd.Series | None = N
     """Dimensão de marca e modelo: um registro por texto distinto de "Marca Modelo".
 
     ``importado`` vem do prefixo ``I/``/``IMP/``, que o RENAVAM usa para veículo
-    importado. É a tabela que o painel lê como ``dModelo``, para que a marca seja
-    derivada num lugar só, com teste.
+    importado. É a dimensão de modelo publicada, para que a marca seja derivada num
+    lugar só, com teste.
     """
     equivalencias = carregar_marcas() if equivalencias is None else equivalencias
     unicos = pd.Series(pd.unique(marca_modelo.dropna().astype("string")), dtype="string")

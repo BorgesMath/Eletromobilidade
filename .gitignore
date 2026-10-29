@@ -17,7 +17,8 @@ venv/
 .pytest_cache/
 .ipynb_checkpoints/
 
-# Power BI: o .pbix é binário e se remonta a partir de pbi/ (ver pbi/MODELO.md)
+# Painel: fica fora do repositório até os resultados estarem fechados
+pbi/
 *.pbix
 *.pbit
 .pbi/

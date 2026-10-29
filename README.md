@@ -2,8 +2,8 @@
 
 Base de eletromobilidade construída a partir da frota de veículos da SENATRAN
 (RENAVAM): quantos veículos elétricos, híbridos plug-in e híbridos há em cada
-município, UF e no Brasil, mês a mês, tratada, conferida e documentada. O painel
-de Power BI é um consumidor dela, não a finalidade.
+município, UF e no Brasil, mês a mês, tratada, conferida e documentada. O
+produto são as tabelas de [`resultados/`](resultados/LEIAME.md).
 
 ## Fontes
 
@@ -33,9 +33,6 @@ data/processed/   todas as tabelas, Parquet e CSV            (fora do git)
    │  eletromobilidade publicar
    ▼
 resultados/       painéis, auditorias, LEIAME e DICIONARIO   (versionado)
-   │
-   ▼
-pbi/              modelo do Power BI, que lê só resultados/
 ```
 
 | Pasta | O que tem | Leia |
@@ -43,14 +40,13 @@ pbi/              modelo do Power BI, que lê só resultados/
 | [`src/eletromobilidade/`](src/eletromobilidade/README.md) | O pacote Python: CLI, pipeline, qualidade dos arquivos, conciliação | Uso, módulos, saídas |
 | [`src/eletromobilidade/dados/`](src/eletromobilidade/dados/README.md) | Regras e tabelas de referência: combustível, modelo, tipo, marca, município, população, PBE | Como cada coisa é classificada e por quê |
 | [`resultados/`](resultados/LEIAME.md) | O que o projeto publica. `LEIAME.md` e `DICIONARIO.md` são gerados por `publicar` | Cobertura e colunas |
-| [`pbi/`](pbi/README.md) | Painel especificado em texto: modelo estrela, Power Query, DAX, tema | Como montar o `.pbix` |
 | [`tests/`](tests/README.md) | Testes do pacote e das tabelas publicadas | Como rodar |
 | [`docs/`](docs/README.md) | Roteiro e apresentações | O que falta e o que a base sustenta |
 | [`data/`](data/README.md) | Arquivos brutos, cache e saídas locais | Layout |
 
-**Nada de regra de negócio no Power BI.** O que decide se um veículo é
-eletrificado mora no Python, onde um teste pega a mudança. O painel apresenta e
-agrega.
+**Toda regra mora no Python.** O que decide se um veículo é eletrificado está em
+`src/`, onde um teste pega a mudança. Quem consome `resultados/` apresenta e
+agrega, sem reclassificar.
 
 ## Premissas
 

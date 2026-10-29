@@ -1,10 +1,9 @@
 # Roteiro
 
-Estado em 23/10/2026. O pipeline Python está fechado e testado (271 testes); a
-camada do Power BI está especificada em [`pbi/`](../pbi/MODELO.md) e o `.pbix`
-ainda precisa ser montado. O que falta está abaixo, em ordem de valor. A
-comparação com as vendas da ABVE, feita em 23/10, está no item 8, e as pendências
-que saíram dela vêm antes do resto da lista.
+Estado em 29/10/2026. O pipeline Python está fechado e testado (301 testes), e o
+escopo do repositório vai até `resultados/`. O que falta está abaixo, em ordem de
+valor. A comparação com as vendas da ABVE, feita em 23/10, está no item 8, e as
+pendências que saíram dela vêm antes do resto da lista.
 
 As tabelas de `resultados/` estão em dia com o código, regeradas em 21/10 com a
 série completa de combustível (76 arquivos) e os dois meses da base por modelo.
@@ -45,7 +44,7 @@ quebra fica em 2022. A taxa de um município comparada através dela mede revis�
 população junto com frota. Detalhe em `src/eletromobilidade/dados/README.md`, seção População.
 
 **O mapa municipal também está destravado.** A malha do IBGE identifica o
-município pelo mesmo código (ver [`pbi/PAGINAS.md`](../pbi/PAGINAS.md)). Ela tem
+município pelo mesmo código. Ela tem
 5.570 polígonos: falta Boa Esperança do Norte, mais novo que a malha.
 
 ## 2. Ampliar a série da base por modelo
@@ -191,13 +190,10 @@ em cada caso — e errar isso é pior que não ter.
 
 ## 6. Publicar a tabela longa por classe
 
-O Power BI hoje despivota `combustivel_municipio` em Power Query (ver
-[`pbi/powerquery/fFrotaCombustivel.m`](../pbi/powerquery/fFrotaCombustivel.m)).
-Funciona, mas põe lógica de modelagem fora do Python, onde não há teste.
-Publicar `frota_classe_municipio.parquet` já no formato longo (mês × município ×
-classe × frota) tiraria 30 linhas de M e mudaria a consulta para uma leitura
-direta. Vale fazer quando o `.pbix` estiver estável — não antes, para não mexer
-em duas pontas ao mesmo tempo.
+`combustivel_municipio` é larga, uma coluna por classe. Publicar
+`frota_classe_municipio.parquet` no formato longo (mês × município × classe ×
+frota) poupa quem consome a base de despivotar por conta própria, fora do
+Python, onde não há teste. Fica para quando houver um consumidor que precise.
 
 ## 7. Outras tabelas da SENATRAN
 
@@ -267,8 +263,11 @@ micro-híbridos. A frota fica 1,5% abaixo: elétrico −0,8%, plug-in −2,2%, h
    inteira, não só os casos acima; versioná-la daria um teste externo.
 4. *O grupo sem UF*: publicá-lo como recorte próprio no painel Brasil, ou ao
    menos separá-lo em `resultados/LEIAME.md`.
-5. *A fonte da divisão por tecnologia no painel*, que hoje é a base por
-   combustível (ver a segunda ressalva abaixo).
+5. *Dizer em `resultados/` qual base vale para cada pergunta.* A divisão
+   plug-in × híbrido convencional vale pela base por modelo, e a série mensal pela
+   base por combustível (ver a segunda ressalva abaixo). Hoje isso está só no
+   README e neste roteiro; o `LEIAME.md` e o `DICIONARIO.md` gerados por
+   `publicar` deveriam dizer o mesmo junto das colunas `frota_hibrido_plug_in`.
 
 ---
 
@@ -331,8 +330,7 @@ como vendidos; o resto entra como híbrido, junto com o híbrido leve. A base po
 modelo reproduz as vendas por tecnologia com diferença de 1% a 3% (item 8). Até
 22/10/2026 este roteiro dizia o contrário: lia a razão de 4,5 entre os plug-ins
 das duas bases como erro do nome do modelo, e a comparação com a ABVE mostrou que
-o erro é do rótulo. O painel ainda tira a tecnologia da base por combustível
-([`pbi/MODELO.md`](../pbi/MODELO.md)); mudar isso é a pendência 5 do item 8.
+o erro é do rótulo. Levar isso para `resultados/` é a pendência 5 do item 8.
 
 **Duas classes não existem no começo da série.** O código de combustível
 plug-in só aparece no RENAVAM em **abr/2022**, e o de célula de combustível em
