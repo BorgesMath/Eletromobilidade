@@ -1,6 +1,6 @@
 # Resultados
 
-Gerado por `eletromobilidade publicar` a partir de `data/processed` em 2026-10-29 14:42 UTC (código no commit `5adf0a8`). Não edite à mão: rode `processar` e `publicar` de novo.
+Gerado por `eletromobilidade publicar` a partir de `data/processed` em 2026-10-29 19:03 UTC (código no commit `b393610`). Não edite à mão: rode `processar` e `publicar` de novo.
 
 ## Cobertura
 
@@ -41,4 +41,4 @@ Gerado por `eletromobilidade publicar` a partir de `data/processed` em 2026-10-2
 | `qualidade_modelo.csv` | 2 | Idem para a base por modelo. |
 
 CSV: separador `;`, decimal `,`, UTF-8 com BOM (abre direto no Excel pt-BR). Parquet: ler com `pandas.read_parquet` ou no Power BI/R/DuckDB.
-Colunas, tipos, fontes e classes: [DICIONARIO.md](DICIONARIO.md). Limitações e método de conciliação: README do repositório.
+Colunas, tipos, fontes e classes: [DICIONARIO.md](DICIONARIO.md). Limitações: README do repositório. Método de conciliação: [src/eletromobilidade/README.md](../src/eletromobilidade/README.md#conciliação).
