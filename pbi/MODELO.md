@@ -16,10 +16,10 @@ Fatos nas linhas, dimensões nas colunas; `●` é um relacionamento.
 ```
                                      dCalendario   dLocalidade   dClasse   dModelo
                                       [Data]     [chave_local.]  [classe] [marca_modelo]
-                          linhas       ~2.465        5.574           8       922
+                          linhas       ~2.465        5.574           8       942
 fFrotaCombustivel      1.266.245         ●             ●             ●
 fPopulacao               417.765         ●             ●
-fFrotaModelo             192.876         ●             ●             ●         ●
+fFrotaModelo             194.426         ●             ●             ●         ●
 fConciliacao              11.147         ●             ●
 fModelosClassificados     70.869         ●                           ●
 fCobertura                    78         ●
@@ -40,7 +40,7 @@ previsível que filtro cruzado automático.
 |---|---|---:|---|
 | `fFrotaCombustivel` | mês × município × classe | 1.266.245 | `combustivel_municipio.parquet` |
 | `fPopulacao` | mês × município | 417.765 | `combustivel_municipio.parquet` (colunas de população) |
-| `fFrotaModelo` | mês × município × modelo × ano de fabricação × classe | 192.876 | `modelo_eletrificados.parquet` |
+| `fFrotaModelo` | mês × município × modelo × ano de fabricação × classe | 194.426 | `modelo_eletrificados.parquet` |
 | `fConciliacao` | mês × município | 11.147 | `conciliacao_municipio.parquet` |
 | `fModelosClassificados` | mês × modelo normalizado | 70.869 | `modelos_classificados.parquet` |
 | `fCobertura` | base × mês | 78 | `qualidade_combustivel.csv` + `qualidade_modelo.csv` |
@@ -52,7 +52,7 @@ previsível que filtro cruzado automático.
 | `dCalendario` | dia | ~2.465 | tabela calculada em DAX |
 | `dLocalidade` | município (código IBGE) | 5.574 | `municipios_dimensao.parquet` |
 | `dClasse` | classe de tecnologia | 8 | digitada no Power Query |
-| `dModelo` | marca_modelo (com marca e tipo de veículo) | 922 | `modelos_dimensao.parquet` |
+| `dModelo` | marca_modelo (com marca e tipo de veículo) | 942 | `modelos_dimensao.parquet` |
 
 ### Relacionamentos
 

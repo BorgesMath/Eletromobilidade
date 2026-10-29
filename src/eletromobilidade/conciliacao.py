@@ -14,7 +14,7 @@ Indicadores comparados (``<indicador>_combustivel``, ``<indicador>_modelo``,
 * ``hibrido``: híbridos convencionais (HEV), cuja bateria só é recarregada pelo
   motor a combustão e pela frenagem regenerativa.
 * ``hibridos``: soma dos dois anteriores. No campo combustível parte dos PHEV
-  aparece como "GASOLINA/ELETRICO" (ver README), então a soma é mais comparável
+  aparece como "GASOLINA/ELETRICO" (ver dados/README.md), então a soma é mais comparável
   entre as bases do que cada parcela.
 * ``eletrificada``: soma das classes eletrificadas.
 

@@ -4,7 +4,7 @@ O Programa Brasileiro de Etiquetagem Veicular publica, por ciclo anual, a lista 
 veículos leves ensaiados, com a propulsão declarada pelo fabricante (combustão,
 elétrico, híbrido, híbrido plug-in) e a categoria de porte. É a única fonte pública
 brasileira que separa PHEV de HEV **por versão** — o campo combustível do RENAVAM não
-separa (ver a conciliação no README) e a inferência por nome de modelo erra entre as
+separa (ver a conciliação no README do repositório) e a inferência por nome de modelo erra entre as
 duas classes.
 
 Serve a três coisas, e nenhuma delas é substituir as regras de ``dados/modelos.csv``:

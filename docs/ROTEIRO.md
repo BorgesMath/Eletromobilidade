@@ -23,7 +23,7 @@ das 5.581 grafias da base casam pelo nome sem acento e sem pontuação, e as 41
 que sobram estão em `src/eletromobilidade/dados/municipios_grafias.csv`,
 conferidas uma a uma. Ficam sem código só os três pseudo-municípios sem UF. O
 teste que este item pedia existe e roda sobre `resultados/`: falha se sobrar
-município com UF e sem código. Detalhe no README, seção Município.
+município com UF e sem código. Detalhe em `src/eletromobilidade/dados/README.md`, seção Município.
 
 **O resíduo não era só grafia.** Seis municípios trocam de nome no meio da série
 — `EMBU` vira `EMBU DAS ARTES` em abr/2022, `GOUVEA` vira `GOUVEIA` em mar/2024
@@ -42,7 +42,7 @@ junção é pelo código, sem casar nome nenhum.
 2024 em diante partem do Censo 2022. Entre as duas, 1.709 municípios mudam mais de
 10%. 2022 e 2023 usam a estimativa de 2024, que está do mesmo lado do Censo, e a
 quebra fica em 2022. A taxa de um município comparada através dela mede revisão de
-população junto com frota. Detalhe no README, seção População.
+população junto com frota. Detalhe em `src/eletromobilidade/dados/README.md`, seção População.
 
 **O mapa municipal também está destravado.** A malha do IBGE identifica o
 município pelo mesmo código (ver [`pbi/PAGINAS.md`](../pbi/PAGINAS.md)). Ela tem
@@ -67,7 +67,7 @@ oito meses dão série anual sem o custo de 75.
 **Feito em 21/10/2026.** Os eletrificados e híbridos leves da base por modelo
 têm tipo de veículo — leve, moto, ônibus, caminhão, outros —, publicado em
 `modelo_eletrificados`, `modelos_dimensao` e nos painéis `modelo_tipo_{uf,brasil}`.
-Detalhe no README, seção Tipo de veículo. A resposta à pergunta que motivou o
+Detalhe em `src/eletromobilidade/dados/README.md`, seção Tipo de veículo. A resposta à pergunta que motivou o
 item, base por modelo:
 
 | | dez/2020 | set/2026 |
@@ -97,8 +97,8 @@ não é ambíguo, como a tecnologia é. O PBE dá o tipo de 78,7% da frota com f
 externa; as 27 regras de `dados/tipos.csv` foram conferidas contra os modelos;
 regra que contradiz o PBE é divergência e derruba o teste — foi o que pegou a BYD
 eT3, van, que uma regra de caminhão levava. Sem tipo ficaram 3 veículos. Um caso
-foi decidido por exclusão, e a regra diz isso (`FLASH/MV ING ELETRIC`, ver o
-README).
+foi decidido por exclusão, e a regra diz isso (`FLASH/MV ING ELETRIC`, ver
+`src/eletromobilidade/dados/README.md`).
 
 **De passagem, a revisão achou falsos elétricos na classificação de tecnologia,
 corrigidos em 21/10/2026** com três regras de combustão em `dados/modelos.csv`,
@@ -311,7 +311,7 @@ distância é maior: 28,9 por mil no Distrito Federal, 8,7 em Santa Catarina, 8,
 em São Paulo e 6,2 no Brasil. A população é a estimativa de 2026 do IBGE.
 
 Composição por tipo de veículo, pela base por modelo: 92,8% da frota
-eletrificada é leve e 6,9% é moto. Entre os elétricos a bateria a moto é 16,9%
+eletrificada é leve e 6,8% é moto. Entre os elétricos a bateria a moto é 16,9%
 — e era dois terços, 66,8%, em dez/2020, com a ressalva de que naquele mês a
 base por modelo só reconhece 61% dos elétricos. Cite a parte, não a contagem:
 a base por modelo acha 18% menos eletrificados que a por combustível.

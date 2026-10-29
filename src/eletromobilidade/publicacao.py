@@ -146,7 +146,8 @@ def leiame(tabelas: dict[str, pd.DataFrame], gerado_em: pd.Timestamp) -> str:
         "CSV: separador `;`, decimal `,`, UTF-8 com BOM (abre direto no Excel pt-BR). "
         "Parquet: ler com `pandas.read_parquet` ou no Power BI/R/DuckDB.",
         "Colunas, tipos, fontes e classes: [DICIONARIO.md](DICIONARIO.md). "
-        "Limitações e método de conciliação: README do repositório.",
+        "Limitações: README do repositório. Método de conciliação: "
+        "[src/eletromobilidade/README.md](../src/eletromobilidade/README.md#conciliação).",
         "",
     ]
     return "\n".join(linhas)
