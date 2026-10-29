@@ -20,7 +20,7 @@ moto;(\d{3,5}|\d\.\d{3}) ?W\b|\d+(\.\d+)? ?KW\b;Potência do motor em W ou kW no
 leve;\bHONDA (CIVIC|ACCORD|CITY|FIT|HR-?V|ZR-?V|CR-?V|WR-?V)\b|^(I/)?CIVIC\b;Honda faz carro e moto: só as famílias de carro.
 leve;\bBMW (I\d|IX\d?|X\d|M?\d{3}|ACTIVEHYBRID);BMW faz carro e moto: carros pela família (i3, i4, iX, X, Série 3/5/7). Motos BMW têm letra antes do número (R 1250, C 400) e não casam.
 leve;\bVOLVO (XC\d+|C40|EX\d+|EC\d+|ES\d+|S\d0|V\d0)\b;Volvo faz carro, ônibus e caminhão: só as famílias de carro.
-leve;\bM\.?BENZ (\d{3} )?(AMG )?(EQ|E?SPRINTER|S ?\d{3}|GLC|GLE|GLS|C ?\d{3}|E ?\d{3});Mercedes-Benz faz carro, van, ônibus e caminhão: carros EQ, Classe S/C/E, GLC e a van eSprinter.
+leve;\bM\.?BENZ (\d{3} )?(AMG )?(EQ|E?SPRINTER|S ?\d{3}|GLC|GLE|GLS|C ?\d{3}|E ?\d{3}|SL ?\d{2}|GT ?\d{2});Mercedes-Benz faz carro, van, ônibus e caminhão: carros EQ, Classe S/C/E, GLC, os esportivos SL e AMG GT ('SL63S EP', 'GT63S EP') e a van eSprinter.
 leve;\bVW[ /](ID\.|GOL\b|TOUAREG|GOLF|E-?GOLF|E-?UP|POLO|T-?CROSS|NIVUS|TAOS|TIGUAN|PASSAT|JETTA|AMAROK);VW faz carro e caminhão: só as famílias de carro.
 leve;\bBYD[ /](D1\b|E[2-6]\b|F[036]\b|G3\b|QIN|LEOPARD|SONG|TANG|U9|XIA|T3\b|DOLPHIN|SEAL|YUAN|HAN\b|KING|SHARK|SEAGULL|ATTO|M6\b);BYD faz carro, ônibus e caminhão: carros pela família, e a van T3. D1 é carro (o ônibus é D9/D11).
 leve;\bJAC (IEV ?(20|40|60|330P|750)|J\d|E-?JS|E-?JV|E-?J7);JAC: carros iEV20/40/60 e e-JS, vans iEV750V e e-JV (o e-JV12 é furgão, que a FIPE lista como carro).

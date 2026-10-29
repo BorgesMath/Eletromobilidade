@@ -4,7 +4,7 @@ sem_informacao;^(SEM INFORMACAO|NAO IDENTIFICADO|NAO INFORMADO)$;
 celula_combustivel;\bFCEV\b|\bMIRAI\b|HIDROGENIO|FUEL ?CELL;
 hibrido_plug_in;PHEV|PLUG-?IN|P-?HIBRID|\b4XE\b|\bSHS\b;'PHEV'/'plug-in' no nome prevalece sobre as regras de marca abaixo (ex.: Caoa Chery Tiggo 7/8 PHEV, que também usa 'Hybrid' em versões leves).
 eletrico;VOLVO.*(\b(EX30|EX40|EC40|EX90|ES90|C40)\b|\b(XC40|C40) ?[68]\b|\bP[68]\b|\bPURE\b|RECHARGE PE\b|\bBEV\b);Volvo a bateria (C40, EX30, EX40, XC40 '6'/'8' = P6/P8, 'RECHARGE PE' = Pure Electric).
-hibrido_plug_in;VOLVO.*\b(T5H|T6H|T8|RECHARGE|TWIN ENGINE)\b;Volvo T8 e T5/T6 'H'/'Recharge' são híbridos plug-in. T5 sem sufixo é combustão.
+hibrido_plug_in;VOLVO.*(\b(T5H|T6H|T8|RECHARGE|TWIN ENGINE)\b|\bXC(60|90) INSC EXPRES\b);Volvo T8 e T5/T6 'H'/'Recharge' são híbridos plug-in. T5 sem sufixo é combustão. XC60/XC90 'Inscription Express' (2021+): inferido T8 Recharge, já que a Volvo só vende eletrificados no Brasil desde 2022. O XC40 com o mesmo nome segue combustão por poder ser B5 (híbrido leve). Revisar contra a base da ABVE.
 hibrido_plug_in;(BYD|DENZA|JETOUR).*\b(I-?)?DM(-?[IPO])?\b;BYD/Denza DM, DM-i, DM-p, DM-o e Jetour i-DM: híbrido plug-in.
 combustao;\bBYD\b.*\b(F0|F3|F6|G3|G6|S6)\b;BYD F0, F3, F6, G3, G6 e S6: carros a combustão que a BYD vendeu por volta de 2010, antes da linha elétrica. Vêm depois da regra DM, para o F3DM, que é plug-in, seguir plug-in.
 eletrico;\b(BYD|DENZA)\b;Demais BYD e Denza (Dolphin, Yuan, Seal, Tan, Han, Denza Z9/D9 EV, ônibus): elétricos a bateria. As marcas não vendem combustão no Brasil hoje, e os F0/F3/F6/G3 de antes ficam na regra acima.
@@ -27,8 +27,11 @@ eletrico;BMW.*\b(I3|I4|I5|I7|IX\d?|CE ?0?[24])\b;BMW i3/i4/i5/i7/iX e scooter CE
 hibrido_plug_in;BMW.*\d{2}E\b;BMW 330e, 530e, X3 xDrive30e, X5 xDrive45e/50e.
 eletrico;(M\.? ?BENZ|MERCEDES).*(\bEQ[ABCESV]\d*\b|\bEO ?500|\bE-?SPRINTER\b);Mercedes EQA/EQB/EQC/EQE/EQS (também grudado no número, ex.: 'EQC400') e chassi elétrico eO500U.
 hibrido_plug_in;(M\.? ?BENZ|MERCEDES).*\b(A|C|E|S|CLA|GLA|GLC|GLE) ?\d{3} ?E\b;Mercedes 300e, 350e etc.
+hibrido_plug_in;(M\.? ?BENZ|MERCEDES).*\d{2}S? EP\b;Mercedes-AMG E Performance ('AMG C63S EP', 'GLC63S EP', 'GT63S EP', 'S63 EP', 'SL63S EP'): híbrido plug-in.
 eletrico;PORSCHE.*(TAYCAN|\bMACAN E4S?\b|\bMACAN (TURBO )?ELE\w*);Porsche Taycan e Macan elétrico (E4, E4S).
-hibrido_plug_in;PORSCHE.*(E-?HY|\dS?EHY|\bPHE\b|PHEV);Porsche E-Hybrid ('4SEHY', '4EHYB', 'CP PHE').
+hibrido_plug_in;PORSCHE.*(E-?HY|\dS?EH(Y|ST|EX|S\b)|\bTSE-?HS?\b|\bCPH\b|\bPHE\b|PHEV);Porsche E-Hybrid ('4SEHY', '4EHYB', 'CP PHE'), também abreviado como Sport Turismo e Executive ('4EHST', '4SEHS', '4EHEX', 'TSEHS', 'TSE-H') e Cayenne Coupé E-Hybrid ('CPH BE'). Cayenne 'E CO', 'E OF', 'ET', 'ES' (39 veículos em set/2026) ficam como combustão, por serem abreviações ambíguas.
+hibrido;PORSCHE.*\bHYBR\b;Cayenne S Hybrid (2011), híbrido sem tomada.
+hibrido_plug_in;(MMC|MITSUBISHI).*OUTLANDER\b.*(\b(HPES|SIGNTR) E\b|\bHYBRID\b);Outlander PHEV abreviado com 'E' no fim ('HPES E', 'SIGNTR E', 2023+) e o 'OUTLANDER HYBRID' de 2018-19: a Mitsubishi não vendeu Outlander híbrido sem tomada no Brasil.
 eletrico;JAG.*I-?PACE;
 hibrido_plug_in;(LR|LAND ?ROVER|RANGE ?ROVER).*\bP\d{3}E\b;Land Rover P300e/P400e/P440e.
 eletrico;MINI.*\b(COOPER SE|COOPER E|ACEMAN|COUNTRYMAN SE|COUNTRYMAN E)\b;MINI a bateria. 'COUNTRYMAN SE' aparece de 2024 em diante (o PHEV anterior está como 'COUNTRYMAN PHEV').

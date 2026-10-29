@@ -19,6 +19,8 @@ def _tipo(texto: str, pbe: str = "") -> pd.Series:
     ("BYD/D9W 20.410", "onibus"),
     ("BYD/INDUSCAR MILLEN U", "onibus"),        # carroceria Caio sobre chassi BYD
     ("M.BENZ/EO500 U2134", "onibus"),
+    ("I/M.BENZ SL63S EP", "leve"),
+    ("I/M.BENZ GT63S EP", "leve"),
     ("I/BYD ET8A", "caminhao"),
     ("VW/E-DELIVERY 11.4", "caminhao"),
     ("I/JAC IEV1200T PLUS", "caminhao"),

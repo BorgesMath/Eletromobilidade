@@ -216,9 +216,10 @@ uma fonte independente.
 **O número comparável.** Vendas são fluxo e frota é estoque, então se compara o
 crescimento da frota com as vendas do mesmo período, só nos leves e só nas UFs
 válidas (`modelo_tipo_uf`, tipo `leve`). De dez/2020 a set/2026 os eletrificados
-leves cresceram 909.699; a ABVE vendeu 927.581 de jan/2021 a set/2026, sem os
-micro-híbridos. A frota fica 1,9% abaixo: elétrico −0,8%, plug-in −3,4%, híbrido
-−1,3%.
+leves cresceram 913.861; a ABVE vendeu 927.581 de jan/2021 a set/2026, sem os
+micro-híbridos. A frota fica 1,5% abaixo: elétrico −0,8%, plug-in −2,2%, híbrido
+−1,3%. O deck de 23/10 traz a versão anterior às regras de plug-in da pendência 1
+(909.699, −1,9%, plug-in −3,4%).
 
 **Três achados que mudam a leitura da base.**
 
@@ -249,10 +250,16 @@ micro-híbridos. A frota fica 1,9% abaixo: elétrico −0,8%, plug-in −3,4%, h
 
 **Pendências, a decidir.**
 
-1. *Regras de plug-in que faltam* em `dados/modelos.csv`: Mitsubishi Outlander
-   com "E" no fim (`MMC OUTLANDER SIGNTR E`, `HPES E`, 1.923), Mercedes "EP"
-   (480), Porsche e Volvo abreviados (`CAYENNE CPH BE`, `PANAMERA 4EHST`,
-   `XC90 INSC EXPRES`; cerca de 830). Pede regerar `resultados/`.
+1. ~~*Regras de plug-in que faltam*~~ — **feito em 29/10/2026.** Passaram a
+   plug-in o Outlander com "E" no fim (`SIGNTR E`, `HPES E`) e o `OUTLANDER
+   HYBRID` de 2018-19, os Mercedes-AMG "EP", os Panamera abreviados (`4EHST`,
+   `4EHEX`, `4SEHS`, `TSE-H`, `TSEHS`), o `CAYENNE CPH BE` e os Volvo XC60/XC90
+   `INSC EXPRES`; o `CAYENNE S HYBR` de 2011 passou a híbrido. São 4.162 plug-ins
+   leves a mais no crescimento comparável, contra os ~3,2 mil estimados: o
+   excedente é a Volvo, cujo Inscription Express foi inferido T8 sem conferência
+   na base da ABVE, e que pode ter passado do total dela (era −966). Ficaram como
+   combustão o XC40 `INSC EXPRES` (pode ser B5, híbrido leve) e os Cayenne `E CO`,
+   `E OF`, `ET`, `ES` (39 veículos, abreviação ambígua).
 2. *Fronteira entre híbrido e híbrido leve.* O Tiggo 7 Pro "H"/"HA" é HEV Flex
    para a ABVE (6.253 vendidos desde 2022) e híbrido leve aqui; os Audi "HIBRIDO"
    (3.722) estão no sentido contrário, e a ABVE marca vários como MHEV 48 V.
